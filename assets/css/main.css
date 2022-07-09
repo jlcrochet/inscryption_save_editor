@@ -1,0 +1,12 @@
+input[type="checkbox"] {
+    margin: 3px 0;
+}
+
+[title] {
+    text-decoration: underline gray;
+    cursor: help;
+}
+
+.card > td {
+    border: 2px solid black;
+}
