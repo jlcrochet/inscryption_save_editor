@@ -9,7 +9,6 @@
     <p>Read the following before use:</p>
 
     <ul>
-      <li>This is designed to be used with Kaycee's Mod; it is not guaranteed to work with the base game, although it might.</li>
       <li>Avoid making manual changes to your save file before uploading; doing so may cause errors.</li>
       <li>Some cards and sigils may cause errors if played outside of specific contexts; others may do nothing at all. Make sure that you make a backup of your save file before experimenting.</li>
     </ul>
@@ -359,7 +358,7 @@
                       ["Urayuli", "Urayuli"],
                       ["W07F", "CXformerWolf"],
                       ["Warren", "Warren"],
-                      ["Wild Bull", "WildBull"],
+                      ["Wild Bull", "Bull"],
                       ["Wolf", "Wolf"],
                       ["Wolf Cub", "WolfCub"],
                       ["Wolf Pelt", "PeltWolf"],
@@ -562,7 +561,7 @@
 
               text = text
                   .replace(/\$iref:\s*\d+/g, '"$&"')
-                  .replace(/"(position|\w*?Position)":\s*{\r?\n?\s*"\$type":\s*(".*?"|-?\d+(?:\.\d+)?),\r?\n?\s*(-?\d+(?:\.\d+)?),\r?\n?\s*(-?\d+(?:\.\d+)?)\r?\n?\s*}/g, '"$1": { "$type": $2, "x": $3, "y": $4 }')
+                  .replace(/"(position|\w*?Position)":\s*{\r?\n?\s*"\$type":\s*(".*?"|-?\d+(?:\.\d+)?),\r?\n?\s*(-?\d+(?:\.\d+)?),\r?\n?\s*(-?\d+(?:\.\d+)?)\r?\n?\s*}/g, '"$1":{"$type":$2,"x":$3,"y":$4}')
 
               // Next, we must scan the file for type definitions and
               // replace all references to those types with the internal
@@ -570,9 +569,9 @@
               // when removing objects from the file.
               let types = {}
 
-              text = text.replace(/"\$type": (?:(\d+)|"(.*?)")/g, (m, p1, p2) => {
+              text = text.replace(/"\$type":(?:(\d+)|"(.*?)")/g, (m, p1, p2) => {
                   if (p1) {
-                      return `"$type": "${types[p1]}"`
+                      return `"$type":"${types[p1]}"`
                   } else {
                       let match = p2.match(/^(\d+)\|(.*)/)
 
@@ -582,9 +581,9 @@
 
                           types[id] = type
 
-                          return `"$type": "${type}"`
+                          return `"$type":"${type}"`
                       } else {
-                          return `"$type": "${p2}"`
+                          return `"$type":"${p2}"`
                       }
                   }
               })
