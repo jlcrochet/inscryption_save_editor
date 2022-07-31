@@ -88,7 +88,7 @@
                   <td><span title="Sigils to add to this card.">Add</span> ({{ mod.abilities.$rlength }}):</td>
 
                   <td>
-                    <select multiple v-model=mod.abilities.$rcontent @change="mod.abilities.$rlength = $event.target.selectedOptions.length">
+                    <select multiple size=8 v-model=mod.abilities.$rcontent @change="mod.abilities.$rlength = $event.target.selectedOptions.length">
                       <template v-for="([ability, description], k) in gameData.abilities">
                         <option :value="k + 1" :title=description>{{ ability }}</option>
                       </template>
@@ -100,7 +100,7 @@
                   <td><span title="Sigils to remove from this card.">Remove</span> ({{ mod.negateAbilities.$rlength }}):</td>
 
                   <td>
-                    <select multiple v-model=mod.negateAbilities.$rcontent @change="mod.negateAbilities.$rlength = $event.target.selectedOptions.length">
+                    <select multiple size=8 v-model=mod.negateAbilities.$rcontent @change="mod.negateAbilities.$rlength = $event.target.selectedOptions.length">
                       <template v-for="([ability, description], k) in gameData.abilities">
                         <option :value="k + 1" :title=description>{{ ability }}</option>
                       </template>

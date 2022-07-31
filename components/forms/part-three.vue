@@ -28,7 +28,7 @@
         <tr>
           <td>Sigils ({{ saveFile.part3Data.sideDeckAbilities.$rlength }}):</td>
           <td>
-            <select multiple size=10 v-model=saveFile.part3Data.sideDeckAbilities.$rcontent @change="saveFile.part3Data.sideDeckAbilities.$rlength = $event.target.selectedOptions.length">
+            <select multiple size=8 v-model=saveFile.part3Data.sideDeckAbilities.$rcontent @change="saveFile.part3Data.sideDeckAbilities.$rlength = $event.target.selectedOptions.length">
               <template v-for="([ability, description], k) in gameData.abilities">
                 <option :value="k + 1" :title=description>{{ ability }}</option>
               </template>
