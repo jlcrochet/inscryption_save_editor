@@ -6,4 +6,4 @@ node_modules
 .output
 .env
 dist
-test.gwsave
+*.gwsave

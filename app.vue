@@ -1,5 +1,5 @@
 <template>
-  <div id=content>
+  <div style="margin: 1em">
     <h1>Inscryption Save Editor</h1>
 
     <noscript>WARNING: This page doesn't work without JavaScript. Please enable JavaScript and refresh the page.</noscript>
@@ -558,52 +558,57 @@
               // temporary placeholders; this involves wrapping `$iref`
               // values in quotes and placing actual `x` and `y` keys
               // inside position-style objects.
-
               text = text
                   .replace(/\$iref:\s*\d+/g, '"$&"')
                   .replace(/"(position|\w*?Position)":\s*{\r?\n?\s*"\$type":\s*(".*?"|-?\d+(?:\.\d+)?),\r?\n?\s*(-?\d+(?:\.\d+)?),\r?\n?\s*(-?\d+(?:\.\d+)?)\r?\n?\s*}/g, '"$1":{"$type":$2,"x":$3,"y":$4}')
 
-              // Next, we must scan the file for type definitions and
-              // replace all references to those types with the internal
-              // type string; this is to avoid orphaned type references
-              // when removing objects from the file.
-              let types = {}
-
-              text = text.replace(/"\$type":(?:(\d+)|"(.*?)")/g, (m, p1, p2) => {
-                  if (p1) {
-                      return `"$type":"${types[p1]}"`
-                  } else {
-                      let match = p2.match(/^(\d+)\|(.*)/)
-
-                      if (match) {
-                          let id = match[1]
-                          let type = match[2]
-
-                          types[id] = type
-
-                          return `"$type":"${type}"`
-                      } else {
-                          return `"$type":"${p2}"`
-                      }
-                  }
-              })
+              // Now that the text is valid JSON, we can parse it:
+              let data
 
               try {
-                  this.saveFile = JSON.parse(text)
+                  let ids = {}
+                  let types = {}
+
+                  data = JSON.parse(text, function(key, value) {
+                      switch (key) {
+                          case "$id": {
+                              ids[value] = this
+                          } break
+
+                          case "$type": {
+                              if (typeof value === "number") {
+                                  return types[value]
+                              } else {
+                                  let [n, type] = value.split("|")
+                                  types[n] = type
+                                  return type
+                              }
+                          } break
+
+                          default: {
+                              if (typeof value === "string" && value.startsWith("$iref")) {
+                                  let [_, n] = value.split(":")
+                                  return ids[n]
+                              }
+                          } break
+                      }
+
+                      return value
+                  })
               } catch (e) {
                   alert(e)
                   return
               }
 
               let decks = [
-                  this.saveFile.currentRun.playerDeck,
-                  this.saveFile.gbcData.deck,
-                  this.saveFile.part3Data.deck,
-                  this.saveFile.grimoraData.deck
+                  data.currentRun.playerDeck,
+                  data.gbcData.deck,
+                  data.part3Data.deck,
+                  data.grimoraData.deck
               ]
 
-              if (this.saveFile.ascensionData?.currentRun) {
-                  decks.push(this.saveFile.ascensionData.currentRun.playerDeck)
+              if (data.ascensionData?.currentRun) {
+                  decks.push(data.ascensionData.currentRun.playerDeck)
               }
 
               for (let deck of decks) {
@@ -627,60 +632,30 @@
                       let search = name + "#" + tally[name]++
                       return deck.cardIdModInfos.$rcontent.find(modInfo => modInfo.$k === search)
                   })
-
-                  // Resolve any irefs for `decalIds`:
-                  let decalIds = {}
-
-                  for (let modInfo of deck.cardIdModInfos.$rcontent) {
-                      for (let mod of modInfo.$v.$rcontent) {
-                          if (typeof mod.decalIds === "string") {
-                              let matchInfo = mod.decalIds.match(/^\$iref:(\d+)$/)
-                              let id = matchInfo[1]
-
-                              mod.decalIds = decalIds[id]
-                          } else {
-                              decalIds[mod.decalIds.$id] = mod.decalIds
-                          }
-                      }
-                  }
-              }
-
-              // Resolve any irefs in the deathcard mod list to their actual
-              // mod info:
-              for (let i = 0; i < this.saveFile.deathCardMods.$rlength; ++i) {
-                  let mod = this.saveFile.deathCardMods.$rcontent[i]
-
-                  if (typeof mod === "string") {
-                      let matchInfo = mod.match(/^\$iref:(\d+)$/)
-                      let id = parseInt(matchInfo[1])
-
-                      this.saveFile.deathCardMods.$rcontent[i] = this.saveFile.currentRun.playerDeck.cardIdModInfos.$rcontent
-                          .find(modInfo => modInfo.$k.startsWith("!DEATHCARD_BASE") && modInfo.$v.$rcontent[0].$id === id)
-                          .$v.$rcontent[0]
-                  }
               }
 
               // Stub boon arrays if they don't already exist:
-              this.saveFile.currentRun.playerDeck.boonIds ??= {
+              data.currentRun.playerDeck.boonIds ??= {
                   $type: "System.Collections.Generic.List`1[[DiskCardGame.BoonData+Type, Assembly-CSharp]], mscorlib",
                   $rlength: 0,
                   $rcontent: []
               }
 
-              if (this.saveFile.ascensionData?.currentRun) {
-                  this.saveFile.ascensionData.currentRun.playerDeck.boonIds ??= {
+              if (data.ascensionData?.currentRun) {
+                  data.ascensionData.currentRun.playerDeck.boonIds ??= {
                       $type: "System.Collections.Generic.List`1[[DiskCardGame.BoonData+Type, Assembly-CSharp]], mscorlib",
                       $rlength: 0,
                       $rcontent: []
                   }
               }
+
+              this.saveFile = data
           },
 
           createFile() {
               // Change the placeholder values back to the format
               // Inscryption expects:
               let text = JSON.stringify(this.saveFile)
-                  .replace(/"(\$iref:\s*\d+)"/g, "$1")
                   .replace(/"(position|\w*?Position)":{"\$type":(".*?"|-?\d+(?:\.\d+)?),"x":(-?\d+(?:\.\d+)?),"y":(-?\d+(?:\.\d+)?)}/g, '"$1":{"$type":$2,$3,$4}')
 
               let blob = new Blob([text], { type: "application/json" })
@@ -692,9 +667,3 @@
       }
   }
 </script>
-
-<style scoped>
-  #content {
-      margin: 1em;
-  }
-</style>
