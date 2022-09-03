@@ -566,8 +566,8 @@
               let data
 
               try {
-                  let ids = {}
-                  let types = {}
+                  let ids = []
+                  let types = []
 
                   data = JSON.parse(text, function(key, value) {
                       switch (key) {
