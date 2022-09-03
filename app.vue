@@ -559,8 +559,8 @@
               // values in quotes and placing actual `x` and `y` keys
               // inside position-style objects.
               text = text
-                  .replace(/\$iref:\s*\d+/g, '"$&"')
-                  .replace(/"(position|\w*?Position)":\s*{\r?\n?\s*"\$type":\s*(".*?"|-?\d+(?:\.\d+)?),\r?\n?\s*(-?\d+(?:\.\d+)?),\r?\n?\s*(-?\d+(?:\.\d+)?)\r?\n?\s*}/g, '"$1":{"$type":$2,"x":$3,"y":$4}')
+                  .replace(/\$iref:\d+/g, '"$&"')
+                  .replace(/"(position|\w*?Position)":\s*{\s*"\$type":\s*(".*?"|-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)\s*}/g, '"$1":{"$type":$2,"x":$3,"y":$4}')
 
               // Now that the text is valid JSON, we can parse it:
               let data
@@ -620,7 +620,7 @@
                   // 2. Ensure that the mod info list is cowitnessed
                   // with the card list for easier lookups.
                   for (let modInfo of deck.cardIdModInfos.$rcontent) {
-                      if (/^[a-zA-Z0-9_!]+$/.test(modInfo.$k)) {
+                      if (/^[\w!]+$/.test(modInfo.$k)) {
                           modInfo.$k += "#0"
                       }
                   }
@@ -653,10 +653,7 @@
           },
 
           createFile() {
-              // Change the placeholder values back to the format
-              // Inscryption expects:
               let text = JSON.stringify(this.saveFile)
-                  .replace(/"(position|\w*?Position)":{"\$type":(".*?"|-?\d+(?:\.\d+)?),"x":(-?\d+(?:\.\d+)?),"y":(-?\d+(?:\.\d+)?)}/g, '"$1":{"$type":$2,$3,$4}')
 
               let blob = new Blob([text], { type: "application/json" })
               let url = URL.createObjectURL(blob)
