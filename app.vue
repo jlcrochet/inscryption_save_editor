@@ -117,7 +117,7 @@
                       ["!FRIENDCARD_BASE", "!FRIENDCARD_BASE"],
                       ["!INSPECTOR", "!INSPECTOR"],
                       ["!MELTER", "!MELTER"],
-                      ["!MYCOCARD_BASE", "!MYOCARD_BASE"],
+                      ["!MYCOCARD_BASE", "!MYCOCARD_BASE"],
                       ["!MYCO_OLD_DATA", "!MYCO_OLD_DATA"],
                       ["!STATIC!GLITCH", "!STATIC!GLITCH"],
                       ["3LK", "CXformerElk"],
@@ -557,7 +557,7 @@
               // First, we must replace non-standard JSON values with
               // temporary placeholders; this involves wrapping `$iref`
               // values in quotes and placing actual `x` and `y` keys
-              // inside position-style objects.
+              // inside vectors.
               text = text
                   .replace(/\$iref:\d+/g, '"$&"')
                   .replace(/"(position|\w*?Position)":\s*{\s*"\$type":\s*(".*?"|-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)\s*}/g, '"$1":{"$type":$2,"x":$3,"y":$4}')

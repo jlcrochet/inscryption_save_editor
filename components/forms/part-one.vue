@@ -9,7 +9,7 @@
 
         <tr>
           <td>Currency:</td>
-          <td><input type=number v-model.lazy.number=saveFile.currentRun.currency min=0 max=999 required /></td>
+          <td><input type=number v-model.lazy.number=saveFile.currentRun.currency min=0 required /></td>
         </tr>
 
         <tr>
@@ -161,17 +161,17 @@
 
                 <table cellpadding=2>
                   <tr>
-                    <td><span title="Appearance of the avatar's head; valid values range from 0 to 7.">Head</span>:</td>
+                    <td><span title="Appearance of the figurine's head; valid values range from 0 to 7.">Head</span>:</td>
                     <td><input type=number v-model.lazy.number=mod.deathCardInfo.headType min=0 max=7 required /></td>
                   </tr>
 
                   <tr>
-                    <td><span title="Appearance of the avatar's mouth; valid values range from 0 to 5.">Mouth</span>:</td>
+                    <td><span title="Appearance of the figurine's mouth; valid values range from 0 to 5.">Mouth</span>:</td>
                     <td><input type=number v-model.lazy.number=mod.deathCardInfo.mouthIndex min=0 max=5 required /></td>
                   </tr>
 
                   <tr>
-                    <td><span title="Appearance of the avatar's eyes; valid values range from 0 to 5.">Eyes</span>:</td>
+                    <td><span title="Appearance of the figurine's eyes; valid values range from 0 to 5.">Eyes</span>:</td>
                     <td><input type=number v-model.lazy.number=mod.deathCardInfo.eyesIndex min=0 max=5 required /></td>
                   </tr>
 
