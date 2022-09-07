@@ -26,7 +26,13 @@
 
     <input type=file accept=.gwsave @click="$event.target.value = null" @input=parseFile($event.target.files[0]) />
 
-    <template v-if=saveFile>
+    <template v-if=loading>
+      <p>
+        <b>Parsing file...</b>
+      </p>
+    </template>
+
+    <template v-else-if=saveFile>
       <p>
         <form name=main @submit.prevent=createFile>
           <fieldset>
@@ -103,6 +109,7 @@
       data() {
           return {
               saveFile: null,
+              loading: false,
               tabIndex: 0,
 
               gameData: {
@@ -549,6 +556,8 @@
           },
 
           async parseFile(file) {
+              this.loading = true
+
               let text = await file.text()
 
               // There are a few things we have to do to the input file
@@ -650,6 +659,7 @@
               }
 
               this.saveFile = data
+              this.loading = false
           },
 
           createFile() {
