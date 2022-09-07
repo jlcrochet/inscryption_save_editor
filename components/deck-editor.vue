@@ -168,14 +168,12 @@
           },
 
           duplicateCard(i) {
-              let name = this.deck.cardIds.$rcontent[i]
-
-              this.deck.cardIds.$rcontent.push(name)
-              this.deck.cardIds.$rlength += 1
+              let name
+              name = this.deck.cardIds.$rcontent[this.deck.cardIds.$rlength++] = this.deck.cardIds.$rcontent[i]
 
               let modInfo = this.deck.cardIdModInfos.$rcontent[i]
 
-              let dup = {
+              this.deck.cardIdModInfos.$rcontent[this.deck.cardIdModInfos.$rlength++] = {
                   $k: modInfo.$k,
                   $v: {
                       $type: modInfo.$v.$type,
@@ -222,9 +220,6 @@
                       })
                   }
               }
-
-              this.deck.cardIdModInfos.$rcontent.push(dup)
-              this.deck.cardIdModInfos.$rlength += 1
 
               this.refreshModInfoKeys(name)
           },

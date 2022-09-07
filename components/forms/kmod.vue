@@ -115,10 +115,8 @@
 
             <td>
               <select v-model=saveFile.ascensionData.currentRun.totems.$rcontent[0].tribe required>
-                <template v-for="(tribe, i) in gameData.tribes">
-                  <template v-if="saveFile.ascensionData.currentRun.totemTops.$rcontent.includes(i + 1)">
-                    <option :value="i + 1">{{ tribe }}</option>
-                  </template>
+                <template v-for="i in saveFile.ascensionData.currentRun.totemTops.$rcontent">
+                  <option :value=i>{{ gameData.tribes[i - 1] }}</option>
                 </template>
               </select>
             </td>
@@ -147,10 +145,8 @@
 
             <td>
               <select v-model=saveFile.ascensionData.currentRun.totems.$rcontent[0].ability required>
-                <template v-for="([ability, description], i) in gameData.abilities">
-                  <template v-if="saveFile.ascensionData.currentRun.totemBottoms.$rcontent.includes(i + 1)">
-                    <option :value="i + 1" :title=description>{{ ability }}</option>
-                  </template>
+                <template v-for="i in saveFile.ascensionData.currentRun.totemBottoms.$rcontent">
+                  <option :value=i :title="gameData.abilities[i - 1][1]">{{ gameData.abilities[i - 1][0] }}</option>
                 </template>
               </select>
             </td>
