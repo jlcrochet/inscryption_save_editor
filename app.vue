@@ -28,7 +28,7 @@
 
     <template v-if=loading>
       <p>
-        <b>Parsing file...</b>
+        <b>Loading...</b>
       </p>
     </template>
 
