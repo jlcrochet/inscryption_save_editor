@@ -1,6 +1,6 @@
 <template>
-  <tab-list :titles="['Miscellaneous', 'Deck', 'Items', 'Totems', 'Boons', 'Painting Puzzle', 'Maps', 'Conquered Starter Decks']">
-    <template #0>
+  <tabs>
+    <tab title="Miscellaneous">
       <table cellpadding=2>
         <tr>
           <td>Challenge level:</td>
@@ -63,13 +63,13 @@
           <td><input type=checkbox v-model=saveFile.ascensionData.currentRun.trapperKnifeBought /></td>
         </tr>
       </table>
-    </template>
+    </tab>
 
-    <template #1>
+    <tab title="Decks">
       <deck-editor :deck=saveFile.ascensionData.currentRun.playerDeck :game-data=gameData />
-    </template>
+    </tab>
 
-    <template #2>
+    <tab title="Items">
       <table cellpadding=2>
         <template v-for="(consumable, i) in saveFile.ascensionData.currentRun.consumables.$rcontent">
           <tr>
@@ -93,9 +93,9 @@
           </td>
         </tr>
       </table>
-    </template>
+    </tab>
 
-    <template #3>
+    <tab title="Totems">
       <table cellpadding=2>
         <tr>
           <td>Tribes ({{ saveFile.ascensionData.currentRun.totemTops.$rlength }}):</td>
@@ -153,9 +153,9 @@
           </tr>
         </template>
       </table>
-    </template>
+    </tab>
 
-    <template #4>
+    <tab title="Boons">
       <table cellpadding=2>
         <template v-for="([name, description], i) in gameData.boons">
           <tr>
@@ -163,15 +163,15 @@
             <td>
               <input type=checkbox
                      :value="i + 1"
-                     :checked="saveFile.ascensionData.currentRun.playerDeck.boonIds.$rcontent.includes(i + 1)"
-                     @change="toggleBoon(i + 1, $event.target.checked)" />
+                     v-model=saveFile.ascensionData.currentRun.playerDeck.boonIds.$rcontent
+                     @change="saveFile.ascensionData.currentRun.playerDeck.boonIds.$rlength = saveFile.ascensionData.currentRun.playerDeck.boonIds.$rcontent.length" />
             </td>
           </tr>
         </template>
       </table>
-    </template>
+    </tab>
 
-    <template #5>
+    <tab title="Painting Puzzle">
       <table cellpadding=2>
         <template v-for="(card, i) in saveFile.ascensionData.oilPaintingState.puzzleSolution.$rcontent">
           <tr>
@@ -179,7 +179,7 @@
               <select v-model=saveFile.ascensionData.oilPaintingState.puzzleSolution.$rcontent[i]>
                 <option :value=null>(empty)</option>
                 <template v-for="[gameName, value] in gameData.cardNames">
-                  <option :value=value :selected="card === value">{{ gameName }}</option>
+                  <option :value=value :selected="card == value">{{ gameName }}</option>
                 </template>
               </select>
             </td>
@@ -211,9 +211,9 @@
           <td><input type=checkbox v-model=saveFile.ascensionData.oilPaintingState.rewardTaken /></td>
         </tr>
       </table>
-    </template>
+    </tab>
 
-    <template #6>
+    <tab title="Maps">
       <table cellpadding=2>
         <tr>
           <td><span title="Zero-based index for the current map; 0 for Map #1, 1 for Map #2, etc.">Current map:</span></td>
@@ -234,9 +234,9 @@
           </tr>
         </template>
       </table>
-    </template>
+    </tab>
 
-    <template #7>
+    <tab title="Conquered Starter Decks">
       <table cellpadding=2>
         <template v-for="deck in gameData.starterDecks">
           <tr>
@@ -244,111 +244,77 @@
             <td>
               <input type=checkbox
                      :value=deck
-                     :checked=saveFile.ascensionData.conqueredStarterDecks.$rcontent.includes(deck)
-                     @change="toggleStarterDeck(deck, $event.target.checked)" />
+                     v-model=saveFile.ascensionData.conqueredStarterDecks.$rcontent
+                     @change="saveFile.ascensionData.conqueredStarterDecks.$rlength = saveFile.ascensionData.conqueredStarterDecks.$rcontent.length" />
             </td>
           </tr>
         </template>
       </table>
-    </template>
-  </tab-list>
+    </tab>
+  </tabs>
 </template>
 
-<script>
-  export default {
-      props: {
-          saveFile: {
-              type: Object,
-              required: true
-          },
-          gameData: {
-              type: Object,
-              required: true
-          }
+<script setup>
+  const props = defineProps({
+      saveFile: {
+          type: Object,
+          required: true
       },
+      gameData: {
+          type: Object,
+          required: true
+      }
+  })
 
-      computed: {
-          totemRequired() {
-              return this.saveFile.ascensionData.currentRun.totemTops.$rlength > 0 && this.saveFile.ascensionData.currentRun.totemBottoms.$rlength > 0
+  const totemRequired = computed(() => props.saveFile.ascensionData.currentRun.totemTops.$rlength > 0 && props.saveFile.ascensionData.currentRun.totemBottoms.$rlength > 0)
+
+  watch(() => props.saveFile.ascensionData.currentRun.totemTops.$rlength, newValue => {
+      if (newValue == 0) {
+          if (props.saveFile.ascensionData.currentRun.totems.$rlength > 0) {
+              props.saveFile.ascensionData.currentRun.totems.$rcontent.splice(0)
+              props.saveFile.ascensionData.currentRun.totems.$rlength = 0
           }
-      },
+      } else {
+          if (props.saveFile.ascensionData.currentRun.totems.$rlength == 0 && props.saveFile.ascensionData.currentRun.totemBottoms.$rlength > 0) {
+              // Stub totem
+              props.saveFile.ascensionData.currentRun.totems.$rcontent.push({
+                  $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
+                  tribe: null,
+                  ability: null
+              })
 
-      watch: {
-          "saveFile.ascensionData.currentRun.totemTops.$rlength"(newVal) {
-              if (newVal === 0) {
-                  if (this.saveFile.ascensionData.currentRun.totems.$rlength > 0) {
-                      this.saveFile.ascensionData.currentRun.totems.$rcontent.splice(0)
-                      this.saveFile.ascensionData.currentRun.totems.$rlength = 0
-                  }
-              } else {
-                  if (this.saveFile.ascensionData.currentRun.totems.$rlength === 0 && this.saveFile.ascensionData.currentRun.totemBottoms.$rlength > 0) {
-                      // Stub totem
-                      this.saveFile.ascensionData.currentRun.totems.$rcontent.push({
-                          $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
-                          tribe: null,
-                          ability: null
-                      })
-
-                      this.saveFile.ascensionData.currentRun.totems.$rlength = 1
-                  }
-              }
-          },
-
-          "saveFile.ascensionData.currentRun.totemBottoms.$rlength"(newVal) {
-              if (newVal === 0) {
-                  if (this.saveFile.ascensionData.currentRun.totems.$rlength > 0) {
-                      this.saveFile.ascensionData.currentRun.totems.$rcontent.splice(0)
-                      this.saveFile.ascensionData.currentRun.totems.$rlength = 0
-                  }
-              } else {
-                  if (this.saveFile.ascensionData.currentRun.totems.$rlength === 0 && this.saveFile.ascensionData.currentRun.totemTops.$rlength > 0) {
-                      // Stub totem
-                      this.saveFile.ascensionData.currentRun.totems.$rcontent.push({
-                          $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
-                          tribe: null,
-                          ability: null
-                      })
-
-                      this.saveFile.ascensionData.currentRun.totems.$rlength = 1
-                  }
-              }
-          }
-      },
-
-      methods: {
-          addItem() {
-              this.saveFile.ascensionData.currentRun.consumables.$rcontent.push(null)
-              this.saveFile.ascensionData.currentRun.consumables.$rlength += 1
-          },
-
-          removeItem(i) {
-              this.saveFile.ascensionData.currentRun.consumables.$rcontent.splice(i, 1)
-              this.saveFile.ascensionData.currentRun.consumables.$rlength -= 1
-          },
-
-          toggleStarterDeck(name, checked) {
-              if (checked) {
-                  this.saveFile.ascensionData.conqueredStarterDecks.$rcontent.push(name)
-                  this.saveFile.ascensionData.conqueredStarterDecks.$rlength += 1
-              } else {
-                  let idx = this.saveFile.ascensionData.conqueredStarterDecks.$rcontent.indexOf(name)
-
-                  this.saveFile.ascensionData.conqueredStarterDecks.$rcontent.splice(idx, 1)
-                  this.saveFile.ascensionData.conqueredStarterDecks.$rlength -= 1
-              }
-          },
-
-          toggleBoon(i, checked) {
-              if (checked) {
-                  this.saveFile.ascensionData.currentRun.playerDeck.boonIds.$rcontent.push(i)
-                  this.saveFile.ascensionData.currentRun.playerDeck.boonIds.$rlength += 1
-              } else {
-                  let idx = this.saveFile.ascensionData.currentRun.playerDeck.boonIds.$rcontent.indexOf(i)
-
-                  this.saveFile.ascensionData.currentRun.playerDeck.boonIds.$rcontent.splice(idx, 1)
-                  this.saveFile.ascensionData.currentRun.playerDeck.boonIds.$rlength -= 1
-              }
+              props.saveFile.ascensionData.currentRun.totems.$rlength = 1
           }
       }
+  })
+
+  watch(() => props.saveFile.ascensionData.currentRun.totemTops.$rlength, newValue => {
+      if (newValue == 0) {
+          if (props.saveFile.ascensionData.currentRun.totems.$rlength > 0) {
+              props.saveFile.ascensionData.currentRun.totems.$rcontent.splice(0)
+              props.saveFile.ascensionData.currentRun.totems.$rlength = 0
+          }
+      } else {
+          if (props.saveFile.ascensionData.currentRun.totems.$rlength == 0 && props.saveFile.ascensionData.currentRun.totemTops.$rlength > 0) {
+              // Stub totem
+              props.saveFile.ascensionData.currentRun.totems.$rcontent.push({
+                  $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
+                  tribe: null,
+                  ability: null
+              })
+
+              props.saveFile.ascensionData.currentRun.totems.$rlength = 1
+          }
+      }
+  })
+
+  function addItem() {
+      props.saveFile.ascensionData.currentRun.consumables.$rcontent.push(null)
+      props.saveFile.ascensionData.currentRun.consumables.$rlength += 1
+  }
+
+  function removeItem(i) {
+      props.saveFile.ascensionData.currentRun.consumables.$rcontent.splice(i, 1)
+      props.saveFile.ascensionData.currentRun.consumables.$rlength -= 1
   }
 </script>

@@ -1,6 +1,6 @@
 <template>
-  <tab-list :titles="['Miscellaneous', 'Deck', 'Side Deck', 'Items']">
-    <template #0>
+  <tabs>
+    <tab title="Miscellaneous">
       <table cellpadding=2>
         <tr>
           <td>Currency:</td>
@@ -17,13 +17,13 @@
           <td><input type=number v-model.lazy.number=saveFile.part3Data.pelts min=0 required /></td>
         </tr>
       </table>
-    </template>
+    </tab>
 
-    <template #1>
+    <tab title="Deck">
       <deck-editor :deck=saveFile.part3Data.deck :game-data=gameData />
-    </template>
+    </tab>
 
-    <template #2>
+    <tab title="Side Deck">
       <table cellpadding=2>
         <tr>
           <td>Sigils ({{ saveFile.part3Data.sideDeckAbilities.$rlength }}):</td>
@@ -36,9 +36,9 @@
           </td>
         </tr>
       </table>
-    </template>
+    </tab>
 
-    <template #3>
+    <tab title="Items">
       <table cellpadding=2>
         <template v-for="(item, i) in saveFile.part3Data.items.$rcontent">
           <tr>
@@ -62,33 +62,29 @@
           </td>
         </tr>
       </table>
-    </template>
-  </tab-list>
+    </tab>
+  </tabs>
 </template>
 
-<script>
-  export default {
-      props: {
-          saveFile: {
-              type: Object,
-              required: true
-          },
-          gameData: {
-              type: Object,
-              required: true
-          }
+<script setup>
+  const props = defineProps({
+      saveFile: {
+          type: Object,
+          required: true
       },
-
-      methods: {
-          addItem() {
-              this.saveFile.part3Data.items.$rcontent.push(null)
-              this.saveFile.part3Data.items.$rlength += 1
-          },
-
-          removeItem(i) {
-              this.saveFile.part3Data.items.$rcontent.splice(i, 1)
-              this.saveFile.part3Data.items.$rlength -= 1
-          }
+      gameData: {
+          type: Object,
+          required: true
       }
+  })
+
+  function addItem() {
+      props.saveFile.part3Data.items.$rcontent.push(null)
+      props.saveFile.part3Data.items.$rlength += 1
+  }
+
+  function removeItem(i) {
+      props.saveFile.part3Data.items.$rcontent.splice(i, 1)
+      props.saveFile.part3Data.items.$rlength -= 1
   }
 </script>

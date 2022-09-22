@@ -1,6 +1,6 @@
 <template>
-  <tab-list :titles="['Miscellaneous', 'Conquered Starter Decks']">
-    <template #0>
+  <tabs>
+    <tab title="Miscellaneous">
       <table cellpadding=2>
         <tr>
           <td>Challenge level:</td>
@@ -12,9 +12,9 @@
           <td><input type=number v-model.lazy.number=saveFile.ascensionData.numRunsSinceReachedFirstBoss min=0 required /></td>
         </tr>
       </table>
-    </template>
+    </tab>
 
-    <template #1>
+    <tab title="Conquered Starter Decks">
       <table cellpadding=2>
         <template v-for="deck in gameData.starterDecks">
           <tr>
@@ -22,41 +22,25 @@
             <td>
               <input type=checkbox
                      :value=deck
-                     :checked=saveFile.ascensionData.conqueredStarterDecks.$rcontent.includes(deck)
-                     @change="toggleStarterDeck(deck, $event.target.checked)" />
+                     v-model=saveFile.ascensionData.conqueredStarterDecks.$rcontent
+                     @change="savefile.ascensionData.conqueredStarterDecks.$rlength = savefile.ascensionData.conqueredStarterDecks.$rcontent.length" />
             </td>
           </tr>
         </template>
       </table>
-    </template>
-  </tab-list>
+    </tab>
+  </tabs>
 </template>
 
-<script>
-  export default {
-      props: {
-          saveFile: {
-              type: Object,
-              required: true
-          },
-          gameData: {
-              type: Object,
-              required: true
-          }
+<script setup>
+  defineProps({
+      saveFile: {
+          type: Object,
+          required: true
       },
-
-      methods: {
-          toggleStarterDeck(name, checked) {
-              if (checked) {
-                  this.saveFile.ascensionData.conqueredStarterDecks.$rcontent.push(name)
-                  this.saveFile.ascensionData.conqueredStarterDecks.$rlength += 1
-              } else {
-                  let idx = this.saveFile.ascensionData.conqueredStarterDecks.$rcontent.indexOf(name)
-
-                  this.saveFile.ascensionData.conqueredStarterDecks.$rcontent.splice(idx, 1)
-                  this.saveFile.ascensionData.conqueredStarterDecks.$rlength -= 1
-              }
-          }
+      gameData: {
+          type: Object,
+          required: true
       }
-  }
+  })
 </script>

@@ -1,31 +1,29 @@
 <template>
-  <tab-list :titles="['Miscellaneous', 'Deck']">
-    <template #0>
+  <tabs>
+    <tab title="Miscellaneous">
       <table cellpadding=2>
         <tr>
           <td>Currency:</td>
           <td><input type=number v-model.lazy.number=saveFile.gbcData.currency min=0 max=999 required /></td>
         </tr>
       </table>
-    </template>
+    </tab>
 
-    <template #1>
+    <tab title="Deck">
       <deck-editor :deck=saveFile.gbcData.deck :game-data=gameData />
-    </template>
-  </tab-list>
+    </tab>
+  </tabs>
 </template>
 
-<script>
-  export default {
-      props: {
-          saveFile: {
-              type: Object,
-              required: true
-          },
-          gameData: {
-              type: Object,
-              required: true
-          }
+<script setup>
+  defineProps({
+      saveFile: {
+          type: Object,
+          required: true
+      },
+      gameData: {
+          type: Object,
+          required: true
       }
-  }
+  })
 </script>

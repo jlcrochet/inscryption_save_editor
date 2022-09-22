@@ -1,22 +1,20 @@
 <template>
-  <tab-list :titles="['Deck']">
-    <template #0>
+  <tabs>
+    <tab title="Deck">
       <deck-editor :deck=saveFile.grimoraData.deck :game-data=gameData />
-    </template>
-  </tab-list>
+    </tab>
+  </tabs>
 </template>
 
-<script>
-  export default {
-      props: {
-          saveFile: {
-              type: Object,
-              required: true
-          },
-          gameData: {
-              type: Object,
-              required: true
-          }
+<script setup>
+  defineProps({
+      saveFile: {
+          type: Object,
+          required: true
+      },
+      gameData: {
+          type: Object,
+          required: true
       }
-  }
+  })
 </script>

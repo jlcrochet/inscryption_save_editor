@@ -22,13 +22,11 @@
   </table>
 </template>
 
-<script>
-  export default {
-      props: {
-          saveFile: {
-              type: Object,
-              required: true
-          }
+<script setup>
+  defineProps({
+      saveFile: {
+          type: Object,
+          required: true
       }
-  }
+  })
 </script>

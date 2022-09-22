@@ -1,6 +1,6 @@
 <template>
-  <tab-list :titles="['Miscellaneous', 'Deck', 'Deathcards', 'Items', 'Totems', 'Boons', 'Painting Puzzle']">
-    <template #0>
+  <tabs>
+    <tab title="Miscellaneous">
       <table cellpadding=2>
         <tr>
           <td>Wall candles progress:</td>
@@ -78,13 +78,13 @@
           <td><input type=number v-model.lazy.number=saveFile.currentRun.playerAvatarBody min=0 max=7 required /></td>
         </tr>
       </table>
-    </template>
+    </tab>
 
-    <template #1>
+    <tab title="Deck">
       <deck-editor :deck=saveFile.currentRun.playerDeck :game-data=gameData />
-    </template>
+    </tab>
 
-    <template #2>
+    <tab title="Deathcards">
       <table cellpadding=8>
         <thead>
           <tr>
@@ -193,9 +193,9 @@
           </tr>
         </tbody>
       </table>
-    </template>
+    </tab>
 
-    <template #3>
+    <tab title="Items">
       <table cellpadding=2>
         <template v-for="(consumable, i) in saveFile.currentRun.consumables.$rcontent">
           <tr>
@@ -219,9 +219,9 @@
           </td>
         </tr>
       </table>
-    </template>
+    </tab>
 
-    <template #4>
+    <tab title="Totems">
       <table cellpadding=2>
         <tr>
           <td>Tribes ({{ saveFile.currentRun.totemTops.$rlength }}):</td>
@@ -279,9 +279,9 @@
           </tr>
         </template>
       </table>
-    </template>
+    </tab>
 
-    <template #5>
+    <tab title="Boons">
       <table cellpadding=2>
         <template v-for="([name, description], i) in gameData.boons">
           <tr>
@@ -289,15 +289,15 @@
             <td>
               <input type=checkbox
                      :value="i + 1"
-                     :checked="saveFile.currentRun.playerDeck.boonIds.$rcontent.includes(i + 1)"
-                     @change="toggleBoon(i + 1, $event.target.checked)" />
+                     v-model=saveFile.currentRun.playerDeck.boonIds.$rcontent
+                     @change="saveFile.currentRun.playerDeck.boonIds.$rlength = saveFile.currentRun.playerDeck.boonIds.$rcontent.length" />
             </td>
           </tr>
         </template>
       </table>
-    </template>
+    </tab>
 
-    <template #6>
+    <tab title="Painting Puzzle">
       <table cellpadding=2>
         <template v-for="(card, i) in saveFile.oilPaintingState.puzzleSolution.$rcontent">
           <tr>
@@ -305,7 +305,7 @@
               <select v-model=saveFile.oilPaintingState.puzzleSolution.$rcontent[i]>
                 <option :value=null>(empty)</option>
                 <template v-for="[gameName, value] in gameData.cardNames">
-                  <option :value=value :selected="card === value">{{ gameName }}</option>
+                  <option :value=value :selected="card == value">{{ gameName }}</option>
                 </template>
               </select>
             </td>
@@ -337,143 +337,121 @@
           <td><input type=checkbox v-model=saveFile.oilPaintingState.rewardTaken /></td>
         </tr>
       </table>
-    </template>
-  </tab-list>
+    </tab>
+  </tabs>
 </template>
 
-<script>
-  export default {
-      props: {
-          saveFile: {
-              type: Object,
-              required: true
-          },
-          gameData: {
-              type: Object,
-              required: true
-          }
+<script setup>
+  const props = defineProps({
+      saveFile: {
+          type: Object,
+          required: true
       },
+      gameData: {
+          type: Object,
+          required: true
+      }
+  })
 
-      computed: {
-          totemRequired() {
-              return this.saveFile.currentRun.totemTops.$rlength > 0 && this.saveFile.currentRun.totemBottoms.$rlength > 0
+  const totemRequired = computed(() => props.saveFile.currentRun.totemTops.$rlength > 0 && props.saveFile.currentRun.totemBottoms.$rlength > 0)
+
+  watch(() => props.saveFile.currentRun.totemTops.$rlength, newValue => {
+      if (newValue == 0) {
+          if (props.saveFile.currentRun.totems.$rlength > 0) {
+              props.saveFile.currentRun.totems.$rcontent.splice(0)
+              props.saveFile.currentRun.totems.$rlength = 0
           }
-      },
-
-      watch: {
-          "saveFile.currentRun.totemTops.$rlength"(newVal) {
-              if (newVal === 0) {
-                  if (this.saveFile.currentRun.totems.$rlength > 0) {
-                      this.saveFile.currentRun.totems.$rcontent.splice(0)
-                      this.saveFile.currentRun.totems.$rlength = 0
-                  }
-              } else {
-                  if (this.saveFile.currentRun.totems.$rlength === 0 && this.saveFile.currentRun.totemBottoms.$rlength > 0) {
-                      // Stub totem
-                      this.saveFile.currentRun.totems.$rcontent.push({
-                          $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
-                          tribe: null,
-                          ability: null
-                      })
-
-                      this.saveFile.currentRun.totems.$rlength = 1
-                  }
-              }
-          },
-
-          "saveFile.currentRun.totemBottoms.$rlength"(newVal) {
-              if (newVal === 0) {
-                  if (this.saveFile.currentRun.totems.$rlength > 0) {
-                      this.saveFile.currentRun.totems.$rcontent.splice(0)
-                      this.saveFile.currentRun.totems.$rlength = 0
-                  }
-              } else {
-                  if (this.saveFile.currentRun.totems.$rlength === 0 && this.saveFile.currentRun.totemTops.$rlength > 0) {
-                      // Stub totem
-                      this.saveFile.currentRun.totems.$rcontent.push({
-                          $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
-                          tribe: null,
-                          ability: null
-                      })
-
-                      this.saveFile.currentRun.totems.$rlength = 1
-                  }
-              }
-          }
-      },
-
-      methods: {
-          addItem() {
-              this.saveFile.currentRun.consumables.$rcontent.push(null)
-              this.saveFile.currentRun.consumables.$rlength += 1
-          },
-
-          removeItem(i) {
-              this.saveFile.currentRun.consumables.$rcontent.splice(i, 1)
-              this.saveFile.currentRun.consumables.$rlength -= 1
-          },
-
-          addDeathcard() {
-              this.saveFile.deathCardMods.$rcontent.push({
-                  $type: "DiskCardGame.CardModificationInfo, Assembly-CSharp",
-                  nameReplacement: null,
-                  attackAdjustment: 0,
-                  healthAdjustment: 0,
-                  abilities: {
-                      $type: "System.Collections.Generic.List`1[[DiskCardGame.Ability, Assembly-CSharp]], mscorlib",
-                      $rlength: 0,
-                      $rcontent: []
-                  },
-                  negateAbilities: {
-                      $type: "System.Collections.Generic.List`1[[DiskCardGame.Ability, Assembly-CSharp]], mscorlib",
-                      $rlength: 0,
-                      $rcontent: []
-                  },
-                  bloodCostAdjustment: 0,
-                  bonesCostAdjustment: 0,
-                  addGemCost: {
-                      $type: "System.Collections.Generic.List`1[[DiskCardGame.GemType, Assembly-CSharp]], mscorlib",
-                      $rlength: 0,
-                      $rcontent: []
-                  },
-                  specialAbilities: {
-                      $type: "System.Collections.Generic.List`1[[DiskCardGame.SpecialTriggeredAbility, Assembly-CSharp]], mscorlib",
-                      $rlength: 0,
-                      $rcontent: []
-                  },
-                  deathCardInfo: {
-                      $type: "DiskCardGame.DeathCardInfo, Assembly-CSharp",
-                      headType: 0,
-                      mouthIndex: 0,
-                      eyesIndex: 0,
-                      lostEye: false
-                  },
-                  decalIds: {
-                      $type: "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
-                      $rlength: 0,
-                      $rcontent: []
-                  }
+      } else {
+          if (props.saveFile.currentRun.totems.$rlength == 0 && props.saveFile.currentRun.totemBottoms.$rlength > 0) {
+              // Stub totem
+              props.saveFile.currentRun.totems.$rcontent.push({
+                  $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
+                  tribe: null,
+                  ability: null
               })
 
-              this.saveFile.deathCardMods.$rlength += 1
-          },
-
-          removeDeathcard(i) {
-              this.saveFile.deathCardMods.$rcontent.splice(i, 1)
-              this.saveFile.deathCardMods.$rlength -= 1
-          },
-
-          toggleBoon(i, checked) {
-              if (checked) {
-                  this.saveFile.currentRun.playerDeck.boonIds.$rcontent.push(i)
-                  this.saveFile.currentRun.playerDeck.boonIds.$rlength += 1
-              } else {
-                  let idx = this.saveFile.currentRun.playerDeck.boonIds.$rcontent.indexOf(i)
-
-                  this.saveFile.currentRun.playerDeck.boonIds.$rcontent.splice(idx, 1)
-                  this.saveFile.currentRun.playerDeck.boonIds.$rlength -= 1
-              }
+              props.saveFile.currentRun.totems.$rlength = 1
           }
       }
+  })
+
+  watch(() => props.saveFile.currentRun.totemTops.$rlength, newValue => {
+      if (newValue == 0) {
+          if (props.saveFile.currentRun.totems.$rlength > 0) {
+              props.saveFile.currentRun.totems.$rcontent.splice(0)
+              props.saveFile.currentRun.totems.$rlength = 0
+          }
+      } else {
+          if (props.saveFile.currentRun.totems.$rlength == 0 && props.saveFile.currentRun.totemTops.$rlength > 0) {
+              // Stub totem
+              props.saveFile.currentRun.totems.$rcontent.push({
+                  $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
+                  tribe: null,
+                  ability: null
+              })
+
+              props.saveFile.currentRun.totems.$rlength = 1
+          }
+      }
+  })
+
+  function addItem() {
+      props.saveFile.currentRun.consumables.$rcontent.push(null)
+      props.saveFile.currentRun.consumables.$rlength += 1
+  }
+
+  function removeItem(i) {
+      props.saveFile.currentRun.consumables.$rcontent.splice(i, 1)
+      props.saveFile.currentRun.consumables.$rlength -= 1
+  }
+
+  function addDeathcard() {
+      props.saveFile.deathCardMods.$rcontent.push({
+          $type: "DiskCardGame.CardModificationInfo, Assembly-CSharp",
+          nameReplacement: null,
+          attackAdjustment: 0,
+          healthAdjustment: 0,
+          abilities: {
+              $type: "System.Collections.Generic.List`1[[DiskCardGame.Ability, Assembly-CSharp]], mscorlib",
+              $rlength: 0,
+              $rcontent: []
+          },
+          negateAbilities: {
+              $type: "System.Collections.Generic.List`1[[DiskCardGame.Ability, Assembly-CSharp]], mscorlib",
+              $rlength: 0,
+              $rcontent: []
+          },
+          bloodCostAdjustment: 0,
+          bonesCostAdjustment: 0,
+          addGemCost: {
+              $type: "System.Collections.Generic.List`1[[DiskCardGame.GemType, Assembly-CSharp]], mscorlib",
+              $rlength: 0,
+              $rcontent: []
+          },
+          specialAbilities: {
+              $type: "System.Collections.Generic.List`1[[DiskCardGame.SpecialTriggeredAbility, Assembly-CSharp]], mscorlib",
+              $rlength: 0,
+              $rcontent: []
+          },
+          deathCardInfo: {
+              $type: "DiskCardGame.DeathCardInfo, Assembly-CSharp",
+              headType: 0,
+              mouthIndex: 0,
+              eyesIndex: 0,
+              lostEye: false
+          },
+          decalIds: {
+              $type: "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
+              $rlength: 0,
+              $rcontent: []
+          }
+      })
+
+      props.saveFile.deathCardMods.$rlength += 1
+  }
+
+  function removeDeathcard(i) {
+      props.saveFile.deathCardMods.$rcontent.splice(i, 1)
+      props.saveFile.deathCardMods.$rlength -= 1
   }
 </script>

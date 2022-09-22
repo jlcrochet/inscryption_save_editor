@@ -136,181 +136,176 @@
   </table>
 </template>
 
-<script>
-  export default {
-      props: {
-          deck: {
-              type: Object,
-              required: true
-          },
-          gameData: {
-              type: Object,
-              required: true
-          }
+<script setup>
+  const props = defineProps({
+      deck: {
+          type: Object,
+          required: true
       },
+      gameData: {
+          type: Object,
+          required: true
+      }
+  })
 
-      methods: {
-          addCard() {
-              this.deck.cardIds.$rcontent.push(null)
-              this.deck.cardIds.$rlength += 1
+  function addCard() {
+      props.deck.cardIds.$rcontent.push(null)
+      props.deck.cardIds.$rlength += 1
 
-              // Stub mod info for new card
-              this.deck.cardIdModInfos.$rcontent.push({
-                  $k: "",
-                  $v: {
-                      $type: "System.Collections.Generic.List`1[[DiskCardGame.CardModificationInfo, Assembly-CSharp]], mscorlib",
-                      $rlength: 0,
-                      $rcontent: []
+      // Stub mod info for new card
+      props.deck.cardIdModInfos.$rcontent.push({
+          $k: "",
+          $v: {
+              $type: "System.Collections.Generic.List`1[[DiskCardGame.CardModificationInfo, Assembly-CSharp]], mscorlib",
+              $rlength: 0,
+              $rcontent: []
+          }
+      })
+
+      props.deck.cardIdModInfos.$rlength += 1
+  }
+
+  async function duplicateCard(i) {
+      let name
+      name = props.deck.cardIds.$rcontent[props.deck.cardIds.$rlength++] = props.deck.cardIds.$rcontent[i]
+
+      let modInfo = props.deck.cardIdModInfos.$rcontent[i]
+
+      props.deck.cardIdModInfos.$rcontent[props.deck.cardIdModInfos.$rlength++] = {
+          $k: modInfo.$k,
+          $v: {
+              $type: modInfo.$v.$type,
+              $rlength: modInfo.$v.$rlength,
+              $rcontent: modInfo.$v.$rcontent.map(mod => {
+                  return {
+                      $type: mod.$type,
+                      nameReplacement: mod.nameReplacement,
+                      attackAdjustment: mod.attackAdjustment,
+                      healthAdjustment: mod.healthAdjustment,
+                      abilities: {
+                          $type: mod.abilities.$type,
+                          $rlength: mod.abilities.$rlength,
+                          $rcontent: [...mod.abilities.$rcontent]
+                      },
+                      negateAbilities: {
+                          $type: mod.negateAbilities.$type,
+                          $rlength: mod.negateAbilities.$rlength,
+                          $rcontent: [...mod.negateAbilities.$rcontent]
+                      },
+                      bloodCostAdjustment: mod.bloodCostAdjustment,
+                      bonesCostAdjustment: mod.bonesCostAdjustment,
+                      energyCostAdjustment: mod.energyCostAdjustment,
+                      nullifyGemsCost: mod.nullifyGemsCost,
+                      addGemCost: {
+                          $type: mod.addGemCost.$type,
+                          $rlength: mod.addGemCost.$rlength,
+                          $rcontent: [...mod.addGemCost.$rcontent]
+                      },
+                      gemify: mod.gemify,
+                      specialAbilities: {
+                          $type: mod.specialAbilities.$type,
+                          $rlength: mod.specialAbilities.$rlength,
+                          $rcontent: [...mod.specialAbilities.$rcontent]
+                      },
+                      fromCardMerge: mod.fromCardMerge,
+                      deathCardInfo: mod.deathCardInfo,
+                      decalIds: {
+                          $type: mod.decalIds.$type,
+                          $rlength: mod.decalIds.$rlength,
+                          $rcontent: [...mod.decalIds.$rcontent]
+                      }
                   }
               })
-
-              this.deck.cardIdModInfos.$rlength += 1
-          },
-
-          duplicateCard(i) {
-              let name
-              name = this.deck.cardIds.$rcontent[this.deck.cardIds.$rlength++] = this.deck.cardIds.$rcontent[i]
-
-              let modInfo = this.deck.cardIdModInfos.$rcontent[i]
-
-              this.deck.cardIdModInfos.$rcontent[this.deck.cardIdModInfos.$rlength++] = {
-                  $k: modInfo.$k,
-                  $v: {
-                      $type: modInfo.$v.$type,
-                      $rlength: modInfo.$v.$rlength,
-                      $rcontent: modInfo.$v.$rcontent.map(mod => {
-                          return {
-                              $type: mod.$type,
-                              nameReplacement: mod.nameReplacement,
-                              attackAdjustment: mod.attackAdjustment,
-                              healthAdjustment: mod.healthAdjustment,
-                              abilities: {
-                                  $type: mod.abilities.$type,
-                                  $rlength: mod.abilities.$rlength,
-                                  $rcontent: [...mod.abilities.$rcontent]
-                              },
-                              negateAbilities: {
-                                  $type: mod.negateAbilities.$type,
-                                  $rlength: mod.negateAbilities.$rlength,
-                                  $rcontent: [...mod.negateAbilities.$rcontent]
-                              },
-                              bloodCostAdjustment: mod.bloodCostAdjustment,
-                              bonesCostAdjustment: mod.bonesCostAdjustment,
-                              energyCostAdjustment: mod.energyCostAdjustment,
-                              nullifyGemsCost: mod.nullifyGemsCost,
-                              addGemCost: {
-                                  $type: mod.addGemCost.$type,
-                                  $rlength: mod.addGemCost.$rlength,
-                                  $rcontent: [...mod.addGemCost.$rcontent]
-                              },
-                              gemify: mod.gemify,
-                              specialAbilities: {
-                                  $type: mod.specialAbilities.$type,
-                                  $rlength: mod.specialAbilities.$rlength,
-                                  $rcontent: [...mod.specialAbilities.$rcontent]
-                              },
-                              fromCardMerge: mod.fromCardMerge,
-                              deathCardInfo: mod.deathCardInfo,
-                              decalIds: {
-                                  $type: mod.decalIds.$type,
-                                  $rlength: mod.decalIds.$rlength,
-                                  $rcontent: [...mod.decalIds.$rcontent]
-                              }
-                          }
-                      })
-                  }
-              }
-
-              this.refreshModInfoKeys(name)
-
-              this.$nextTick(function() {
-                  window.scrollTo(0, document.body.scrollHeight)
-              })
-          },
-
-          removeCard(i) {
-              let name = this.deck.cardIds.$rcontent.splice(i, 1)[0]
-              this.deck.cardIds.$rlength -= 1
-
-              this.deck.cardIdModInfos.$rcontent.splice(i, 1)
-              this.deck.cardIdModInfos.$rlength -= 1
-
-              this.refreshModInfoKeys(name)
-          },
-
-          updateCardSelection(i, name) {
-              let oldName = this.deck.cardIds.$rcontent[i]
-
-              this.deck.cardIds.$rcontent[i] = name
-              this.deck.cardIdModInfos.$rcontent[i].$k = name
-
-              this.refreshModInfoKeys(oldName)
-              this.refreshModInfoKeys(name)
-          },
-
-          refreshModInfoKeys(name) {
-              let search = name + "#"
-              let idx = 0
-
-              for (let modInfo of this.deck.cardIdModInfos.$rcontent) {
-                  if (modInfo.$k === name || modInfo.$k.startsWith(search)) {
-                      modInfo.$k = search + idx++
-                  }
-              }
-          },
-
-          addMod(i) {
-              let modInfo = this.deck.cardIdModInfos.$rcontent[i]
-
-              // Stub mod
-              modInfo.$v.$rcontent.push({
-                  $type: "DiskCardGame.CardModificationInfo, Assembly-CSharp",
-                  nameReplacement: null,
-                  attackAdjustment: 0,
-                  healthAdjustment: 0,
-                  abilities: {
-                      $type: "System.Collections.Generic.List`1[[DiskCardGame.Ability, Assembly-CSharp]], mscorlib",
-                      $rlength: 0,
-                      $rcontent: []
-                  },
-                  negateAbilities: {
-                      $type: "System.Collections.Generic.List`1[[DiskCardGame.Ability, Assembly-CSharp]], mscorlib",
-                      $rlength: 0,
-                      $rcontent: []
-                  },
-                  bloodCostAdjustment: 0,
-                  bonesCostAdjustment: 0,
-                  energyCostAdjustment: 0,
-                  nullifyGemsCost: false,
-                  addGemCost: {
-                      $type: "System.Collections.Generic.List`1[[DiskCardGame.GemType, Assembly-CSharp]], mscorlib",
-                      $rlength: 0,
-                      $rcontent: []
-                  },
-                  gemify: false,
-                  specialAbilities: {
-                      $type: "System.Collections.Generic.List`1[[DiskCardGame.SpecialTriggeredAbility, Assembly-CSharp]], mscorlib",
-                      $rlength: 0,
-                      $rcontent: []
-                  },
-                  fromCardMerge: false,
-                  deathCardInfo: null,
-                  decalIds: {
-                      $type: "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
-                      $rlength: 0,
-                      $rcontent: []
-                  }
-              })
-
-              modInfo.$v.$rlength += 1
-          },
-
-          removeMod(i, j) {
-              let modInfo = this.deck.cardIdModInfos.$rcontent[i]
-
-              modInfo.$v.$rcontent.splice(j, 1)
-              modInfo.$v.$rlength -= 1
           }
       }
+
+      refreshModInfoKeys(name)
+
+      await nextTick()
+      window.scrollTo(0, document.body.scrollHeight)
+  }
+
+  function removeCard(i) {
+      let name = props.deck.cardIds.$rcontent.splice(i, 1)[0]
+      props.deck.cardIds.$rlength -= 1
+
+      props.deck.cardIdModInfos.$rcontent.splice(i, 1)
+      props.deck.cardIdModInfos.$rlength -= 1
+
+      refreshModInfoKeys(name)
+  }
+
+  function updateCardSelection(i, name) {
+      let oldName = props.deck.cardIds.$rcontent[i]
+
+      props.deck.cardIds.$rcontent[i] = name
+      props.deck.cardIdModInfos.$rcontent[i].$k = name
+
+      refreshModInfoKeys(oldName)
+      refreshModInfoKeys(name)
+  }
+
+  function refreshModInfoKeys(name) {
+      let search = name + "#"
+      let idx = 0
+
+      for (let modInfo of props.deck.cardIdModInfos.$rcontent) {
+          if (modInfo.$k == name || modInfo.$k.startsWith(search)) {
+              modInfo.$k = search + idx++
+          }
+      }
+  }
+
+  function addMod(i) {
+      let modInfo = props.deck.cardIdModInfos.$rcontent[i]
+
+      // Stub mod
+      modInfo.$v.$rcontent.push({
+          $type: "DiskCardGame.CardModificationInfo, Assembly-CSharp",
+          nameReplacement: null,
+          attackAdjustment: 0,
+          healthAdjustment: 0,
+          abilities: {
+              $type: "System.Collections.Generic.List`1[[DiskCardGame.Ability, Assembly-CSharp]], mscorlib",
+              $rlength: 0,
+              $rcontent: []
+          },
+          negateAbilities: {
+              $type: "System.Collections.Generic.List`1[[DiskCardGame.Ability, Assembly-CSharp]], mscorlib",
+              $rlength: 0,
+              $rcontent: []
+          },
+          bloodCostAdjustment: 0,
+          bonesCostAdjustment: 0,
+          energyCostAdjustment: 0,
+          nullifyGemsCost: false,
+          addGemCost: {
+              $type: "System.Collections.Generic.List`1[[DiskCardGame.GemType, Assembly-CSharp]], mscorlib",
+              $rlength: 0,
+              $rcontent: []
+          },
+          gemify: false,
+          specialAbilities: {
+              $type: "System.Collections.Generic.List`1[[DiskCardGame.SpecialTriggeredAbility, Assembly-CSharp]], mscorlib",
+              $rlength: 0,
+              $rcontent: []
+          },
+          fromCardMerge: false,
+          deathCardInfo: null,
+          decalIds: {
+              $type: "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
+              $rlength: 0,
+              $rcontent: []
+          }
+      })
+
+      modInfo.$v.$rlength += 1
+  }
+
+  function removeMod(i, j) {
+      let modInfo = props.deck.cardIdModInfos.$rcontent[i]
+
+      modInfo.$v.$rcontent.splice(j, 1)
+      modInfo.$v.$rlength -= 1
   }
 </script>
