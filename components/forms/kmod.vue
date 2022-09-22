@@ -65,7 +65,7 @@
       </table>
     </tab>
 
-    <tab title="Decks">
+    <tab title="Deck">
       <deck-editor :deck=saveFile.ascensionData.currentRun.playerDeck :game-data=gameData />
     </tab>
 
