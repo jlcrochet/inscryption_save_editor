@@ -10,3 +10,7 @@ input[type=checkbox] {
 .card > td {
     border: 2px solid black;
 }
+
+td {
+    white-space: nowrap;
+}
