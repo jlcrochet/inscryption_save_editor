@@ -57,13 +57,13 @@
             </tab>
 
             <tab title="Kaycee's Mod">
-              <!-- <template v-if=saveFile.ascensionData.currentRun> -->
-              <forms-kmod :save-file=saveFile :game-data=gameData />
-              <!-- </template> -->
+              <template v-if=saveFile.ascensionData.currentRun>
+                <forms-kmod :save-file=saveFile :game-data=gameData />
+              </template>
 
-              <!-- <template v-else> -->
-              <!--   <forms-kmod-no-run :save-file=saveFile :game-data=gameData /> -->
-              <!-- </template> -->
+              <template v-else>
+                <forms-kmod-no-run :save-file=saveFile :game-data=gameData />
+              </template>
             </tab>
           </tabs>
 
