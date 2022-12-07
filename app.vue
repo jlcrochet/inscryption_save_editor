@@ -550,7 +550,7 @@
             if (typeof value == "number") {
               return types[value]
             } else {
-              let [n, type] = value.split("|")
+              let [n, type] = value.split("|", 2)
               types[n] = type
               return type
             }
@@ -558,7 +558,7 @@
 
           default: {
             if (typeof value == "string" && value.startsWith("$iref")) {
-              let [_, n] = value.split(":")
+              let [_, n] = value.split(":", 2)
               return ids[n]
             }
           } break
