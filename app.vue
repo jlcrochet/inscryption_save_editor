@@ -18,13 +18,19 @@
     <p>Instructions:</p>
 
     <ol>
-      <li>Click the button below to upload your save file. The save file is called <code>SaveFile.gwsave</code> and is located in the root of your Inscryption directory.</li>
+      <li>
+        Click the button below to upload your save file from your Inscryption directory. On PC, the save file will be named <code>SaveFile.gwsave</code>; on Nintendo Switch, it should be called <code>save.fs</code>.
+
+        <ul>
+          <li>If you would like for this editor to handle save files for other platforms, please provide a save file as an example and I will update the editor.</li>
+        </ul>
+      </li>
       <li>A form will appear on the page; use it to make changes to your save file.</li>
       <li>After making changes, click the Save button at the bottom of the page; this will create a new file and will prompt you to save it.</li>
-      <li>Save the new file as <code>SaveFile.gwsave</code> in your Inscryption directory.</li>
+      <li>Save the new file as either <code>SaveFile.gwsave</code> (PC) or <code>save.fs</code> (Nintendo Switch) in your Inscryption directory.</li>
     </ol>
 
-    <input type=file accept=.gwsave @click="$event.target.value = null" @input=parseFile($event.target.files[0]) />
+    <input type=file accept=.gwsave,.fs @click="$event.target.value = null" @input=parseFile($event.target.files[0]) />
 
     <template v-if=loading>
       <p>
@@ -74,17 +80,18 @@
       </p>
     </template>
 
-    <a ref=ghostLink download=SaveFile.gwsave hidden />
+    <a ref=ghostLink :download=filename hidden />
   </div>
 </template>
 
 <script setup>
   const saveFile = ref(null)
   const loading = ref(false)
+  const filename = ref(null)
 
   const ghostLink = shallowRef(null)
 
-  const gameData = readonly({
+  const gameData = shallowRef({
     cardNames: [
       ["!BOUNTYHUNTER_BASE", "!BOUNTYHUNTER_BASE"],
       ["!BUILDACARD_BASE", "!BUILDACARD_BASE"],
@@ -518,25 +525,49 @@
     ]
   })
 
+  let fileFormat, fileData, saveIndex, leadingBytes, trailingBytes
+  const decoder = new TextDecoder('utf-8')
+
   async function parseFile(file) {
     loading.value = true
 
+    filename.value = file.name
+    fileFormat = file.name.substring(file.name.lastIndexOf('.') + 1)
+
     let text = await file.text()
 
-    // There are a few things we have to do to the input file before we can
-    // use it:
-    //
-    // First, we must replace non-standard JSON values with temporary
-    // placeholders; this involves wrapping `$iref` values in quotes and
-    // placing actual `x` and `y` keys inside vectors.
-    text = text
-      .replace(/\$iref:\d+/g, '"$&"')
-      .replace(/"(position|\w*?Position)":\s*{\s*"\$type":\s*(".*?"|-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)\s*}/g, '"$1":{"$type":$2,"x":$3,"y":$4}')
-
-    // Now that the text is valid JSON, we can parse it:
     let data
 
     try {
+      if (fileFormat == 'fs') {
+        // Packed Nintendo Switch file format; we need to extract the actual
+        // save data first
+        fileData = JSON.parse(text)
+        saveIndex = fileData._files.findIndex(f => f._fullPath == '/SaveFile.gwsave')
+
+        let bytes = fileData._files[saveIndex]._data
+
+        // There are some leading and trailing bytes outside of the save data;
+        // I have no idea what they're for, but I'm going to assume that
+        // they're important; let's save them for later:
+        leadingBytes = bytes.splice(0, bytes.indexOf(123))
+        trailingBytes = bytes.splice(bytes.lastIndexOf(125) + 1)
+        // 123 == '{', 125 == '}'
+
+        text = decoder.decode(Uint8Array.from(bytes))
+      }
+
+      // There are a few things we have to do to the input file before we can
+      // use it:
+      //
+      // First, we must replace non-standard JSON values with temporary
+      // placeholders; this involves wrapping `$iref` values in quotes and
+      // placing actual `x` and `y` keys inside vectors.
+
+      text = text
+        .replace(/\$iref:\d+/g, '"$&"')
+        .replace(/"(position|\w*?Position)":\s*{\s*"\$type":\s*(".*?"|-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)\s*}/g, '"$1":{"$type":$2,"x":$3,"y":$4}')
+
       let ids = []
       let types = []
 
@@ -566,8 +597,8 @@
 
         return value
       })
-    } catch (e) {
-      alert(e)
+    } catch {
+      alert("There was an error parsing the file. Please send the file to me at jlcrochet@hey.com and I will try to debug the issue.")
       return
     }
 
@@ -624,13 +655,25 @@
     loading.value = false
   }
 
+  const encoder = new TextEncoder('utf-8')
+
   function createFile() {
     let text = JSON.stringify(saveFile.value)
 
-    let blob = new Blob([text], { type: "application/json" })
-    let url = URL.createObjectURL(blob)
+    let blob
 
-    ghostLink.value.href = url
+    switch (fileFormat) {
+      case 'gwsave': {
+        blob = new Blob([text])
+      } break
+
+      case 'fs': {
+        fileData._files[saveIndex].data = leadingBytes.concat(Array.from(encoder.encode(text)), trailingBytes)
+        blob = new Blob([JSON.stringify(fileData)])
+      } break
+    }
+
+    ghostLink.value.href = URL.createObjectURL(blob)
     ghostLink.value.click()
   }
 </script>
