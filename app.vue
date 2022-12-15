@@ -526,7 +526,7 @@
     ]
   })
 
-  let fileFormat, fileData, saveIndex, leadingBytes, trailingBytes
+  let fileFormat, fileData, saveIndex, header, footer
   const decoder = new TextDecoder('utf-8')
 
   async function parseFile(file) {
@@ -551,8 +551,8 @@
         // There are some leading and trailing bytes outside of the save data;
         // I have no idea what they're for, but I'm going to assume that
         // they're important; let's save them for later:
-        leadingBytes = bytes.splice(0, bytes.indexOf(123))
-        trailingBytes = bytes.splice(bytes.lastIndexOf(125) + 1)
+        header = bytes.splice(0, bytes.indexOf(123))
+        footer = bytes.splice(bytes.lastIndexOf(125) + 1)
         // 123 == '{', 125 == '}'
 
         text = decoder.decode(Uint8Array.from(bytes))
@@ -669,7 +669,33 @@
       } break
 
       case 'fs': {
-        fileData._files[saveIndex]._data = leadingBytes.concat(Array.from(encoder.encode(text)), trailingBytes)
+        let remove = 1
+
+        for (let i = header.length - 2; i > 0; --i) {
+          if (!(header[i] & 1 << 7)) {
+            break
+          } else {
+            remove += 1
+          }
+        }
+
+        header.length -= remove
+
+        let content = Array.from(encoder.encode(text))
+        let length = content.length
+
+        do {
+          let septet = length & 0b1111111
+          length >>= 7
+
+          if (length) {
+            septet |= 1 << 7
+          }
+
+          header.push(septet)
+        } while (length > 0)
+
+        fileData._files[saveIndex]._data = header.concat(content, footer)
         blob = new Blob([JSON.stringify(fileData)])
       } break
     }
