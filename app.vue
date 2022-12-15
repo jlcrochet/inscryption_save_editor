@@ -19,15 +19,16 @@
 
     <ol>
       <li>
-        Click the button below to upload your save file from your Inscryption directory. On PC, the save file will be named <code>SaveFile.gwsave</code>; on Nintendo Switch, it should be called <code>save.fs</code>.
+        Click the button below to upload your save file from your Inscryption directory. On PC, the save file will be named <code>SaveFile.gwsave</code>.
 
         <ul>
-          <li>If you would like for this editor to handle save files for other platforms, please provide a save file as an example and I will update the editor.</li>
+          <li>This editor can also edit save files produced by <a href=https://github.com/FlagBrew/Checkpoint>Checkpoint</a>; simply upload your <code>save.fs</code> file instead and the editor should be able to produce another <code>save.fs</code> that you can restore using Checkpoint.</li>
+          <li>If you want this editor to support save files in other formats, please send me an example save file and I'll see what I can do.</li>
         </ul>
       </li>
       <li>A form will appear on the page; use it to make changes to your save file.</li>
       <li>After making changes, click the Save button at the bottom of the page; this will create a new file and will prompt you to save it.</li>
-      <li>Save the new file as either <code>SaveFile.gwsave</code> (PC) or <code>save.fs</code> (Nintendo Switch) in your Inscryption directory.</li>
+      <li>Save the new file to your Inscryption directory.</li>
     </ol>
 
     <input type=file accept=.gwsave,.fs @click="$event.target.value = null" @input=parseFile($event.target.files[0]) />
@@ -668,7 +669,7 @@
       } break
 
       case 'fs': {
-        fileData._files[saveIndex].data = leadingBytes.concat(Array.from(encoder.encode(text)), trailingBytes)
+        fileData._files[saveIndex]._data = leadingBytes.concat(Array.from(encoder.encode(text)), trailingBytes)
         blob = new Blob([JSON.stringify(fileData)])
       } break
     }
