@@ -13,7 +13,7 @@
       <li>Some cards and sigils may cause errors if played outside of specific contexts; others may do nothing at all. Make sure that you make a backup of your save file before experimenting.</li>
     </ul>
 
-    <p>To report problems, e-mail me at <a href=mailto:jlcrochet@hey.com>jlcrochet@hey.com</a> or post an issue on <a href=https://github.com/jlcrochet/inscryption_save_editor>GitHub</a>.</p>
+    <p>To report problems, e-mail me at <a href=mailto:jlcrochet91@pm.me>jlcrochet91@pm.me</a> or post an issue on <a href=https://github.com/jlcrochet/inscryption_save_editor>GitHub</a>.</p>
 
     <p>Instructions:</p>
 
@@ -610,7 +610,7 @@
         return value
       })
     } catch {
-      alert("There was an error parsing the file. Please send the file to me at jlcrochet@hey.com and I will try to debug the issue.")
+      alert("There was an error parsing the file. Please send the file to me at jlcrochet91@pm.me and I will try to debug the issue.")
       return
     }
 
