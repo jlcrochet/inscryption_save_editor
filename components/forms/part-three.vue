@@ -20,7 +20,7 @@
     </tab>
 
     <tab title="Deck">
-      <deck-editor :deck=saveFile.part3Data.deck :game-data=gameData />
+      <deck-editor :deck=saveFile.part3Data.deck />
     </tab>
 
     <tab title="Side Deck">
@@ -67,24 +67,16 @@
 </template>
 
 <script setup>
-  const props = defineProps({
-      saveFile: {
-          type: Object,
-          required: true
-      },
-      gameData: {
-          type: Object,
-          required: true
-      }
-  })
+  const saveFile = useState('saveFile')
+  const gameData = useState('gameData')
 
   function addItem() {
-      props.saveFile.part3Data.items.$rcontent.push(null)
-      props.saveFile.part3Data.items.$rlength += 1
+      saveFile.value.part3Data.items.$rcontent.push(null)
+      saveFile.value.part3Data.items.$rlength += 1
   }
 
   function removeItem(i) {
-      props.saveFile.part3Data.items.$rcontent.splice(i, 1)
-      props.saveFile.part3Data.items.$rlength -= 1
+      saveFile.value.part3Data.items.$rcontent.splice(i, 1)
+      saveFile.value.part3Data.items.$rlength -= 1
   }
 </script>

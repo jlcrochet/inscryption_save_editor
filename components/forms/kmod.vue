@@ -66,7 +66,7 @@
     </tab>
 
     <tab title="Deck">
-      <deck-editor :deck=saveFile.ascensionData.currentRun.playerDeck :game-data=gameData />
+      <deck-editor :deck=saveFile.ascensionData.currentRun.playerDeck />
     </tab>
 
     <tab title="Items">
@@ -255,66 +255,58 @@
 </template>
 
 <script setup>
-  const props = defineProps({
-      saveFile: {
-          type: Object,
-          required: true
-      },
-      gameData: {
-          type: Object,
-          required: true
-      }
-  })
+  const saveFile = useState('saveFile')
+  const gameData = useState('gameData')
 
-  const totemRequired = computed(() => props.saveFile.ascensionData.currentRun.totemTops.$rlength > 0 && props.saveFile.ascensionData.currentRun.totemBottoms.$rlength > 0)
+  const totemRequired = computed(() => saveFile.value.ascensionData.currentRun.totemTops.$rlength > 0 && saveFile.value.ascensionData.currentRun.totemBottoms.$rlength > 0)
 
-  watch(() => props.saveFile.ascensionData.currentRun.totemTops.$rlength, newValue => {
+  watch(() => saveFile.value.ascensionData.currentRun.totemTops.$rlength, newValue => {
       if (newValue == 0) {
-          if (props.saveFile.ascensionData.currentRun.totems.$rlength > 0) {
-              props.saveFile.ascensionData.currentRun.totems.$rcontent.splice(0)
-              props.saveFile.ascensionData.currentRun.totems.$rlength = 0
+          if (saveFile.value.ascensionData.currentRun.totems.$rlength > 0) {
+              saveFile.value.ascensionData.currentRun.totems.$rcontent.splice(0)
+              saveFile.value.ascensionData.currentRun.totems.$rlength = 0
           }
       } else {
-          if (props.saveFile.ascensionData.currentRun.totems.$rlength == 0 && props.saveFile.ascensionData.currentRun.totemBottoms.$rlength > 0) {
+          if (saveFile.value.ascensionData.currentRun.totems.$rlength == 0 && saveFile.value.ascensionData.currentRun.totemBottoms.$rlength > 0) {
               // Stub totem
-              props.saveFile.ascensionData.currentRun.totems.$rcontent.push({
+              saveFile.value.ascensionData.currentRun.totems.$rcontent.push({
                   $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
                   tribe: null,
                   ability: null
               })
 
-              props.saveFile.ascensionData.currentRun.totems.$rlength = 1
+              saveFile.value.ascensionData.currentRun.totems.$rlength = 1
           }
       }
   })
 
-  watch(() => props.saveFile.ascensionData.currentRun.totemTops.$rlength, newValue => {
+  watch(() => saveFile.value.ascensionData.currentRun.totemTops.$rlength, newValue => {
       if (newValue == 0) {
-          if (props.saveFile.ascensionData.currentRun.totems.$rlength > 0) {
-              props.saveFile.ascensionData.currentRun.totems.$rcontent.splice(0)
-              props.saveFile.ascensionData.currentRun.totems.$rlength = 0
+          if (saveFile.value.ascensionData.currentRun.totems.$rlength > 0) {
+              saveFile.value.ascensionData.currentRun.totems.$rcontent.splice(0)
+              saveFile.value.ascensionData.currentRun.totems.$rlength = 0
           }
       } else {
-          if (props.saveFile.ascensionData.currentRun.totems.$rlength == 0 && props.saveFile.ascensionData.currentRun.totemTops.$rlength > 0) {
+          if (saveFile.value.ascensionData.currentRun.totems.$rlength == 0 && saveFile.value.ascensionData.currentRun.totemTops.$rlength > 0) {
               // Stub totem
-              props.saveFile.ascensionData.currentRun.totems.$rcontent.push({
+              saveFile.value.ascensionData.currentRun.totems.$rcontent.push({
                   $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
                   tribe: null,
                   ability: null
               })
 
-              props.saveFile.ascensionData.currentRun.totems.$rlength = 1
+              saveFile.value.ascensionData.currentRun.totems.$rlength = 1
           }
       }
   })
 
   function addItem() {
-      props.saveFile.ascensionData.currentRun.consumables.$rcontent.push(null)
-      props.saveFile.ascensionData.currentRun.consumables.$rlength += 1
+      saveFile.value.ascensionData.currentRun.consumables.$rcontent.push(null)
+      saveFile.value.ascensionData.currentRun.consumables.$rlength += 1
   }
 
   function removeItem(i) {
-      props.saveFile.ascensionData.currentRun.consumables.$rcontent.splice(i, 1)
-      props.saveFile.ascensionData.currentRun.consumables.$rlength -= 1
+      saveFile.value.ascensionData.currentRun.consumables.$rcontent.splice(i, 1)
+      saveFile.value.ascensionData.currentRun.consumables.$rlength -= 1
   }
 </script>

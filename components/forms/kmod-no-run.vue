@@ -33,14 +33,6 @@
 </template>
 
 <script setup>
-  defineProps({
-      saveFile: {
-          type: Object,
-          required: true
-      },
-      gameData: {
-          type: Object,
-          required: true
-      }
-  })
+  const saveFile = useState('saveFile')
+  const gameData = useState('gameData')
 </script>

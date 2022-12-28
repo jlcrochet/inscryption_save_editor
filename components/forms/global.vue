@@ -23,10 +23,5 @@
 </template>
 
 <script setup>
-  defineProps({
-      saveFile: {
-          type: Object,
-          required: true
-      }
-  })
+  const saveFile = useState('saveFile')
 </script>

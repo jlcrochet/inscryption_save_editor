@@ -81,7 +81,7 @@
     </tab>
 
     <tab title="Deck">
-      <deck-editor :deck=saveFile.currentRun.playerDeck :game-data=gameData />
+      <deck-editor :deck=saveFile.currentRun.playerDeck />
     </tab>
 
     <tab title="Deathcards">
@@ -342,71 +342,63 @@
 </template>
 
 <script setup>
-  const props = defineProps({
-      saveFile: {
-          type: Object,
-          required: true
-      },
-      gameData: {
-          type: Object,
-          required: true
-      }
-  })
+  const saveFile = useState('saveFile')
+  const gameData = useState('gameData')
 
-  const totemRequired = computed(() => props.saveFile.currentRun.totemTops.$rlength > 0 && props.saveFile.currentRun.totemBottoms.$rlength > 0)
+  const totemRequired = computed(() => saveFile.value.currentRun.totemTops.$rlength > 0 && saveFile.value.currentRun.totemBottoms.$rlength > 0)
 
-  watch(() => props.saveFile.currentRun.totemTops.$rlength, newValue => {
+  watch(() => saveFile.value.currentRun.totemTops.$rlength, newValue => {
       if (newValue == 0) {
-          if (props.saveFile.currentRun.totems.$rlength > 0) {
-              props.saveFile.currentRun.totems.$rcontent.splice(0)
-              props.saveFile.currentRun.totems.$rlength = 0
+          if (saveFile.value.currentRun.totems.$rlength > 0) {
+              saveFile.value.currentRun.totems.$rcontent.splice(0)
+              saveFile.value.currentRun.totems.$rlength = 0
           }
       } else {
-          if (props.saveFile.currentRun.totems.$rlength == 0 && props.saveFile.currentRun.totemBottoms.$rlength > 0) {
+          if (saveFile.value.currentRun.totems.$rlength == 0 && saveFile.value.currentRun.totemBottoms.$rlength > 0) {
               // Stub totem
-              props.saveFile.currentRun.totems.$rcontent.push({
+              saveFile.value.currentRun.totems.$rcontent.push({
                   $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
                   tribe: null,
                   ability: null
               })
 
-              props.saveFile.currentRun.totems.$rlength = 1
+              saveFile.value.currentRun.totems.$rlength = 1
           }
       }
   })
 
-  watch(() => props.saveFile.currentRun.totemTops.$rlength, newValue => {
+  watch(() => saveFile.value.currentRun.totemTops.$rlength, newValue => {
       if (newValue == 0) {
-          if (props.saveFile.currentRun.totems.$rlength > 0) {
-              props.saveFile.currentRun.totems.$rcontent.splice(0)
-              props.saveFile.currentRun.totems.$rlength = 0
+          if (saveFile.value.currentRun.totems.$rlength > 0) {
+              saveFile.value.currentRun.totems.$rcontent.splice(0)
+              saveFile.value.currentRun.totems.$rlength = 0
           }
       } else {
-          if (props.saveFile.currentRun.totems.$rlength == 0 && props.saveFile.currentRun.totemTops.$rlength > 0) {
+          if (saveFile.value.currentRun.totems.$rlength == 0 && saveFile.value.currentRun.totemTops.$rlength > 0) {
               // Stub totem
-              props.saveFile.currentRun.totems.$rcontent.push({
+              saveFile.value.currentRun.totems.$rcontent.push({
                   $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
                   tribe: null,
                   ability: null
               })
 
-              props.saveFile.currentRun.totems.$rlength = 1
+              saveFile.value.currentRun.totems.$rlength = 1
           }
       }
   })
 
   function addItem() {
-      props.saveFile.currentRun.consumables.$rcontent.push(null)
-      props.saveFile.currentRun.consumables.$rlength += 1
+      saveFile.value.currentRun.consumables.$rcontent.push(null)
+      saveFile.value.currentRun.consumables.$rlength += 1
   }
 
   function removeItem(i) {
-      props.saveFile.currentRun.consumables.$rcontent.splice(i, 1)
-      props.saveFile.currentRun.consumables.$rlength -= 1
+      saveFile.value.currentRun.consumables.$rcontent.splice(i, 1)
+      saveFile.value.currentRun.consumables.$rlength -= 1
   }
 
   function addDeathcard() {
-      props.saveFile.deathCardMods.$rcontent.push({
+      saveFile.value.deathCardMods.$rcontent.push({
           $type: "DiskCardGame.CardModificationInfo, Assembly-CSharp",
           nameReplacement: null,
           attackAdjustment: 0,
@@ -447,11 +439,11 @@
           }
       })
 
-      props.saveFile.deathCardMods.$rlength += 1
+      saveFile.value.deathCardMods.$rlength += 1
   }
 
   function removeDeathcard(i) {
-      props.saveFile.deathCardMods.$rcontent.splice(i, 1)
-      props.saveFile.deathCardMods.$rlength -= 1
+      saveFile.value.deathCardMods.$rcontent.splice(i, 1)
+      saveFile.value.deathCardMods.$rlength -= 1
   }
 </script>

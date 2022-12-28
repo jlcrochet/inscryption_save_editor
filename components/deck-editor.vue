@@ -141,12 +141,10 @@
       deck: {
           type: Object,
           required: true
-      },
-      gameData: {
-          type: Object,
-          required: true
       }
   })
+
+  const gameData = useState('gameData')
 
   function addCard() {
       props.deck.cardIds.$rcontent.push(null)

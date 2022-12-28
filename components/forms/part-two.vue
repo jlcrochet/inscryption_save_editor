@@ -10,20 +10,12 @@
     </tab>
 
     <tab title="Deck">
-      <deck-editor :deck=saveFile.gbcData.deck :game-data=gameData />
+      <deck-editor :deck=saveFile.gbcData.deck />
     </tab>
   </tabs>
 </template>
 
 <script setup>
-  defineProps({
-      saveFile: {
-          type: Object,
-          required: true
-      },
-      gameData: {
-          type: Object,
-          required: true
-      }
-  })
+  const saveFile = useState('saveFile')
+  const gameData = useState('gameData')
 </script>
