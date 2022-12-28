@@ -87,7 +87,6 @@
 
 <script setup>
   import data from './gameData.json'
-  console.log(data)
   const gameData = useState('gameData', () => data)
 
   const loading = ref(false)
