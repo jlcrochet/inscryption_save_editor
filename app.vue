@@ -19,9 +19,9 @@
 
     <ol>
       <li>
-        Click the button below to upload your save file from your Inscryption directory. On PC, the save file will be named <code>SaveFile.gwsave</code>.
-
+        Click the button below to upload your save file from your Inscryption directory. The save file should be named <code>SaveFile.gwsave</code>.
         <ul>
+          <li>This editor can edit save files for both the PC and Nintendo Switch versions of the game.</li>
           <li>This editor can also edit save files produced by <a href=https://github.com/FlagBrew/Checkpoint>Checkpoint</a>; simply upload your <code>save.fs</code> file instead and the editor should be able to produce another <code>save.fs</code> that you can restore using Checkpoint.</li>
           <li>If you want this editor to support save files in other formats, please send me an example save file and I'll see what I can do.</li>
         </ul>
@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-  import data from './gameData.json'
+  import data from './game-data.json'
   const gameData = useState('gameData', () => data)
 
   const loading = ref(false)
@@ -96,47 +96,45 @@
 
   const saveFile = useState('saveFile')
 
+  const encoder = new TextEncoder()
+  const decoder = new TextDecoder()
+
   let fileFormat, fileData, saveIndex, header
-  const decoder = new TextDecoder('utf-8')
 
   async function parseFile(file) {
     loading.value = true
-
     filename.value = file.name
-    fileFormat = file.name.substring(file.name.lastIndexOf('.') + 1)
 
-    let text = await file.text()
+    fileFormat = file.name.substring(file.name.lastIndexOf('.') + 1)
+    header = null
 
     let data
 
     try {
+      let text
+
       if (fileFormat == 'fs') {
-        // Packed Nintendo Switch file format; we need to extract the actual
-        // save data first
-        fileData = JSON.parse(text)
+        let json = await file.text()
+        fileData = JSON.parse(json)
+
         saveIndex = fileData._files.findIndex(f => f._fullPath == '/SaveFile.gwsave')
+        let data = fileData._files[saveIndex]._data
+        let bytes = new Uint8Array(data)
 
-        let bytes = fileData._files[saveIndex]._data
+        let [h, t] = parseBytes(bytes)
+        header = h
+        text = t
+      } else {
+        let buffer = await file.arrayBuffer()
+        let bytes = new Uint8Array(buffer)
 
-        // There are some leading and trailing bytes outside of the save data;
-        // I have no idea what they're for, but I'm going to assume that
-        // they're important; let's save them for later:
-        header = bytes.splice(0, 22)
-
-        let remove = 1
-
-        for (let i = 0; i < bytes.length; ++i) {
-          if (!(bytes[i] & 1 << 7)) {
-            break
-          }
-
-          remove += 1
+        if (bytes[0] == 0x7B /*{*/) {
+          text = decoder.decode(bytes)
+        } else {
+          let [h, t] = parseBytes(bytes)
+          header = h
+          text = t
         }
-
-        bytes.splice(0, remove)
-        bytes.pop()
-
-        text = decoder.decode(Uint8Array.from(bytes))
       }
 
       // There are a few things we have to do to the input file before we can
@@ -179,7 +177,8 @@
 
         return value
       })
-    } catch {
+    } catch (error) {
+      console.error(error)
       alert("There was an error parsing the file. Please send the file to me at jlcrochet91@pm.me and I will try to debug the issue.")
       return
     }
@@ -237,41 +236,85 @@
     loading.value = false
   }
 
-  const encoder = new TextEncoder('utf-8')
-
   function createFile() {
-    let text = JSON.stringify(saveFile.value)
+    let json = JSON.stringify(saveFile.value)
 
-    let blob
+    let content
 
-    switch (fileFormat) {
-      case 'gwsave': {
-        blob = new Blob([text])
-      } break
+    if (fileFormat == "fs") {
+      let bytes = encoder.encode(json)
 
-      case 'fs': {
-        let content = Array.from(encoder.encode(text))
-        let length = content.length
+      fileData._files[saveIndex]._data = [
+        ...header,
+        ...vlq(bytes.length),
+        ...bytes,
+        0x0B
+      ]
 
-        do {
-          let septet = length & 0b1111111
-          length >>= 7
+      content = [JSON.stringify(fileData)]
+    } else if (header) {
+      let bytes = encoder.encode(json)
 
-          if (length) {
-            septet |= 1 << 7
-          }
-
-          header.push(septet)
-        } while (length > 0)
-
-        content.push(11)  // I'm assuming that this is some kind of EOF marker
-
-        fileData._files[saveIndex]._data = header.concat(content)
-        blob = new Blob([JSON.stringify(fileData)])
-      } break
+      content = [
+        String.fromCharCode(...header),
+        String.fromCharCode(...vlq(bytes.length)),
+        json,
+        "\x0B"
+      ]
+    } else {
+      content = [json]
     }
+
+    let blob = new Blob(content)
 
     ghostLink.value.href = URL.createObjectURL(blob)
     ghostLink.value.click()
+  }
+
+  function parseBytes(bytes) {
+    let header = new Uint8Array(bytes.buffer, 0, 22)
+
+    // Skip VLQ
+    let start
+
+    for (start = 22; start < bytes.length; ++start) {
+      if (!(bytes[start] & 1 << 7)) {
+        start += 1
+        break
+      }
+    }
+
+    let payload = new Uint8Array(
+      bytes.buffer,
+      start,
+      bytes.lastIndexOf(0x7D /*}*/) + 1 - start
+    )
+
+    return [
+      header,                  // Raw header bytes
+      decoder.decode(payload)  // UTF-8 JSON bytes
+    ]
+  }
+
+  function vlq(n) {
+    if (n == 0) {
+      return new Uint8Array([0])
+    }
+
+    let bytes = new Uint8Array(Math.ceil(Math.log2(n + 1) / 7))
+    let size = 0
+
+    do {
+      let septet = n & 0b1111111
+      n >>= 7
+
+      if (n > 0) {
+        septet |= 1 << 7
+      }
+
+      bytes[size++] = septet
+    } while (n > 0)
+
+    return bytes
   }
 </script>
