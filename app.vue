@@ -13,7 +13,7 @@
       <li>Some cards and sigils may cause errors if played outside of specific contexts; others may do nothing at all. Make sure that you make a backup of your save file before experimenting.</li>
     </ul>
 
-    <p>To report problems, e-mail me at <a href=mailto:jlcrochet91@pm.me>jlcrochet91@pm.me</a> or post an issue on <a href=https://github.com/jlcrochet/inscryption_save_editor>GitHub</a>.</p>
+    <p>To report problems, e-mail me at <a href=mailto:jlcrochet91@pm.me>jlcrochet91@pm.me</a> or post an issue on <a href=https://github.com/jlcrochet/inscryption_save_editor target=_blank>GitHub</a>.</p>
 
     <p>Instructions:</p>
 
@@ -21,8 +21,7 @@
       <li>
         Click the button below to upload your save file from your Inscryption directory. The save file should be named <code>SaveFile.gwsave</code>.
         <ul>
-          <li>This editor can edit save files for both the PC and Nintendo Switch versions of the game.</li>
-          <li>This editor can also edit save files produced by <a href=https://github.com/FlagBrew/Checkpoint>Checkpoint</a>; simply upload your <code>save.fs</code> file instead and the editor should be able to produce another <code>save.fs</code> that you can restore using Checkpoint.</li>
+          <li>This editor can also edit save files produced by <a href=https://github.com/FlagBrew/Checkpoint target=_blank>Checkpoint</a>; simply upload your <code>save.fs</code> file instead and the editor should be able to produce another <code>save.fs</code> that you can restore using Checkpoint.</li>
           <li>If you want this editor to support save files in other formats, please send me an example save file and I'll see what I can do.</li>
         </ul>
       </li>
@@ -75,7 +74,11 @@
           </tabs>
 
           <p>
-            <button>Save</button>
+            <button>Save</button>&nbsp;&nbsp;&nbsp;&nbsp;Output format:&nbsp;<select v-model=outputFormat>
+              <option value=gwsavePC>.gwsave (PC)</option>
+              <option value=gwsaveSwitch>.gwsave (Nintendo Switch)</option>
+              <option value=fs>.fs (Checkpoint)</option>
+            </select>
           </p>
         </form>
       </p>
@@ -90,7 +93,16 @@
   const gameData = useState('gameData', () => data)
 
   const loading = ref(false)
-  const filename = ref(null)
+  const outputFormat = ref("gwsavePC")
+
+  const filename = computed(() => {
+    switch (outputFormat.value) {
+      case "gwsavePC": return "SaveFile.gwsave"
+      case "gwsaveSwitch": return "SaveFile.gwsave"
+      case "fs": return "save.fs"
+      default: throw "Invalid output format"
+    }
+  })
 
   const ghostLink = shallowRef(null)
 
@@ -99,41 +111,44 @@
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
-  let fileFormat, fileData, saveIndex, header
+  // Standard header for Nintendo Switch save files; not sure what these bytes
+  // indicate, but they seem to be consistent.
+  const switchHeader = [0, 1, 0, 0, 0, 255, 255, 255, 255, 1, 0, 0, 0, 0, 0, 0, 0, 6, 1, 0, 0, 0]
+
+  let fileExtension, fsData, fsIndex
 
   async function parseFile(file) {
     loading.value = true
-    filename.value = file.name
-
-    fileFormat = file.name.substring(file.name.lastIndexOf('.') + 1)
-    header = null
 
     let data
 
     try {
       let text
 
-      if (fileFormat == 'fs') {
-        let json = await file.text()
-        fileData = JSON.parse(json)
+      fileExtension = file.name.substring(file.name.lastIndexOf('.') + 1)
 
-        saveIndex = fileData._files.findIndex(f => f._fullPath == '/SaveFile.gwsave')
-        let data = fileData._files[saveIndex]._data
+      if (fileExtension == "fs") {
+        outputFormat.value = "fs"
+
+        let json = await file.text()
+
+        fsData = JSON.parse(json)
+        fsIndex = fsData._files.findIndex(f => f._fullPath == '/SaveFile.gwsave')
+
+        let data = fsData._files[fsIndex]._data
         let bytes = new Uint8Array(data)
 
-        let [h, t] = parseBytes(bytes)
-        header = h
-        text = t
+        text = parseBody(bytes)
       } else {
         let buffer = await file.arrayBuffer()
         let bytes = new Uint8Array(buffer)
 
         if (bytes[0] == 0x7B /*{*/) {
+          outputFormat.value = "gwsavePC"
           text = decoder.decode(bytes)
         } else {
-          let [h, t] = parseBytes(bytes)
-          header = h
-          text = t
+          outputFormat.value = "gwsaveSwitch"
+          text = parseBody(bytes)
         }
       }
 
@@ -179,7 +194,7 @@
       })
     } catch (error) {
       console.error(error)
-      alert("There was an error parsing the file. Please send the file to me at jlcrochet91@pm.me and I will try to debug the issue.")
+      alert("There was an error parsing the file. Please e-mail me or post an issue on GitHub and I will try to troubleshoot the issue.")
       return
     }
 
@@ -237,47 +252,71 @@
   }
 
   function createFile() {
-    let json = JSON.stringify(saveFile.value)
-
-    let content
-
-    if (fileFormat == "fs") {
-      let bytes = encoder.encode(json)
-
-      fileData._files[saveIndex]._data = [
-        ...header,
-        ...vlq(bytes.length),
-        ...bytes,
-        0x0B
-      ]
-
-      content = [JSON.stringify(fileData)]
-    } else if (header) {
-      let bytes = encoder.encode(json)
-
-      content = [
-        String.fromCharCode(...header),
-        String.fromCharCode(...vlq(bytes.length)),
-        json,
-        "\x0B"
-      ]
-    } else {
-      content = [json]
-    }
-
-    let blob = new Blob(content)
+    let payload = generatePayload()
+    let blob = new Blob(payload)
 
     ghostLink.value.href = URL.createObjectURL(blob)
     ghostLink.value.click()
   }
 
-  function parseBytes(bytes) {
-    let header = new Uint8Array(bytes.buffer, 0, 22)
+  function generatePayload() {
+    let json = JSON.stringify(saveFile.value)
 
+    switch (outputFormat.value) {
+      case "gwsavePC": {
+        return [json]
+      }
+
+      case "gwsaveSwitch": {
+        let bytes = encoder.encode(json)
+
+        return [
+          String.fromCharCode(...switchHeader),
+          String.fromCharCode(...vlq(bytes.length)),
+          json,
+          "\x0B"
+        ]
+      }
+
+      case "fs": {
+        let bytes = encoder.encode(json)
+
+        let payload = [
+          ...switchHeader,
+          ...vlq(bytes.length),
+          ...bytes,
+          0x0B
+        ]
+
+        if (fileExtension == "fs") {
+          fsData._files[fsIndex]._data = payload
+          return [JSON.stringify(fsData)]
+        } else {
+          let fs = {
+            _files: [
+              {
+                _fullPath: "/SaveFile.gwsave",
+                _data: payload
+              }
+            ],
+            _directories: []
+          }
+
+          return [JSON.stringify(fs)]
+        }
+      }
+
+      default: {
+        throw "Invalid output format"
+      }
+    }
+  }
+
+  function parseBody(bytes) {
     // Skip VLQ
     let start
 
-    for (start = 22; start < bytes.length; ++start) {
+    for (start = switchHeader.length; start < bytes.length; ++start) {
       if (!(bytes[start] & 1 << 7)) {
         start += 1
         break
@@ -290,10 +329,7 @@
       bytes.lastIndexOf(0x7D /*}*/) + 1 - start
     )
 
-    return [
-      header,                  // Raw header bytes
-      decoder.decode(payload)  // UTF-8 JSON bytes
-    ]
+    return decoder.decode(payload)
   }
 
   function vlq(n) {
