@@ -112,7 +112,7 @@
 
   // Standard header for Nintendo Switch save files; not sure what these bytes
   // indicate, but they seem to be consistent.
-  const switchHeader = new Uint8Array([0, 1, 0, 0, 0, 255, 255, 255, 255, 1, 0, 0, 0, 0, 0, 0, 0, 6, 1, 0, 0, 0])
+  const switchHeader = Uint8Array.of(0, 1, 0, 0, 0, 255, 255, 255, 255, 1, 0, 0, 0, 0, 0, 0, 0, 6, 1, 0, 0, 0)
 
   let fileExtension, fsData, fsIndex
 
@@ -135,7 +135,7 @@
         fsIndex = fsData._files.findIndex(f => f._fullPath == '/SaveFile.gwsave')
 
         let data = fsData._files[fsIndex]._data
-        let bytes = new Uint8Array(data)
+        let bytes = Uint8Array.from(data)
 
         text = parseBody(bytes)
       } else {
@@ -269,33 +269,33 @@
       case "gwsaveSwitch": {
         let bytes = stringToBytes(json)
 
-        return new Uint8Array([
-          ...switchHeader,
-          ...vlq(bytes.length),
-          ...bytes,
+        return concatBytes(
+          switchHeader,
+          vlq(bytes.length),
+          bytes,
           0x0B
-        ])
+        )
       }
 
       case "fs": {
         let bytes = stringToBytes(json)
 
-        let payload = [
-          ...switchHeader,
-          ...vlq(bytes.length),
-          ...bytes,
+        let payload = concatBytes(
+          switchHeader,
+          vlq(bytes.length),
+          bytes,
           0x0B
-        ]
+        )
 
         if (fileExtension == "fs") {
-          fsData._files[fsIndex]._data = payload
+          fsData._files[fsIndex]._data = Array.from(payload)
           return JSON.stringify(fsData)
         } else {
           let fs = {
             _files: [
               {
                 _fullPath: "/SaveFile.gwsave",
-                _data: payload
+                _data: Array.from(payload)
               }
             ],
             _directories: []
@@ -333,7 +333,7 @@
 
   function vlq(n) {
     if (n == 0) {
-      return new Uint8Array([0])
+      return Uint8Array.of(0)
     }
 
     let bytes = new Uint8Array(Math.ceil(Math.log2(n + 1) / 7))
@@ -358,6 +358,28 @@
 
     for (let i = 0; i < string.length; ++i) {
       bytes[i] = string.charCodeAt(i)
+    }
+
+    return bytes
+  }
+
+  function concatBytes(...args) {
+    let size = args.reduce(
+      (sum, arg) => sum += ArrayBuffer.isView(arg) ? arg.length : 1,
+      0
+    )
+
+    let bytes = new Uint8Array(size)
+
+    let offset = 0
+
+    for (let arg of args) {
+      if (ArrayBuffer.isView(arg)) {
+        bytes.set(arg, offset)
+        offset += arg.length
+      } else {
+        bytes[offset++] = arg
+      }
     }
 
     return bytes
