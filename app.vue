@@ -269,12 +269,12 @@
       case "gwsaveSwitch": {
         let bytes = stringToBytes(json)
 
-        return Uint8Array.of(
+        return new Uint8Array([
           ...switchHeader,
           ...vlq(bytes.length),
           ...bytes,
           0x0B
-        )
+        ])
       }
 
       case "fs": {
