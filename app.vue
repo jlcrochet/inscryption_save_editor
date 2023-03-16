@@ -108,12 +108,11 @@
 
   const saveFile = useState('saveFile')
 
-  const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
   // Standard header for Nintendo Switch save files; not sure what these bytes
   // indicate, but they seem to be consistent.
-  const switchHeader = [0, 1, 0, 0, 0, 255, 255, 255, 255, 1, 0, 0, 0, 0, 0, 0, 0, 6, 1, 0, 0, 0]
+  const switchHeader = new Uint8Array([0, 1, 0, 0, 0, 255, 255, 255, 255, 1, 0, 0, 0, 0, 0, 0, 0, 6, 1, 0, 0, 0])
 
   let fileExtension, fsData, fsIndex
 
@@ -253,7 +252,7 @@
 
   function createFile() {
     let payload = generatePayload()
-    let blob = new Blob(payload)
+    let blob = new Blob([payload], { type: "application/octet-stream" })
 
     ghostLink.value.href = URL.createObjectURL(blob)
     ghostLink.value.click()
@@ -264,22 +263,22 @@
 
     switch (outputFormat.value) {
       case "gwsavePC": {
-        return [json]
+        return json
       }
 
       case "gwsaveSwitch": {
-        let bytes = encoder.encode(json)
+        let bytes = stringToBytes(json)
 
-        return [
-          String.fromCharCode(...switchHeader),
-          String.fromCharCode(...vlq(bytes.length)),
-          json,
-          "\x0B"
-        ]
+        return Uint8Array.of(
+          ...switchHeader,
+          ...vlq(bytes.length),
+          ...bytes,
+          0x0B
+        )
       }
 
       case "fs": {
-        let bytes = encoder.encode(json)
+        let bytes = stringToBytes(json)
 
         let payload = [
           ...switchHeader,
@@ -290,7 +289,7 @@
 
         if (fileExtension == "fs") {
           fsData._files[fsIndex]._data = payload
-          return [JSON.stringify(fsData)]
+          return JSON.stringify(fsData)
         } else {
           let fs = {
             _files: [
@@ -302,7 +301,7 @@
             _directories: []
           }
 
-          return [JSON.stringify(fs)]
+          return JSON.stringify(fs)
         }
       }
 
@@ -350,6 +349,16 @@
 
       bytes[size++] = septet
     } while (n > 0)
+
+    return bytes
+  }
+
+  function stringToBytes(string) {
+    let bytes = new Uint8Array(string.length)
+
+    for (let i = 0; i < string.length; ++i) {
+      bytes[i] = string.charCodeAt(i)
+    }
 
     return bytes
   }
