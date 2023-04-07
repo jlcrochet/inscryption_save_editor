@@ -142,7 +142,7 @@
         let buffer = await file.arrayBuffer()
         let bytes = new Uint8Array(buffer)
 
-        if (bytes[0] == 0x7B /*{*/) {
+        if (bytes[0] == 0x7B /* { */) {
           outputFormat.value = "gwsavePC"
           text = decoder.decode(bytes)
         } else {
@@ -211,13 +211,12 @@
     for (let deck of decks) {
       // Normalize the card mod info list:
       //
-      // 1. Ensure that all mod info keys are in the format
-      // `[name]#[index]`.
+      // 1. Ensure that all mod info keys are in the format `[name]#[index]`.
       //
-      // 2. Ensure that the mod info list is cowitnessed
-      // with the card list for easier lookups.
+      // 2. Ensure that the mod info list is cowitnessed with the card list
+      // for easier lookups.
       for (let modInfo of deck.cardIdModInfos.$rcontent) {
-        if (/^[\w!]+$/.test(modInfo.$k)) {
+        if (!/#\d+$/.test(modInfo.$k)) {
           modInfo.$k += "#0"
         }
       }
@@ -267,25 +266,11 @@
       }
 
       case "gwsaveSwitch": {
-        let bytes = stringToBytes(json)
-
-        return concatBytes(
-          switchHeader,
-          vlq(bytes.length),
-          bytes,
-          0x0B
-        )
+        return generateBytes(json)
       }
 
       case "fs": {
-        let bytes = stringToBytes(json)
-
-        let payload = concatBytes(
-          switchHeader,
-          vlq(bytes.length),
-          bytes,
-          0x0B
-        )
+        let payload = generateBytes(json)
 
         if (fileExtension == "fs") {
           fsData._files[fsIndex]._data = Array.from(payload)
@@ -311,6 +296,45 @@
     }
   }
 
+  function generateBytes(json) {
+    let size =
+      switchHeader.length +
+      json.length +
+      Math.ceil(Math.log2(json.length + 1) / 7) +
+      1
+
+    let bytes = new Uint8Array(size)
+    let offset = 0
+
+    // header
+    bytes.set(switchHeader, offset)
+    offset += switchHeader.length
+
+    // vlq
+    let n = json.length
+
+    do {
+      let septet = n & 0b1111111
+      n >>= 7
+
+      if (n > 0) {
+        septet |= 1 << 7
+      }
+
+      bytes[offset++] = septet
+    } while (n > 0)
+
+    // body
+    for (let i = 0; i < json.length; ++i) {
+      bytes[offset++] = json.charCodeAt(i)
+    }
+
+    // EOF
+    bytes[offset] = 0x0B
+
+    return bytes
+  }
+
   function parseBody(bytes) {
     // Skip VLQ
     let start
@@ -325,63 +349,9 @@
     let payload = new Uint8Array(
       bytes.buffer,
       start,
-      bytes.lastIndexOf(0x7D /*}*/) + 1 - start
+      bytes.lastIndexOf(0x7D /* } */) + 1 - start
     )
 
     return decoder.decode(payload)
-  }
-
-  function vlq(n) {
-    if (n == 0) {
-      return Uint8Array.of(0)
-    }
-
-    let bytes = new Uint8Array(Math.ceil(Math.log2(n + 1) / 7))
-    let size = 0
-
-    do {
-      let septet = n & 0b1111111
-      n >>= 7
-
-      if (n > 0) {
-        septet |= 1 << 7
-      }
-
-      bytes[size++] = septet
-    } while (n > 0)
-
-    return bytes
-  }
-
-  function stringToBytes(string) {
-    let bytes = new Uint8Array(string.length)
-
-    for (let i = 0; i < string.length; ++i) {
-      bytes[i] = string.charCodeAt(i)
-    }
-
-    return bytes
-  }
-
-  function concatBytes(...args) {
-    let size = args.reduce(
-      (sum, arg) => sum += ArrayBuffer.isView(arg) ? arg.length : 1,
-      0
-    )
-
-    let bytes = new Uint8Array(size)
-
-    let offset = 0
-
-    for (let arg of args) {
-      if (ArrayBuffer.isView(arg)) {
-        bytes.set(arg, offset)
-        offset += arg.length
-      } else {
-        bytes[offset++] = arg
-      }
-    }
-
-    return bytes
   }
 </script>
