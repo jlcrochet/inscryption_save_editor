@@ -84,7 +84,7 @@
       </p>
     </template>
 
-    <a ref=ghostLink :download=filename hidden />
+    <a ref=ghostLink hidden />
   </div>
 </template>
 
@@ -95,14 +95,11 @@
   const loading = ref(false)
   const outputFormat = ref("gwsavePC")
 
-  const filename = computed(() => {
-    switch (outputFormat.value) {
-      case "gwsavePC": return "SaveFile.gwsave"
-      case "gwsaveSwitch": return "SaveFile.gwsave"
-      case "fs": return "save.fs"
-      default: throw "Invalid output format"
-    }
-  })
+  const defaultFileNames = {
+    gwsavePC: "SaveFile.gwsave",
+    gwsaveSwitch: "SaveFile.gwsave",
+    fs: "save.fs"
+  }
 
   const ghostLink = shallowRef(null)
 
@@ -254,6 +251,7 @@
     let blob = new Blob([payload], { type: "application/octet-stream" })
 
     ghostLink.value.href = URL.createObjectURL(blob)
+    ghostLink.value.download = defaultFileNames[outputFormat.value]
     ghostLink.value.click()
   }
 
@@ -310,7 +308,7 @@
     bytes.set(switchHeader, offset)
     offset += switchHeader.length
 
-    // vlq
+    // VLQ
     let n = json.length
 
     do {
