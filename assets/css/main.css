@@ -11,6 +11,10 @@ input[type=checkbox] {
     border: 2px solid black;
 }
 
+table {
+    border-collapse: collapse;
+}
+
 td {
     white-space: nowrap;
 }
