@@ -51,17 +51,17 @@
                 </tr>
 
                 <tr>
-                  <td><span title="Modifies the number of sacrifices this card requires to play.">Blood</span>:</td>
+                  <td><span title="Increases or decreases the number of sacrifices this card requires to play.">Blood</span>:</td>
                   <td><input type=number v-model.lazy.number=mod.bloodCostAdjustment /></td>
                 </tr>
 
                 <tr>
-                  <td><span title="Modifies the number of bones this card requires to play.">Bones</span>:</td>
+                  <td><span title="Increases or decreases the number of bones this card requires to play.">Bones</span>:</td>
                   <td><input type=number v-model.lazy.number=mod.bonesCostAdjustment /></td>
                 </tr>
 
                 <tr>
-                  <td><span title="Modifies the amount of energy this card requires to play.">Energy</span>:</td>
+                  <td><span title="Increases or decreases the amount of energy this card requires to play.">Energy</span>:</td>
                   <td><input type=number v-model.lazy.number=mod.energyCostAdjustment /></td>
                 </tr>
 
