@@ -157,7 +157,7 @@
 
       text = text
         .replace(/\$iref:\d+/g, '"$&"')
-        .replace(/"(position|\w*?Position)":\s*{\s*"\$type":\s*(".*?"|-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)\s*}/g, '"$1":{"$type":$2,"x":$3,"y":$4}')
+        .replace(/"(position|\w*?Position)":\s*{\s*"\$type":\s*(".*?"|\S*?),\s*(\S*?),\s*(\S*?)\s*}/g, '"$1":{"$type":$2,"x":$3,"y":$4}')
 
       let ids = []
       let types = []
