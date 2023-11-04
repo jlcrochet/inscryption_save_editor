@@ -264,7 +264,7 @@
       loading.value = false
     } catch (error) {
       console.error(error)
-      alert("An error occurred while parsing the file. Please e-mail at jlcrochet91@pm.me me or post an issue on GitHub (https://github.com/jlcrochet/inscryption-save-editor) and I will try to troubleshoot the issue.")
+      alert("An error occurred while parsing the file. Please e-mail at jlcrochet91@pm.me me or post an issue on GitHub (https://github.com/jlcrochet/inscryption_save_editor) and I will try to troubleshoot the issue.")
     }
   }
 
@@ -278,7 +278,7 @@
       ghostLink.value.click()
     } catch (error) {
       console.error(error)
-      alert('An error occurred while creating the file. Please e-mail me at jlcrochet91@pm.me or post an issue on GitHub (https://github.com/jlcrochet/inscryption-save-editor) and I will try to troubleshoot the issue.')
+      alert('An error occurred while creating the file. Please e-mail me at jlcrochet91@pm.me or post an issue on GitHub (https://github.com/jlcrochet/inscryption_save_editor) and I will try to troubleshoot the issue.')
     }
   }
 
