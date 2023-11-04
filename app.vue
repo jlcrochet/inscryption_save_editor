@@ -41,37 +41,63 @@
     <template v-else-if=saveFile>
       <p>
         <form name=main @submit.prevent=createFile>
-          <tabs>
-            <tab title="Global">
-              <forms-global />
-            </tab>
+          <template v-if=saveFile.ascensionData>
+            <tabs>
+              <tab title="Global">
+                <forms-global />
+              </tab>
 
-            <tab title="Part One">
-              <forms-part-one />
-            </tab>
+              <tab title="Part One">
+                <forms-part-one />
+              </tab>
 
-            <tab title="Part Two">
-              <forms-part-two />
-            </tab>
+              <tab title="Part Two">
+                <forms-part-two />
+              </tab>
 
-            <tab title="Part Three">
-              <forms-part-three />
-            </tab>
+              <tab title="Part Three">
+                <forms-part-three />
+              </tab>
 
-            <tab title="Part Four">
-              <forms-part-four />
-            </tab>
+              <tab title="Part Four">
+                <forms-part-four />
+              </tab>
 
-            <tab title="Kaycee's Mod">
-              <template v-if=saveFile.ascensionData.currentRun>
-                <forms-kmod />
-              </template>
+              <tab title="Kaycee's Mod">
+                <template v-if=saveFile.ascensionData?.currentRun>
+                  <forms-kmod />
+                </template>
 
-              <template v-else>
-                <forms-kmod-no-run />
-              </template>
-            </tab>
-          </tabs>
+                <template v-else>
+                  <forms-kmod-no-run />
+                </template>
+              </tab>
+            </tabs>
+          </template>
+
+          <template v-else>
+            <tabs>
+              <tab title="Global">
+                <forms-global />
+              </tab>
+
+              <tab title="Part One">
+                <forms-part-one />
+              </tab>
+
+              <tab title="Part Two">
+                <forms-part-two />
+              </tab>
+
+              <tab title="Part Three">
+                <forms-part-three />
+              </tab>
+
+              <tab title="Part Four">
+                <forms-part-four />
+              </tab>
+            </tabs>
+          </template>
 
           <p>
             <button>Save</button>&nbsp;&nbsp;&nbsp;&nbsp;Output format:&nbsp;<select v-model=outputFormat>
@@ -114,14 +140,11 @@
   let fileExtension, fsData, fsIndex
 
   async function parseFile(file) {
-    loading.value = true
-
-    let data
-
     try {
-      let text
-
+      loading.value = true
       fileExtension = file.name.substring(file.name.lastIndexOf('.') + 1)
+
+      let text
 
       if (fileExtension == "fs") {
         outputFormat.value = "fs"
@@ -162,7 +185,7 @@
       let ids = []
       let types = []
 
-      data = JSON.parse(text, function(key, value) {
+      let data = JSON.parse(text, function(key, value) {
         switch (key) {
           case "$id": {
             ids[value] = this
@@ -188,71 +211,75 @@
 
         return value
       })
-    } catch (error) {
-      console.error(error)
-      alert("There was an error parsing the file. Please e-mail me or post an issue on GitHub and I will try to troubleshoot the issue.")
-      return
-    }
 
-    let decks = [
-      data.currentRun.playerDeck,
-      data.gbcData.deck,
-      data.part3Data.deck,
-      data.grimoraData.deck
-    ]
+      let decks = [
+        data.currentRun.playerDeck,
+        data.gbcData.deck,
+        data.part3Data.deck,
+        data.grimoraData.deck
+      ]
 
-    if (data.ascensionData.currentRun) {
-      decks.push(data.ascensionData.currentRun.playerDeck)
-    }
-
-    for (let deck of decks) {
-      // Normalize the card mod info list:
-      //
-      // 1. Ensure that all mod info keys are in the format `[name]#[index]`.
-      //
-      // 2. Ensure that the mod info list is cowitnessed with the card list
-      // for easier lookups.
-      for (let modInfo of deck.cardIdModInfos.$rcontent) {
-        if (!/#\d+$/.test(modInfo.$k)) {
-          modInfo.$k += "#0"
-        }
+      if (data.ascensionData?.currentRun) {
+        decks.push(data.ascensionData.currentRun.playerDeck)
       }
 
-      let tally = {}
+      for (let deck of decks) {
+        // Normalize the card mod info list:
+        //
+        // 1. Ensure that all mod info keys are in the format `[name]#[index]`.
+        //
+        // 2. Ensure that the mod info list is cowitnessed with the card list
+        // for easier lookups.
+        for (let modInfo of deck.cardIdModInfos.$rcontent) {
+          if (!/#\d+$/.test(modInfo.$k)) {
+            modInfo.$k += "#0"
+          }
+        }
 
-      deck.cardIdModInfos.$rcontent = deck.cardIds.$rcontent.map(name => {
-        tally[name] ??= 0
-        let search = name + "#" + tally[name]++
-        return deck.cardIdModInfos.$rcontent.find(modInfo => modInfo.$k == search)
-      })
-    }
+        let tally = {}
 
-    // Stub boon arrays if they don't already exist:
-    data.currentRun.playerDeck.boonIds ??= {
-      $type: "System.Collections.Generic.List`1[[DiskCardGame.BoonData+Type, Assembly-CSharp]], mscorlib",
-      $rlength: 0,
-      $rcontent: []
-    }
+        deck.cardIdModInfos.$rcontent = deck.cardIds.$rcontent.map(name => {
+          tally[name] ??= 0
+          let search = name + "#" + tally[name]++
+          return deck.cardIdModInfos.$rcontent.find(modInfo => modInfo.$k == search)
+        })
+      }
 
-    if (data.ascensionData.currentRun) {
-      data.ascensionData.currentRun.playerDeck.boonIds ??= {
+      // Stub boon arrays if they don't already exist:
+      data.currentRun.playerDeck.boonIds ??= {
         $type: "System.Collections.Generic.List`1[[DiskCardGame.BoonData+Type, Assembly-CSharp]], mscorlib",
         $rlength: 0,
         $rcontent: []
       }
-    }
 
-    saveFile.value = data
-    loading.value = false
+      if (data.ascensionData?.currentRun) {
+        data.ascensionData.currentRun.playerDeck.boonIds ??= {
+          $type: "System.Collections.Generic.List`1[[DiskCardGame.BoonData+Type, Assembly-CSharp]], mscorlib",
+          $rlength: 0,
+          $rcontent: []
+        }
+      }
+
+      saveFile.value = data
+      loading.value = false
+    } catch (error) {
+      console.error(error)
+      alert("An error occurred while parsing the file. Please e-mail at jlcrochet91@pm.me me or post an issue on GitHub (https://github.com/jlcrochet/inscryption-save-editor) and I will try to troubleshoot the issue.")
+    }
   }
 
   function createFile() {
-    let payload = generatePayload()
-    let blob = new Blob([payload], { type: "application/octet-stream" })
+    try {
+      let payload = generatePayload()
+      let blob = new Blob([payload], { type: "application/octet-stream" })
 
-    ghostLink.value.href = URL.createObjectURL(blob)
-    ghostLink.value.download = defaultFileNames[outputFormat.value]
-    ghostLink.value.click()
+      ghostLink.value.href = URL.createObjectURL(blob)
+      ghostLink.value.download = defaultFileNames[outputFormat.value]
+      ghostLink.value.click()
+    } catch (error) {
+      console.error(error)
+      alert('An error occurred while creating the file. Please e-mail me at jlcrochet91@pm.me or post an issue on GitHub (https://github.com/jlcrochet/inscryption-save-editor) and I will try to troubleshoot the issue.')
+    }
   }
 
   function generatePayload() {
