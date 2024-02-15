@@ -2,15 +2,16 @@
   <div style="margin: 1em">
     <h1>Inscryption Save Editor</h1>
 
-    <noscript>WARNING: This page doesn't work without JavaScript. Please enable JavaScript and refresh the page.</noscript>
+    <noscript>WARNING: This page doesn't work without JavaScript. Please enable JavaScript in your browser and refresh the page.</noscript>
 
     <p>NOTE: Spoilers ahead if you haven't beaten the game yet.</p>
 
     <p>Read the following before use:</p>
 
     <ul>
+      <li>Make sure that you keep a backup of your original save file before experimenting.</li>
       <li>Avoid making manual changes to your save file before uploading; doing so may cause errors.</li>
-      <li>Some cards and sigils may cause errors if played outside of specific contexts; others may do nothing at all. Make sure that you make a backup of your save file before experimenting.</li>
+      <li>Some cards and sigils may cause errors if played outside of specific contexts; others may do nothing at all.</li>
     </ul>
 
     <p>To report problems, e-mail me at <a href=mailto:jlcrochet91@pm.me>jlcrochet91@pm.me</a> or post an issue on <a href=https://github.com/jlcrochet/inscryption_save_editor target=_blank>GitHub</a>.</p>
@@ -144,7 +145,7 @@
       loading.value = true
       fileExtension = file.name.substring(file.name.lastIndexOf('.') + 1)
 
-      let text
+      let bytes
 
       if (fileExtension == "fs") {
         outputFormat.value = "fs"
@@ -155,32 +156,24 @@
         fsIndex = fsData._files.findIndex(f => f._fullPath == '/SaveFile.gwsave')
 
         let data = fsData._files[fsIndex]._data
-        let bytes = Uint8Array.from(data)
 
-        text = parseBody(bytes)
+        bytes = parseBody(Uint8Array.from(data))
       } else {
         let buffer = await file.arrayBuffer()
-        let bytes = new Uint8Array(buffer)
+
+        bytes = new Uint8Array(buffer)
 
         if (bytes[0] == 0x7B /* { */) {
           outputFormat.value = "gwsavePC"
-          text = decoder.decode(bytes)
         } else {
           outputFormat.value = "gwsaveSwitch"
-          text = parseBody(bytes)
+          bytes = parseBody(bytes)
         }
       }
 
-      // There are a few things we have to do to the input file before we can
-      // use it:
-      //
-      // First, we must replace non-standard JSON values with temporary
-      // placeholders; this involves wrapping `$iref` values in quotes and
-      // placing actual `x` and `y` keys inside vectors.
+      bytes = normalizeJSON(bytes)
 
-      text = text
-        .replace(/\$iref:\d+/g, '"$&"')
-        .replace(/"(position|\w*?Position)":\s*{\s*"\$type":\s*(".*?"|\S*?),\s*(\S*?),\s*(\S*?)\s*}/g, '"$1":{"$type":$2,"x":$3,"y":$4}')
+      let text = decoder.decode(bytes)
 
       let ids = []
       let types = []
@@ -261,11 +254,12 @@
       }
 
       saveFile.value = data
-      loading.value = false
     } catch (error) {
       console.error(error)
       alert("An error occurred while parsing the file. Please e-mail at jlcrochet91@pm.me me or post an issue on GitHub (https://github.com/jlcrochet/inscryption_save_editor) and I will try to troubleshoot the issue.")
     }
+
+    loading.value = false
   }
 
   function createFile() {
@@ -280,6 +274,107 @@
       console.error(error)
       alert('An error occurred while creating the file. Please e-mail me at jlcrochet91@pm.me or post an issue on GitHub (https://github.com/jlcrochet/inscryption_save_editor) and I will try to troubleshoot the issue.')
     }
+  }
+
+  // Strips redundant whitespace, wraps `$iref` in quotes, and replaces
+  // Unity-style vectors with JSON-compatible ones
+  function normalizeJSON(bytes) {
+    let output = []
+
+    let stack = []
+    let last = () => stack[stack.length - 1]
+    let coordinateX = true
+    let isKey = true
+
+    for (let i = 0; i < bytes.length; i += 1) {
+      let b = bytes[i]
+
+      if (b <= 0x20 /* whitespace */) {
+        if (last() == 'string') {
+          output.push(b)
+        }
+      } else if (b == 0x22 /* " */) {
+        if (last() == 'string') {
+          stack.pop()
+        } else {
+          stack.push('string')
+        }
+
+        output.push(b)
+      } else if (b >= 0x30 && b <= 0x39 /* digits */) {
+        if (last() == 'object' && isKey) {
+          output.push(0x22, coordinateX ? 0x78 : 0x79, 0x22, 0x3A)  // "x|y":
+          coordinateX = !coordinateX
+
+          while ((b >= 0x30 && b <= 0x39) || b == 0x2E /* digits or . */) {
+            output.push(b)
+            i += 1
+            b = bytes[i]
+          }
+
+          i -= 1
+        } else {
+          output.push(b)
+        }
+      } else if (b == 0x3A /* : */) {
+        if (last() == 'object') {
+          isKey = false
+        }
+
+        output.push(b)
+      } else if (b == 0x5B /* [ */) {
+        if (last() != 'string') {
+          stack.push('array')
+        }
+
+        output.push(b)
+      } else if (b == 0x7B /* { */) {
+        if (last() != 'string') {
+          stack.push('object')
+        }
+
+        output.push(b)
+      } else if (b == 0x5D /* ] */) {
+        if (last() == 'array') {
+          stack.pop()
+        }
+
+        output.push(b)
+      } else if (b == 0x7D /* } */) {
+        if (last() == 'object') {
+          stack.pop()
+          isKey = true
+        }
+
+        output.push(b)
+      } else if (b == 0x2C /* , */) {
+        if (last() == 'object') {
+          isKey = true
+        }
+
+        output.push(b)
+      } else if (b == 0x24 /* $ */) {
+        if (last() == 'string') {
+          output.push(b)
+        } else {
+          output.push(0x22)
+
+          while (b > 0x20 && b != 0x2C && b != 0x5D && b != 0x7D /* [^[:space:],\]}] */) {
+            output.push(b)
+            i += 1
+            b = bytes[i]
+          }
+
+          i -= 1
+
+          output.push(0x22)
+        }
+      } else {
+        output.push(b)
+      }
+    }
+
+    return Uint8Array.from(output)
   }
 
   function generatePayload() {
@@ -377,6 +472,6 @@
       bytes.lastIndexOf(0x7D /* } */) + 1 - start
     )
 
-    return decoder.decode(payload)
+    return payload
   }
 </script>
