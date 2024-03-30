@@ -101,7 +101,8 @@
           </template>
 
           <p>
-            <button>Save</button>&nbsp;&nbsp;&nbsp;&nbsp;Output format:&nbsp;<select v-model=outputFormat>
+            <button>Save</button>&nbsp;&nbsp;&nbsp;&nbsp;Output format:&nbsp;
+            <select v-model=outputFormat>
               <option value=gwsavePC>.gwsave (PC)</option>
               <option value=gwsaveSwitch>.gwsave (Nintendo Switch)</option>
               <option value=fs>.fs (Checkpoint)</option>
@@ -132,7 +133,12 @@
 
   const saveFile = useState('saveFile')
 
-  const decoder = new TextDecoder()
+  const codec = {
+    encoder: new TextEncoder(),
+    decoder: new TextDecoder(),
+    encode(text) { return this.encoder.encode(text) },
+    decode(bytes) { return this.decoder.decode(bytes) }
+  }
 
   // Standard header for Nintendo Switch save files; not sure what these bytes
   // indicate, but they seem to be consistent.
@@ -173,7 +179,7 @@
 
       bytes = normalizeJSON(bytes)
 
-      let text = decoder.decode(bytes)
+      let text = codec.decode(bytes)
 
       let ids = []
       let types = []
@@ -301,12 +307,12 @@
         }
 
         output.push(b)
-      } else if (b >= 0x30 && b <= 0x39 /* digits */) {
+      } else if (b == 0x2D || (b >= 0x30 && b <= 0x39) /* - or digits */) {
         if (last() == 'object' && isKey) {
           output.push(0x22, coordinateX ? 0x78 : 0x79, 0x22, 0x3A)  // "x|y":
           coordinateX = !coordinateX
 
-          while ((b >= 0x30 && b <= 0x39) || b == 0x2E /* digits or . */) {
+          while (b == 0x2D || b == 0x2E || (b >= 0x30 && b <= 0x39) /* - or . or digits */) {
             output.push(b)
             i += 1
             b = bytes[i]
@@ -417,21 +423,27 @@
   }
 
   function generateBytes(json) {
+    let bytes = codec.encode(json)
+
+    // length of header bytes +
+    // length of input +
+    // number of bytes needed for storing VLQ +
+    // EOF
     let size =
       switchHeader.length +
-      json.length +
-      Math.ceil(Math.log2(json.length + 1) / 7) +
+      bytes.length +
+      Math.ceil(Math.log2(bytes.length + 1) / 7) +
       1
 
-    let bytes = new Uint8Array(size)
+    let output = new Uint8Array(size)
     let offset = 0
 
-    // header
-    bytes.set(switchHeader, offset)
+    // 1. Header
+    output.set(switchHeader, offset)
     offset += switchHeader.length
 
-    // VLQ
-    let n = json.length
+    // 2. VLQ
+    let n = bytes.length
 
     do {
       let septet = n & 0b1111111
@@ -441,18 +453,17 @@
         septet |= 1 << 7
       }
 
-      bytes[offset++] = septet
+      output[offset++] = septet
     } while (n > 0)
 
-    // body
-    for (let i = 0; i < json.length; ++i) {
-      bytes[offset++] = json.charCodeAt(i)
-    }
+    // 3. Body
+    output.set(bytes, offset)
+    offset += bytes.length
 
-    // EOF
-    bytes[offset] = 0x0B
+    // 4. EOF
+    output[offset] = 0x0B
 
-    return bytes
+    return output
   }
 
   function parseBody(bytes) {
