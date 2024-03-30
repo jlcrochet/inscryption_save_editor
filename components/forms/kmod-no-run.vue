@@ -16,7 +16,7 @@
 
     <tab title="Conquered Starter Decks">
       <table cellpadding=2>
-        <template v-for="deck in gameData.starterDecks">
+        <template v-for="deck in starterDecks">
           <tr>
             <td>{{ deck }}</td>
             <td>
@@ -33,6 +33,7 @@
 </template>
 
 <script setup>
+  import { starterDecks } from '~/game-data'
+
   const saveFile = useState('saveFile')
-  const gameData = useState('gameData')
 </script>

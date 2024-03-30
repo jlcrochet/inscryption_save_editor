@@ -117,9 +117,6 @@
 </template>
 
 <script setup>
-  import data from './game-data.json'
-  const gameData = useState('gameData', () => data)
-
   const loading = ref(false)
   const outputFormat = ref("gwsavePC")
 

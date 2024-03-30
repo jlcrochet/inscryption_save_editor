@@ -17,5 +17,4 @@
 
 <script setup>
   const saveFile = useState('saveFile')
-  const gameData = useState('gameData')
 </script>

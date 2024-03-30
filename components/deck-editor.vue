@@ -12,7 +12,7 @@
         <tr class=card>
           <td>
             <select :value=card @input="updateCardSelection(i, $event.target.value)" required>
-              <template v-for="[gameName, value] in gameData.cardNames">
+              <template v-for="[gameName, value] in cardNames">
                 <option :value=value>{{ gameName }}</option>
               </template>
             </select>
@@ -89,7 +89,7 @@
 
                   <td>
                     <select multiple size=8 v-model=mod.abilities.$rcontent @change="mod.abilities.$rlength = $event.target.selectedOptions.length">
-                      <template v-for="([ability, description], k) in gameData.abilities">
+                      <template v-for="([ability, description], k) in abilities">
                         <option :value="k + 1" :title=description>{{ ability }}</option>
                       </template>
                     </select>
@@ -101,7 +101,7 @@
 
                   <td>
                     <select multiple size=8 v-model=mod.negateAbilities.$rcontent @change="mod.negateAbilities.$rlength = $event.target.selectedOptions.length">
-                      <template v-for="([ability, description], k) in gameData.abilities">
+                      <template v-for="([ability, description], k) in abilities">
                         <option :value="k + 1" :title=description>{{ ability }}</option>
                       </template>
                     </select>
@@ -137,14 +137,14 @@
 </template>
 
 <script setup>
+  import { cardNames, abilities } from '~/game-data'
+
   const props = defineProps({
       deck: {
           type: Object,
           required: true
       }
   })
-
-  const gameData = useState('gameData')
 
   function addCard() {
       props.deck.cardIds.$rcontent.push(null)

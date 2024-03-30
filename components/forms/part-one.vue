@@ -342,8 +342,9 @@
 </template>
 
 <script setup>
+  import * as gameData from '~/game-data'
+
   const saveFile = useState('saveFile')
-  const gameData = useState('gameData')
 
   const totemRequired = computed(() => saveFile.value.currentRun.totemTops.$rlength > 0 && saveFile.value.currentRun.totemBottoms.$rlength > 0)
 

@@ -29,7 +29,7 @@
           <td>Sigils ({{ saveFile.part3Data.sideDeckAbilities.$rlength }}):</td>
           <td>
             <select multiple size=8 v-model=saveFile.part3Data.sideDeckAbilities.$rcontent @change="saveFile.part3Data.sideDeckAbilities.$rlength = $event.target.selectedOptions.length">
-              <template v-for="([ability, description], k) in gameData.abilities">
+              <template v-for="([ability, description], k) in abilities">
                 <option :value="k + 1" :title=description>{{ ability }}</option>
               </template>
             </select>
@@ -44,7 +44,7 @@
           <tr>
             <td>
               <select v-model=saveFile.part3Data.items.$rcontent[i] required>
-                <template v-for="[gameName, value] in gameData.items">
+                <template v-for="[gameName, value] in items">
                   <option :value=value>{{ gameName }}</option>
                 </template>
               </select>
@@ -67,8 +67,9 @@
 </template>
 
 <script setup>
+  import { abilities, items } from '~/game-data'
+
   const saveFile = useState('saveFile')
-  const gameData = useState('gameData')
 
   function addItem() {
       saveFile.value.part3Data.items.$rcontent.push(null)
