@@ -4,15 +4,6 @@
 
     <noscript>WARNING: This page doesn't work without JavaScript. Please enable JavaScript in your browser and refresh the page.</noscript>
 
-    <dialog ref=dialog>
-      <p>Hello</p>
-      <form method=dialog>
-        <button>OK</button>
-      </form>
-    </dialog>
-
-    <button type=button @click=dialog.showModal>TEST</button>
-
     <blockquote>
       <p>NOTE: Spoilers ahead if you haven't beaten the game yet.</p>
 
