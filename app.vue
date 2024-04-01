@@ -4,32 +4,43 @@
 
     <noscript>WARNING: This page doesn't work without JavaScript. Please enable JavaScript in your browser and refresh the page.</noscript>
 
-    <p>NOTE: Spoilers ahead if you haven't beaten the game yet.</p>
+    <dialog ref=dialog>
+      <p>Hello</p>
+      <form method=dialog>
+        <button>OK</button>
+      </form>
+    </dialog>
 
-    <p>Read the following before use:</p>
+    <button type=button @click=dialog.showModal>TEST</button>
 
-    <ul>
-      <li>Make sure that you keep a backup of your original save file before experimenting.</li>
-      <li>Avoid making manual changes to your save file before uploading; doing so may cause errors.</li>
-      <li>Some cards and sigils may cause errors if played outside of specific contexts; others may do nothing at all.</li>
-    </ul>
+    <blockquote>
+      <p>NOTE: Spoilers ahead if you haven't beaten the game yet.</p>
 
-    <p>To report problems, e-mail me at <a href=mailto:jlcrochet91@pm.me>jlcrochet91@pm.me</a> or post an issue on <a href=https://github.com/jlcrochet/inscryption_save_editor target=_blank>GitHub</a>.</p>
+      <p>Read the following before use:</p>
 
-    <p>Instructions:</p>
+      <ul>
+        <li>Make sure that you keep a backup of your original save file before experimenting.</li>
+        <li>Avoid making manual changes to your save file before uploading; doing so may cause errors.</li>
+        <li>Some cards and sigils may cause errors if played outside of specific contexts; others may do nothing at all.</li>
+      </ul>
 
-    <ol>
-      <li>
-        Click the button below to upload your save file from your Inscryption directory. The save file should be named <code>SaveFile.gwsave</code>.
-        <ul>
-          <li>This editor can also edit save files produced by <a href=https://github.com/FlagBrew/Checkpoint target=_blank>Checkpoint</a>; simply upload your <code>save.fs</code> file instead and the editor should be able to produce another <code>save.fs</code> that you can restore using Checkpoint.</li>
-          <li>If you want this editor to support save files in other formats, please send me an example save file and I'll see what I can do.</li>
-        </ul>
-      </li>
-      <li>A form will appear on the page; use it to make changes to your save file.</li>
-      <li>After making changes, click the Save button at the bottom of the page; this will create a new file and will prompt you to save it.</li>
-      <li>Save the new file to your Inscryption directory.</li>
-    </ol>
+      <p>To report problems, e-mail me at <a href=mailto:jlcrochet91@pm.me>jlcrochet91@pm.me</a> or post an issue on <a href=https://github.com/jlcrochet/inscryption_save_editor target=_blank>GitHub</a>.</p>
+
+      <p>Instructions:</p>
+
+      <ol>
+        <li>
+          Click the button below to upload your save file from your Inscryption directory. The save file should be named <code>SaveFile.gwsave</code>.
+          <ul>
+            <li>This editor can also edit save files produced by <a href=https://github.com/FlagBrew/Checkpoint target=_blank>Checkpoint</a>; simply upload your <code>save.fs</code> file instead and the editor should be able to produce another <code>save.fs</code> that you can restore using Checkpoint.</li>
+            <li>If you want this editor to support save files in other formats, please send me an example save file and I'll see what I can do.</li>
+          </ul>
+        </li>
+        <li>A form will appear on the page; use it to make changes to your save file.</li>
+        <li>After making changes, click the Save button at the bottom of the page; this will create a new file and will prompt you to save it.</li>
+        <li>Save the new file to your Inscryption directory.</li>
+      </ol>
+    </blockquote>
 
     <input type=file accept=.gwsave,.fs @click="$event.target.value = null" @input=parseFile($event.target.files[0]) />
 
@@ -48,20 +59,20 @@
                 <forms-global />
               </tab>
 
-              <tab title="Part One">
-                <forms-part-one />
+              <tab title="Act I">
+                <forms-act-i />
               </tab>
 
-              <tab title="Part Two">
-                <forms-part-two />
+              <tab title="Act II">
+                <forms-act-ii />
               </tab>
 
-              <tab title="Part Three">
-                <forms-part-three />
+              <tab title="Act III">
+                <forms-act-iii />
               </tab>
 
-              <tab title="Part Four">
-                <forms-part-four />
+              <tab title="Finale">
+                <forms-finale />
               </tab>
 
               <tab title="Kaycee's Mod">
@@ -82,27 +93,26 @@
                 <forms-global />
               </tab>
 
-              <tab title="Part One">
-                <forms-part-one />
+              <tab title="Act I">
+                <forms-act-i />
               </tab>
 
-              <tab title="Part Two">
-                <forms-part-two />
+              <tab title="Act II">
+                <forms-act-ii />
               </tab>
 
-              <tab title="Part Three">
-                <forms-part-three />
+              <tab title="Act III">
+                <forms-act-iii />
               </tab>
 
-              <tab title="Part Four">
-                <forms-part-four />
+              <tab title="Finale">
+                <forms-finale />
               </tab>
             </tabs>
           </template>
 
           <p>
-            <button>Save</button>&nbsp;&nbsp;&nbsp;&nbsp;Output format:&nbsp;
-            <select v-model=outputFormat>
+            <button>Save</button>&nbsp;&nbsp;&nbsp;&nbsp;Output format:&nbsp;<select v-model=outputFormat>
               <option value=gwsavePC>.gwsave (PC)</option>
               <option value=gwsaveSwitch>.gwsave (Nintendo Switch)</option>
               <option value=fs>.fs (Checkpoint)</option>
@@ -127,6 +137,8 @@
   }
 
   const ghostLink = shallowRef(null)
+
+  const dialog = shallowRef(null)
 
   const saveFile = useState('saveFile')
 
@@ -442,8 +454,9 @@
     // 2. VLQ
     let n = bytes.length
 
-    do {
-      let septet = n & 0b1111111
+    while (n > 0) {
+      let septet = n & 0b0111_1111
+
       n >>= 7
 
       if (n > 0) {
@@ -451,13 +464,13 @@
       }
 
       output[offset++] = septet
-    } while (n > 0)
+    }
 
     // 3. Body
     output.set(bytes, offset)
     offset += bytes.length
 
-    // 4. EOF
+    // 4. EOF; ASCII Vertical Tab (0x0B) is used to indicate EOF
     output[offset] = 0x0B
 
     return output

@@ -18,3 +18,11 @@ table {
 td {
     white-space: nowrap;
 }
+
+blockquote {
+    font-size: small;
+    background-color: #eee;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0.25em 1em;
+}

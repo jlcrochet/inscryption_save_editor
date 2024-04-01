@@ -3,15 +3,13 @@
     <legend>
       <table>
         <tbody>
-          <tr>
-            <template v-for="(tab, i) in tabs">
-              <td>
-                <button type=button :disabled="i == tabIndex" @click=setIndex(i)>
-                  {{ tab.props.title }}
-                </button>
-              </td>
-            </template>
-          </tr>
+          <template v-for="(tab, i) in tabs">
+            <td>
+              <button type=button :disabled="i == tabIndex" @click=setIndex(i) style='user-select: none'>
+                {{ tab.props.title }}
+              </button>
+            </td>
+          </template>
         </tbody>
       </table>
     </legend>
@@ -29,8 +27,8 @@
   onMounted(() => tabs.value = useSlots().default())
 
   function setIndex(i) {
-      if (document.forms.main.reportValidity()) {
-          tabIndex.value = i
-      }
+    if (document.forms.main.reportValidity()) {
+      tabIndex.value = i
+    }
   }
 </script>

@@ -1,67 +1,72 @@
 <template>
   <tabs>
     <tab title="Miscellaneous">
-      <table cellpadding=2>
-        <tr>
-          <td>Challenge level:</td>
-          <td><input type=number v-model.lazy.number=saveFile.ascensionData.challengeLevel min=0 required /></td>
-        </tr>
+      <table cellpadding=4>
+        <table-input
+          v-model.number=saveFile.ascensionData.challengeLevel
+          label='Challenge level'
+          type=number min=0 required
+        />
+        <table-input
+          v-model.number=saveFile.ascensionData.currentRunSeed
+          label='Run seed'
+          type=number required
+        />
+        <table-input
+          v-model.number=saveFile.ascensionData.currentOuroborosDeaths
+          label='Ouroboros deaths'
+          type=number min=0 required
+        />
+        <table-input
+          v-model.number=saveFile.ascensionData.numRunsSinceReachedFirstBoss
+          label='Runs since first boss was reached'
+          help="If 0, your deck will start with two Rabbit Pelts; if 1, your deck will start with an Opossum and a Rabbit Pelt; else, your deck will start with an Opossum and a Ring Worm."
+          type=number min=0 required
+        />
+        <table-input
+          v-model.number=saveFile.ascensionData.currentRun.currency
+          label=Currency
+          type=number min=0 max=999 required
+        />
+        <table-input
+          v-model.number=saveFile.ascensionData.currentRun.playerLives
+          label=Lives
+          type=number min=0 required
+        />
+        <table-input
+          v-model.number=saveFile.ascensionData.currentRun.maxPlayerLives
+          label='Maximum lives'
+          type=number min=0 required
+        />
 
-        <tr>
-          <td>Run seed:</td>
-          <td><input type=number v-model.lazy.number=saveFile.ascensionData.currentRunSeed required /></td>
-        </tr>
+        <table-select
+          v-model.number=saveFile.ascensionData.currentRun.eyeState
+          label='Eye state'
+          required
+        >
+          <template v-for="(state, i) in gameData.eyeStates">
+            <option :value=i>{{ state }}</option>
+          </template>
+        </table-select>
 
-        <tr>
-          <td>Ouroboros deaths:</td>
-          <td><input type=number v-model.lazy.number=saveFile.ascensionData.currentOuroborosDeaths min=0 required /></td>
-        </tr>
-
-        <tr>
-          <td><span title="If 0, your deck will start with two Rabbit Pelts; if 1, your deck will start with an Opossum and a Rabbit Pelt; else, your deck will start with an Opossum and a Ring Worm.">Runs since first boss was reached</span>:</td>
-          <td><input type=number v-model.lazy.number=saveFile.ascensionData.numRunsSinceReachedFirstBoss min=0 required /></td>
-        </tr>
-
-        <tr>
-          <td>Currency:</td>
-          <td><input type=number v-model.lazy.number=saveFile.ascensionData.currentRun.currency min=0 max=999 required /></td>
-        </tr>
-
-        <tr>
-          <td>Lives:</td>
-          <td><input type=number v-model.lazy.number=saveFile.ascensionData.currentRun.playerLives min=0 required /></td>
-        </tr>
-
-        <tr>
-          <td>Maximum lives:</td>
-          <td><input type=number v-model.lazy.number=saveFile.ascensionData.currentRun.maxPlayerLives min=0 required /></td>
-        </tr>
-
-        <tr>
-          <td>Eye state:</td>
-          <td>
-            <select v-model.number=saveFile.ascensionData.currentRun.eyeState required>
-              <template v-for="(state, i) in gameData.eyeStates">
-                <option :value=i>{{ state }}</option>
-              </template>
-            </select>
-          </td>
-        </tr>
-
-        <tr>
-          <td><span title="If true, the eyes on the Bonelord's skull mounted on the wall will turn red; triggered in-game by clicking on the skull several times.">Bonelord puzzle active</span>:</td>
-          <td><input type=checkbox v-model=saveFile.ascensionData.currentRun.bonelordPuzzleActive /></td>
-        </tr>
-
-        <tr>
-          <td><span title="Whether or not the campfire survivors have been killed.">Survivors dead</span>:</td>
-          <td><input type=checkbox v-model=saveFile.ascensionData.currentRun.survivorsDead /></td>
-        </tr>
-
-        <tr>
-          <td><span title="Whether or not the Skinning Knife has been purchased from the Trapper.">Skinning Knife bought</span>:</td>
-          <td><input type=checkbox v-model=saveFile.ascensionData.currentRun.trapperKnifeBought /></td>
-        </tr>
+        <table-input
+          v-model=saveFile.ascensionData.currentRun.bonelordPuzzleActive
+          label='Bonelord puzzle active'
+          help="If true, the eyes on the Bonelord's skull mounted on the wall will turn red; triggered in-game by clicking on the skull several times."
+          type=checkbox
+        />
+        <table-input
+          v-model=saveFile.ascensionData.currentRun.survivorsDead
+          label='Survivors dead'
+          help="Whether or not the campfire survivors have been killed."
+          type=checkbox
+        />
+        <table-input
+          v-model=saveFile.ascensionData.currentRun.trapperKnifeBought
+          label='Skinning Knife bought'
+          help="Whether or not the Skinning Knife has been purchased from the Trapper."
+          type=checkbox
+        />
       </table>
     </tab>
 
@@ -70,7 +75,7 @@
     </tab>
 
     <tab title="Items">
-      <table cellpadding=2>
+      <table cellpadding=4>
         <template v-for="(consumable, i) in saveFile.ascensionData.currentRun.consumables.$rcontent">
           <tr>
             <td>
@@ -82,97 +87,86 @@
             </td>
 
             <td>
-              <button type=button @click=removeItem(i)>Remove</button>
+              <button type=button @click='listRemove(saveFile.ascensionData.currentRun.consumables, i)'>Remove</button>
             </td>
           </tr>
         </template>
 
         <tr>
           <td>
-            <button type=button @click=addItem>Add</button>
+            <button type=button @click='listAdd(saveFile.ascensionData.currentRun.consumables, null)'>Add</button>
           </td>
         </tr>
       </table>
     </tab>
 
     <tab title="Totems">
-      <table cellpadding=2>
-        <tr>
-          <td>Tribes ({{ saveFile.ascensionData.currentRun.totemTops.$rlength }}):</td>
+      <table cellpadding=4>
+        <table-select
+          v-model=totemTops.$rcontent
+          @change="totemTops.$rlength = $event.target.selectedOptions.length"
+          label=Tribes
+          help="Which totem heads you have"
+          multiple size=6
+        >
+          <template v-for='(tribe, i) in gameData.tribes'>
+            <option :value="i + 1">{{ tribe }}</option>
+          </template>
+        </table-select>
 
-          <td>
-            <select multiple size=6 v-model=saveFile.ascensionData.currentRun.totemTops.$rcontent @change="saveFile.ascensionData.currentRun.totemTops.$rlength = $event.target.selectedOptions.length">
-              <template v-for="(tribe, i) in gameData.tribes">
-                <option :value="i + 1">{{ tribe }}</option>
-              </template>
-            </select>
-          </td>
-        </tr>
-
-        <template v-if=totemRequired>
-          <tr>
-            <td>Selected:</td>
-
-            <td>
-              <select v-model=saveFile.ascensionData.currentRun.totems.$rcontent[0].tribe required>
-                <template v-for="i in saveFile.ascensionData.currentRun.totemTops.$rcontent">
-                  <option :value=i>{{ gameData.tribes[i - 1] }}</option>
-                </template>
-              </select>
-            </td>
-          </tr>
+        <template v-if='totems.$rlength > 0'>
+          <table-select v-model=totems.$rcontent[0].tribe label=Selected required>
+            <template v-for="i in totemTops.$rcontent">
+              <option :value=i>{{ gameData.tribes[i - 1] }}</option>
+            </template>
+          </table-select>
         </template>
-      </table>
 
-      <hr />
+        <br />
 
-      <table cellpadding=2>
-        <tr>
-          <td>Sigils ({{ saveFile.ascensionData.currentRun.totemBottoms.$rlength }}):</td>
+        <table-select
+          v-model=totemBottoms.$rcontent
+          @change="totemBottoms.$rlength = $event.target.selectedOptions.length"
+          label=Sigils
+          help="Which totem bodies you have"
+          multiple size=10
+        >
+          <template v-for="([ability, description], i) in gameData.abilities">
+            <option :value="i + 1" :title=description>{{ ability }}</option>
+          </template>
+        </table-select>
 
-          <td>
-            <select multiple size=10 v-model=saveFile.ascensionData.currentRun.totemBottoms.$rcontent @change="saveFile.ascensionData.currentRun.totemBottoms.$rlength = $event.target.selectedOptions.length">
-              <template v-for="([ability, description], i) in gameData.abilities">
-                <option :value="i + 1" :title=description>{{ ability }}</option>
-              </template>
-            </select>
-          </td>
-        </tr>
-
-        <template v-if=totemRequired>
-          <tr>
-            <td>Selected:</td>
-
-            <td>
-              <select v-model=saveFile.ascensionData.currentRun.totems.$rcontent[0].ability required>
-                <template v-for="i in saveFile.ascensionData.currentRun.totemBottoms.$rcontent">
-                  <option :value=i :title="gameData.abilities[i - 1][1]">{{ gameData.abilities[i - 1][0] }}</option>
-                </template>
-              </select>
-            </td>
-          </tr>
+        <template v-if='totems.$rlength > 0'>
+          <table-select v-model=totems.$rcontent[0].ability label=Selected required>
+            <template v-for="i in totemBottoms.$rcontent">
+              <option :value=i :title='gameData.abilities[i - 1][1]'>{{ gameData.abilities[i - 1][0] }}</option>
+            </template>
+          </table-select>
         </template>
       </table>
     </tab>
 
     <tab title="Boons">
-      <table cellpadding=2>
+      <table cellpadding=4>
         <template v-for="([name, description], i) in gameData.boons">
-          <tr>
-            <td><span :title=description>{{ name }}</span></td>
-            <td>
-              <input type=checkbox
-                     :value="i + 1"
-                     v-model=saveFile.ascensionData.currentRun.playerDeck.boonIds.$rcontent
-                     @change="saveFile.ascensionData.currentRun.playerDeck.boonIds.$rlength = saveFile.ascensionData.currentRun.playerDeck.boonIds.$rcontent.length" />
-            </td>
-          </tr>
+          <table-input
+            v-model=saveFile.ascensionData.currentRun.playerDeck.boonIds.$rcontent
+            :value="i + 1"
+            @change="saveFile.ascensionData.currentRun.playerDeck.boonIds.$rlength = saveFile.ascensionData.currentRun.playerDeck.boonIds.$rcontent.length"
+            :label=name
+            :help=description
+            type=checkbox
+          />
         </template>
       </table>
     </tab>
 
     <tab title="Painting Puzzle">
-      <table cellpadding=2>
+      <blockquote>
+        These represent spaces on the board from left to right
+      </blockquote>
+
+      <table cellpadding=4>
         <template v-for="(card, i) in saveFile.ascensionData.oilPaintingState.puzzleSolution.$rcontent">
           <tr>
             <td>
@@ -189,65 +183,50 @@
 
       <hr />
 
-      <table cellpadding=2>
-        <tr>
-          <td>Solved:</td>
-          <td><input type=checkbox v-model=saveFile.ascensionData.oilPaintingState.puzzleSolved /></td>
-        </tr>
-
-        <tr>
-          <td>Reward:</td>
-          <td>
-            <select v-model.number=saveFile.ascensionData.oilPaintingState.rewardIndex>
-              <option value=0>Magickal Bleach</option>
-              <option value=1>Wiseclock</option>
-              <option value=2>Magpie's Glass</option>
-            </select>
-          </td>
-        </tr>
-
-        <tr>
-          <td>Reward taken:</td>
-          <td><input type=checkbox v-model=saveFile.ascensionData.oilPaintingState.rewardTaken /></td>
-        </tr>
+      <table cellpadding=4>
+        <table-input v-model=saveFile.ascensionData.oilPaintingState.puzzleSolved type=checkbox label=Solved />
+        <table-select v-model.number=saveFile.ascensionData.oilPaintingState.rewardIndex label=Reward>
+          <option value=0>Clover</option>
+          <option value=1>Extra Candle</option>
+          <option value=2>Bee Statue</option>
+        </table-select>
+        <table-input v-model=saveFile.ascensionData.oilPaintingState.rewardTaken type=checkbox label='Reward taken' />
       </table>
     </tab>
 
     <tab title="Maps">
-      <table cellpadding=2>
-        <tr>
-          <td><span title="Zero-based index for the current map; 0 for Map #1, 1 for Map #2, etc.">Current map:</span></td>
-          <td><input type=number v-model.lazy.number=saveFile.ascensionData.currentRun.regionTier min=0 required /></td>
-        </tr>
+      <table cellpadding=4>
+        <table-input
+          v-model.number=saveFile.ascensionData.currentRun.regionTier
+          label='Current map'
+          help="Zero-based index for the current map; 0 for Map #1, 1 for Map #2, etc."
+          type=number min=0 max=2 required
+        />
 
         <template v-for="i in saveFile.ascensionData.currentRun.regionOrder.$plength">
-          <tr>
-            <td>Map #{{ i }}:</td>
-            <td>
-              <select v-model.number="saveFile.ascensionData.currentRun.regionOrder.$pcontent[i - 1]">
-                <option value=0>The Woodlands</option>
-                <option value=1>The Wetlands</option>
-                <option value=2>The Snow Line</option>
-                <option value=3>Leshy's Cabin</option>
-              </select>
-            </td>
-          </tr>
+          <table-select
+            v-model.number='saveFile.ascensionData.currentRun.regionOrder.$pcontent[i - 1]'
+            :label="'Map #' + i"
+          >
+            <option value=0>The Woodlands</option>
+            <option value=1>The Wetlands</option>
+            <option value=2>The Snow Line</option>
+            <option value=3>Leshy's Cabin</option>
+          </table-select>
         </template>
       </table>
     </tab>
 
     <tab title="Conquered Starter Decks">
-      <table cellpadding=2>
+      <table cellpadding=4>
         <template v-for="deck in gameData.starterDecks">
-          <tr>
-            <td>{{ deck }}</td>
-            <td>
-              <input type=checkbox
-                     :value=deck
-                     v-model=saveFile.ascensionData.conqueredStarterDecks.$rcontent
-                     @change="saveFile.ascensionData.conqueredStarterDecks.$rlength = saveFile.ascensionData.conqueredStarterDecks.$rcontent.length" />
-            </td>
-          </tr>
+          <table-input
+            v-model=saveFile.ascensionData.conqueredStarterDecks.$rcontent
+            :value=deck
+            @change="saveFile.ascensionData.conqueredStarterDecks.$rlength = saveFile.ascensionData.conqueredStarterDecks.$rcontent.length"
+            :label=deck
+            type=checkbox
+          />
         </template>
       </table>
     </tab>
@@ -256,58 +235,38 @@
 
 <script setup>
   import * as gameData from '~/game-data'
+  import { listAdd, listRemove, listClear } from '~/utils'
 
   const saveFile = useState('saveFile')
 
-  const totemRequired = computed(() => saveFile.value.ascensionData.currentRun.totemTops.$rlength > 0 && saveFile.value.ascensionData.currentRun.totemBottoms.$rlength > 0)
+  const totemTops = ref(saveFile.value.ascensionData.currentRun.totemTops)
+  const totemBottoms = ref(saveFile.value.ascensionData.currentRun.totemBottoms)
+  const totems = ref(saveFile.value.ascensionData.currentRun.totems)
 
-  watch(() => saveFile.value.ascensionData.currentRun.totemTops.$rlength, newValue => {
-      if (newValue == 0) {
-          if (saveFile.value.ascensionData.currentRun.totems.$rlength > 0) {
-              saveFile.value.ascensionData.currentRun.totems.$rcontent.splice(0)
-              saveFile.value.ascensionData.currentRun.totems.$rlength = 0
-          }
+  watch(
+    [
+      () => totemTops.value.$rcontent,
+      () => totemBottoms.value.$rcontent
+    ],
+    ([top, bottom]) => {
+      if (top.length > 0 && bottom.length > 0) {
+        if (totems.value.$rlength == 0) {
+          // Stub totem
+          listAdd(totems.value, {
+            $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
+            tribe: null,
+            ability: null
+          })
+        }
+
+        totems.value.$rcontent[0].tribe = top[0]
+        totems.value.$rcontent[0].ability = bottom[0]
       } else {
-          if (saveFile.value.ascensionData.currentRun.totems.$rlength == 0 && saveFile.value.ascensionData.currentRun.totemBottoms.$rlength > 0) {
-              // Stub totem
-              saveFile.value.ascensionData.currentRun.totems.$rcontent.push({
-                  $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
-                  tribe: null,
-                  ability: null
-              })
-
-              saveFile.value.ascensionData.currentRun.totems.$rlength = 1
-          }
+        if (totems.value.$rlength > 0) {
+          // Empty totems list
+          listClear(totems.value)
+        }
       }
-  })
-
-  watch(() => saveFile.value.ascensionData.currentRun.totemTops.$rlength, newValue => {
-      if (newValue == 0) {
-          if (saveFile.value.ascensionData.currentRun.totems.$rlength > 0) {
-              saveFile.value.ascensionData.currentRun.totems.$rcontent.splice(0)
-              saveFile.value.ascensionData.currentRun.totems.$rlength = 0
-          }
-      } else {
-          if (saveFile.value.ascensionData.currentRun.totems.$rlength == 0 && saveFile.value.ascensionData.currentRun.totemTops.$rlength > 0) {
-              // Stub totem
-              saveFile.value.ascensionData.currentRun.totems.$rcontent.push({
-                  $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
-                  tribe: null,
-                  ability: null
-              })
-
-              saveFile.value.ascensionData.currentRun.totems.$rlength = 1
-          }
-      }
-  })
-
-  function addItem() {
-      saveFile.value.ascensionData.currentRun.consumables.$rcontent.push(null)
-      saveFile.value.ascensionData.currentRun.consumables.$rlength += 1
-  }
-
-  function removeItem(i) {
-      saveFile.value.ascensionData.currentRun.consumables.$rcontent.splice(i, 1)
-      saveFile.value.ascensionData.currentRun.consumables.$rlength -= 1
-  }
+    }
+  )
 </script>

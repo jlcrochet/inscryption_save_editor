@@ -1,31 +1,31 @@
 <template>
   <tabs>
     <tab title="Miscellaneous">
-      <table cellpadding=2>
-        <tr>
-          <td>Challenge level:</td>
-          <td><input type=number v-model.lazy.number=saveFile.ascensionData.challengeLevel min=0 required /></td>
-        </tr>
-
-        <tr>
-          <td><span title="If 0, your deck will start with two Rabbit Pelts; if 1, your deck will start with an Opossum and a Rabbit Pelt; else, your deck will start with an Opossum and a Ring Worm.">Runs since first boss was reached</span>:</td>
-          <td><input type=number v-model.lazy.number=saveFile.ascensionData.numRunsSinceReachedFirstBoss min=0 required /></td>
-        </tr>
+      <table cellpadding=4>
+        <table-input
+          v-model.number=saveFile.ascensionData.challengeLevel
+          label='Challenge level'
+          type=number min=0 required
+        />
+        <table-input
+          v-model.number=saveFile.ascensionData.numRunsSinceReachedFirstBoss
+          label='Runs since first boss was reached'
+          help="If 0, your deck will start with two Rabbit Pelts; if 1, your deck will start with an Opossum and a Rabbit Pelt; else, your deck will start with an Opossum and a Ring Worm."
+          type=number min=0 required
+        />
       </table>
     </tab>
 
     <tab title="Conquered Starter Decks">
-      <table cellpadding=2>
+      <table cellpadding=4>
         <template v-for="deck in starterDecks">
-          <tr>
-            <td>{{ deck }}</td>
-            <td>
-              <input type=checkbox
-                     :value=deck
-                     v-model=saveFile.ascensionData.conqueredStarterDecks.$rcontent
-                     @change="savefile.ascensionData.conqueredStarterDecks.$rlength = savefile.ascensionData.conqueredStarterDecks.$rcontent.length" />
-            </td>
-          </tr>
+          <table-input
+            v-model=saveFile.ascensionData.conqueredStarterDecks.$rcontent
+            :value=deck
+            @change="saveFile.ascensionData.conqueredStarterDecks.$rlength = saveFile.ascensionData.conqueredStarterDecks.$rcontent.length"
+            :label=deck
+            type=checkbox
+          />
         </template>
       </table>
     </tab>
