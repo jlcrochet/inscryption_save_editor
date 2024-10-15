@@ -42,155 +42,154 @@
     </template>
 
     <template v-else-if=saveFile>
-      <p>
-        <form name=main @submit.prevent=createFile>
-          <template v-if=saveFile.ascensionData>
-            <tabs>
-              <tab title="Global">
-                <forms-global />
-              </tab>
+      <form name=main @submit.prevent=createFile>
+        <br />
 
-              <tab title="Act I">
-                <forms-act-i />
-              </tab>
+        <template v-if=saveFile.ascensionData>
+          <tabs>
+            <tab title="Global">
+              <forms-global />
+            </tab>
 
-              <tab title="Act II">
-                <forms-act-ii />
-              </tab>
+            <tab title="Act I">
+              <forms-act-i />
+            </tab>
 
-              <tab title="Act III">
-                <forms-act-iii />
-              </tab>
+            <tab title="Act II">
+              <forms-act-ii />
+            </tab>
 
-              <tab title="Finale">
-                <forms-finale />
-              </tab>
+            <tab title="Act III">
+              <forms-act-iii />
+            </tab>
 
-              <tab title="Kaycee's Mod">
-                <template v-if=saveFile.ascensionData?.currentRun>
-                  <forms-kmod />
-                </template>
+            <tab title="Finale">
+              <forms-finale />
+            </tab>
 
-                <template v-else>
-                  <forms-kmod-no-run />
-                </template>
-              </tab>
-            </tabs>
-          </template>
+            <tab title="Kaycee's Mod">
+              <template v-if=saveFile.ascensionData?.currentRun>
+                <forms-kmod />
+              </template>
 
-          <template v-else>
-            <tabs>
-              <tab title="Global">
-                <forms-global />
-              </tab>
+              <template v-else>
+                <forms-kmod-no-run />
+              </template>
+            </tab>
+          </tabs>
+        </template>
 
-              <tab title="Act I">
-                <forms-act-i />
-              </tab>
+        <template v-else>
+          <tabs>
+            <tab title="Global">
+              <forms-global />
+            </tab>
 
-              <tab title="Act II">
-                <forms-act-ii />
-              </tab>
+            <tab title="Act I">
+              <forms-act-i />
+            </tab>
 
-              <tab title="Act III">
-                <forms-act-iii />
-              </tab>
+            <tab title="Act II">
+              <forms-act-ii />
+            </tab>
 
-              <tab title="Finale">
-                <forms-finale />
-              </tab>
-            </tabs>
-          </template>
+            <tab title="Act III">
+              <forms-act-iii />
+            </tab>
 
-          <p>
-            <button>Save</button>&nbsp;&nbsp;&nbsp;&nbsp;Output format:&nbsp;<select v-model=outputFormat>
-              <option value=gwsavePC>.gwsave (PC)</option>
-              <option value=gwsaveSwitch>.gwsave (Nintendo Switch)</option>
-              <option value=fs>.fs (Checkpoint)</option>
-            </select>
-          </p>
-        </form>
-      </p>
+            <tab title="Finale">
+              <forms-finale />
+            </tab>
+          </tabs>
+        </template>
+
+        <p>
+          <button>Save</button>
+        </p>
+      </form>
     </template>
 
     <a ref=ghostLink hidden />
   </div>
 </template>
 
-<script setup>
+<script setup lang=ts>
   const loading = ref(false)
-  const outputFormat = ref("gwsavePC")
 
-  const defaultFileNames = {
-    gwsavePC: "SaveFile.gwsave",
-    gwsaveSwitch: "SaveFile.gwsave",
-    fs: "save.fs"
-  }
+  const ghostLink = shallowRef<HTMLAnchorElement>(null)
 
-  const ghostLink = shallowRef(null)
+  const saveFile = ref(null)
+  provide('saveFile', saveFile)
 
-  const dialog = shallowRef(null)
-
-  const saveFile = useState('saveFile')
-
-  const codec = {
+  const utf8 = {
     encoder: new TextEncoder(),
     decoder: new TextDecoder(),
-    encode(text) { return this.encoder.encode(text) },
-    decode(bytes) { return this.decoder.decode(bytes) }
+    encode(text: string): Uint8Array
+    {
+      return this.encoder.encode(text)
+    },
+    decode(bytes: Uint8Array): string
+    {
+      return this.decoder.decode(bytes)
+    }
   }
 
-  // Standard header for Nintendo Switch save files; not sure what these bytes
-  // indicate, but they seem to be consistent.
-  const switchHeader = Uint8Array.of(0, 1, 0, 0, 0, 255, 255, 255, 255, 1, 0, 0, 0, 0, 0, 0, 0, 6, 1, 0, 0, 0)
+  let fileName: string
+  let header: Uint8Array | null
+  let fs: any
+  let fsSaveFileIndex: number
 
-  let fileExtension, fsData, fsIndex
-
-  async function parseFile(file) {
+  async function parseFile(file: File)
+  {
     try {
       loading.value = true
-      fileExtension = file.name.substring(file.name.lastIndexOf('.') + 1)
 
-      let bytes
+      fileName = file.name
+      let fileBytes = new Uint8Array(await file.arrayBuffer())
 
-      if (fileExtension == "fs") {
-        outputFormat.value = "fs"
+      fs = null
 
-        let json = await file.text()
+      let body: Uint8Array
 
-        fsData = JSON.parse(json)
-        fsIndex = fsData._files.findIndex(f => f._fullPath == '/SaveFile.gwsave')
-
-        let data = fsData._files[fsIndex]._data
-
-        bytes = parseBody(Uint8Array.from(data))
-      } else {
-        let buffer = await file.arrayBuffer()
-
-        bytes = new Uint8Array(buffer)
-
-        if (bytes[0] == 0x7B /* { */) {
-          outputFormat.value = "gwsavePC"
-        } else {
-          outputFormat.value = "gwsaveSwitch"
-          bytes = parseBody(bytes)
+      if (fileBytes.at(0) == 0x00 && fileBytes.at(-1) == 0x0B /* vertical tab */) {
+        let [h, b] = parseBody(fileBytes)
+        header = h
+        body = b
+      }
+      else if (fileBytes.at(0) == 0x7B /* { */) {
+        let i = 1
+        while (fileBytes.at(i) <= 0x20)
+          i += 1
+        if (utf8.decode(fileBytes.slice(i, i + 8)) == '"_files"') {
+          let json = utf8.decode(fileBytes)
+          fs = JSON.parse(json)
+          fsSaveFileIndex = fs._files.findIndex(f => f._fullPath == '/SaveFile.gwsave')
+          let [h, b] = parseBody(Uint8Array.from(fs._files[fsSaveFileIndex]._data))
+          header = h
+          body = b
+        }
+        else {
+          header = null
+          body = fileBytes
         }
       }
+      else {
+        throw 'Unrecognized file format'
+      }
 
-      bytes = normalizeJSON(bytes)
+      body = normalizeJSON(body)
 
-      let text = codec.decode(bytes)
+      let text = utf8.decode(body)
 
-      let ids = []
-      let types = []
+      let ids: object[] = []
+      let types: string[] = []
 
-      let data = JSON.parse(text, function(key, value) {
+      let data = JSON.parse(text, function(key: string, value: any): any {
         switch (key) {
-          case "$id": {
+          case "$id":
             ids[value] = this
-          } break
-
-          case "$type": {
+            break
+          case "$type":
             if (typeof value == "number") {
               return types[value]
             } else {
@@ -198,14 +197,11 @@
               types[n] = type
               return type
             }
-          } break
-
-          default: {
+          default:
             if (typeof value == "string" && value.startsWith("$iref")) {
               let [_, n] = value.split(":", 2)
-              return ids[n]
+              return ids[parseInt(n)]
             }
-          } break
         }
 
         return value
@@ -218,9 +214,8 @@
         data.grimoraData.deck
       ]
 
-      if (data.ascensionData?.currentRun) {
+      if (data.ascensionData?.currentRun)
         decks.push(data.ascensionData.currentRun.playerDeck)
-      }
 
       for (let deck of decks) {
         // Normalize the card mod info list:
@@ -230,9 +225,8 @@
         // 2. Ensure that the mod info list is cowitnessed with the card list
         // for easier lookups.
         for (let modInfo of deck.cardIdModInfos.$rcontent) {
-          if (!/#\d+$/.test(modInfo.$k)) {
+          if (!/#\d+$/.test(modInfo.$k))
             modInfo.$k += "#0"
-          }
         }
 
         let tally = {}
@@ -268,13 +262,37 @@
     loading.value = false
   }
 
-  function createFile() {
+  function createFile()
+  {
     try {
-      let payload = generatePayload()
-      let blob = new Blob([payload], { type: "application/octet-stream" })
+      let body = JSON.stringify(saveFile.value)
+
+      let parts: (Uint8Array | string)[]
+
+      // Console filesystem
+      if (fs) {
+        let payload = [
+          ...header,
+          ...vlq(body.length),
+          ...utf8.encode(body),
+          0x0B  // vertical tab; used to indicate EOF
+        ]
+        fs._files[fsSaveFileIndex]._data = payload
+        parts = [JSON.stringify(fs)]
+      }
+      // Console standalone
+      else if (header) {
+        parts = [header, vlq(body.length), body, Uint8Array.of(0x0B)]
+      }
+      // PC
+      else {
+        parts = [body]
+      }
+
+      let blob = new Blob(parts, { type: "application/octet-stream" })
 
       ghostLink.value.href = URL.createObjectURL(blob)
-      ghostLink.value.download = defaultFileNames[outputFormat.value]
+      ghostLink.value.download = fileName
       ghostLink.value.click()
     } catch (error) {
       console.error(error)
@@ -282,33 +300,66 @@
     }
   }
 
+  function parseBody(bytes: Uint8Array): [Uint8Array, Uint8Array]
+  {
+    let header = bytes.slice(0, 22)
+
+    // Skip VLQ
+    let start = 22
+    while (bytes[start] > 0x7F)
+      start += 1
+    start += 1
+
+    let body = bytes.slice(start, -1)
+
+    return [header, body]
+  }
+
+  function vlq(n: number): Uint8Array
+  {
+    const size = Math.ceil(Math.log2(n + 1) / 7)
+    const output = new Uint8Array(size)
+
+    let i = 0
+
+    while (n > 0) {
+      let septet = n & 0x7F
+      n >>= 7
+      if (n > 0)
+        septet |= 1 << 7
+      output[i++] = septet
+    }
+
+    return output
+  }
+
   // Strips redundant whitespace, wraps `$iref` in quotes, and replaces
   // Unity-style vectors with JSON-compatible ones
-  function normalizeJSON(bytes) {
-    let output = []
-
-    let stack = []
-    let last = () => stack[stack.length - 1]
+  function normalizeJSON(bytes: Uint8Array): Uint8Array
+  {
+    let output: number[] = []
+    let regions: string[] = []
     let coordinateX = true
     let isKey = true
 
     for (let i = 0; i < bytes.length; i += 1) {
       let b = bytes[i]
+      let last_region = regions.at(-1)
 
       if (b <= 0x20 /* whitespace */) {
-        if (last() == 'string') {
+        if (last_region == 'string')
           output.push(b)
-        }
-      } else if (b == 0x22 /* " */) {
-        if (last() == 'string') {
-          stack.pop()
-        } else {
-          stack.push('string')
-        }
+      }
+      else if (b == 0x22 /* " */) {
+        if (last_region == 'string')
+          regions.pop()
+        else
+          regions.push('string')
 
         output.push(b)
-      } else if (b == 0x2D || (b >= 0x30 && b <= 0x39) /* - or digits */) {
-        if (last() == 'object' && isKey) {
+      }
+      else if (b == 0x2D || (b >= 0x30 && b <= 0x39) /* - or digits */) {
+        if (last_region == 'object' && isKey) {
           output.push(0x22, coordinateX ? 0x78 : 0x79, 0x22, 0x3A)  // "x|y":
           coordinateX = !coordinateX
 
@@ -322,168 +373,58 @@
         } else {
           output.push(b)
         }
-      } else if (b == 0x3A /* : */) {
-        if (last() == 'object') {
+      }
+      else if (b == 0x3A /* : */) {
+        if (last_region == 'object')
           isKey = false
-        }
-
         output.push(b)
-      } else if (b == 0x5B /* [ */) {
-        if (last() != 'string') {
-          stack.push('array')
-        }
-
+      }
+      else if (b == 0x5B /* [ */) {
+        if (last_region != 'string')
+          regions.push('array')
         output.push(b)
-      } else if (b == 0x7B /* { */) {
-        if (last() != 'string') {
-          stack.push('object')
-        }
-
+      }
+      else if (b == 0x7B /* { */) {
+        if (last_region != 'string')
+          regions.push('object')
         output.push(b)
-      } else if (b == 0x5D /* ] */) {
-        if (last() == 'array') {
-          stack.pop()
-        }
-
+      }
+      else if (b == 0x5D /* ] */) {
+        if (last_region == 'array')
+          regions.pop()
         output.push(b)
-      } else if (b == 0x7D /* } */) {
-        if (last() == 'object') {
-          stack.pop()
+      }
+      else if (b == 0x7D /* } */) {
+        if (last_region == 'object') {
+          regions.pop()
           isKey = true
         }
-
         output.push(b)
-      } else if (b == 0x2C /* , */) {
-        if (last() == 'object') {
+      }
+      else if (b == 0x2C /* , */) {
+        if (last_region == 'object')
           isKey = true
-        }
-
         output.push(b)
-      } else if (b == 0x24 /* $ */) {
-        if (last() == 'string') {
+      }
+      else if (b == 0x24 /* $ */) {
+        if (last_region == 'string') {
           output.push(b)
         } else {
           output.push(0x22)
-
           while (b > 0x20 && b != 0x2C && b != 0x5D && b != 0x7D /* [^[:space:],\]}] */) {
             output.push(b)
             i += 1
             b = bytes[i]
           }
-
           i -= 1
-
           output.push(0x22)
         }
-      } else {
+      }
+      else {
         output.push(b)
       }
     }
 
     return Uint8Array.from(output)
-  }
-
-  function generatePayload() {
-    let json = JSON.stringify(saveFile.value)
-
-    switch (outputFormat.value) {
-      case "gwsavePC": {
-        return json
-      }
-
-      case "gwsaveSwitch": {
-        return generateBytes(json)
-      }
-
-      case "fs": {
-        let payload = generateBytes(json)
-
-        if (fileExtension == "fs") {
-          fsData._files[fsIndex]._data = Array.from(payload)
-          return JSON.stringify(fsData)
-        } else {
-          let fs = {
-            _files: [
-              {
-                _fullPath: "/SaveFile.gwsave",
-                _data: Array.from(payload)
-              }
-            ],
-            _directories: []
-          }
-
-          return JSON.stringify(fs)
-        }
-      }
-
-      default: {
-        throw "Invalid output format"
-      }
-    }
-  }
-
-  function generateBytes(json) {
-    let bytes = codec.encode(json)
-
-    // length of header bytes +
-    // length of input +
-    // number of bytes needed for storing VLQ +
-    // EOF
-    let size =
-      switchHeader.length +
-      bytes.length +
-      Math.ceil(Math.log2(bytes.length + 1) / 7) +
-      1
-
-    let output = new Uint8Array(size)
-    let offset = 0
-
-    // 1. Header
-    output.set(switchHeader, offset)
-    offset += switchHeader.length
-
-    // 2. VLQ
-    let n = bytes.length
-
-    while (n > 0) {
-      let septet = n & 0b0111_1111
-
-      n >>= 7
-
-      if (n > 0) {
-        septet |= 1 << 7
-      }
-
-      output[offset++] = septet
-    }
-
-    // 3. Body
-    output.set(bytes, offset)
-    offset += bytes.length
-
-    // 4. EOF; ASCII Vertical Tab (0x0B) is used to indicate EOF
-    output[offset] = 0x0B
-
-    return output
-  }
-
-  function parseBody(bytes) {
-    // Skip VLQ
-    let start
-
-    for (start = switchHeader.length; start < bytes.length; ++start) {
-      if (!(bytes[start] & 1 << 7)) {
-        start += 1
-        break
-      }
-    }
-
-    let payload = new Uint8Array(
-      bytes.buffer,
-      start,
-      bytes.lastIndexOf(0x7D /* } */) + 1 - start
-    )
-
-    return payload
   }
 </script>

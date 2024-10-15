@@ -26,5 +26,5 @@
 </template>
 
 <script setup>
-  const saveFile = useState('saveFile')
+  const saveFile = inject('saveFile')
 </script>

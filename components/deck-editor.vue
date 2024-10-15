@@ -21,13 +21,17 @@
 
             <center>
               <table>
-                <td>
-                  <button type=button @click=duplicateCard(i)>Duplicate</button>
-                </td>
+                <tbody>
+                  <tr>
+                    <td>
+                      <button type=button @click=duplicateCard(i)>Duplicate</button>
+                    </td>
 
-                <td>
-                  <button type=button @click=removeCard(i)>Remove</button>
-                </td>
+                    <td>
+                      <button type=button @click=removeCard(i)>Remove</button>
+                    </td>
+                  </tr>
+                </tbody>
               </table>
             </center>
           </td>
@@ -105,8 +109,6 @@
                     <option :value="k + 1" :title=description>{{ ability }}</option>
                   </template>
                 </table-select>
-
-                <br />
 
                 <table-select
                   v-model=mod.negateAbilities.$rcontent

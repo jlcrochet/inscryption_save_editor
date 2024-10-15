@@ -76,27 +76,29 @@
 
     <tab title="Items">
       <table cellpadding=4>
-        <template v-for="(consumable, i) in saveFile.ascensionData.currentRun.consumables.$rcontent">
+        <tbody>
+          <template v-for="(consumable, i) in saveFile.ascensionData.currentRun.consumables.$rcontent">
+            <tr>
+              <td>
+                <select v-model=saveFile.ascensionData.currentRun.consumables.$rcontent[i] required>
+                  <template v-for="[gameName, value] in gameData.items">
+                    <option :value=value>{{ gameName }}</option>
+                  </template>
+                </select>
+              </td>
+
+              <td>
+                <button type=button @click='listRemove(saveFile.ascensionData.currentRun.consumables, i)'>Remove</button>
+              </td>
+            </tr>
+          </template>
+
           <tr>
             <td>
-              <select v-model=saveFile.ascensionData.currentRun.consumables.$rcontent[i] required>
-                <template v-for="[gameName, value] in gameData.items">
-                  <option :value=value>{{ gameName }}</option>
-                </template>
-              </select>
-            </td>
-
-            <td>
-              <button type=button @click='listRemove(saveFile.ascensionData.currentRun.consumables, i)'>Remove</button>
+              <button type=button @click='listAdd(saveFile.ascensionData.currentRun.consumables, null)'>Add</button>
             </td>
           </tr>
-        </template>
-
-        <tr>
-          <td>
-            <button type=button @click='listAdd(saveFile.ascensionData.currentRun.consumables, null)'>Add</button>
-          </td>
-        </tr>
+        </tbody>
       </table>
     </tab>
 
@@ -121,8 +123,6 @@
             </template>
           </table-select>
         </template>
-
-        <br />
 
         <table-select
           v-model=totemBottoms.$rcontent
@@ -237,7 +237,7 @@
   import * as gameData from '~/game-data'
   import { listAdd, listRemove, listClear } from '~/utils'
 
-  const saveFile = useState('saveFile')
+  const saveFile = inject('saveFile')
 
   const totemTops = ref(saveFile.value.ascensionData.currentRun.totemTops)
   const totemBottoms = ref(saveFile.value.ascensionData.currentRun.totemBottoms)

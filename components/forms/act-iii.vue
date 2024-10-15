@@ -41,27 +41,29 @@
 
     <tab title="Items">
       <table cellpadding=4>
-        <template v-for="(item, i) in saveFile.part3Data.items.$rcontent">
+        <tbody>
+          <template v-for="(item, i) in saveFile.part3Data.items.$rcontent">
+            <tr>
+              <td>
+                <select v-model=saveFile.part3Data.items.$rcontent[i] required>
+                  <template v-for="[gameName, value] in items">
+                    <option :value=value>{{ gameName }}</option>
+                  </template>
+                </select>
+              </td>
+
+              <td>
+                <button type=button @click='listRemove(saveFile.part3Data.items, i)'>Remove</button>
+              </td>
+            </tr>
+          </template>
+
           <tr>
             <td>
-              <select v-model=saveFile.part3Data.items.$rcontent[i] required>
-                <template v-for="[gameName, value] in items">
-                  <option :value=value>{{ gameName }}</option>
-                </template>
-              </select>
-            </td>
-
-            <td>
-              <button type=button @click='listRemove(saveFile.part3Data.items, i)'>Remove</button>
+              <button type=button @click='listAdd(saveFile.part3Data.items, null)'>Add</button>
             </td>
           </tr>
-        </template>
-
-        <tr>
-          <td>
-            <button type=button @click='listAdd(saveFile.part3Data.items, null)'>Add</button>
-          </td>
-        </tr>
+        </tbody>
       </table>
     </tab>
   </tabs>
@@ -71,5 +73,5 @@
   import { abilities, items } from '~/game-data'
   import { listAdd, listRemove } from '~/utils'
 
-  const saveFile = useState('saveFile')
+  const saveFile = inject('saveFile')
 </script>

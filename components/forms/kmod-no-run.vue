@@ -35,5 +35,5 @@
 <script setup>
   import { starterDecks } from '~/game-data'
 
-  const saveFile = useState('saveFile')
+  const saveFile = inject('saveFile')
 </script>
