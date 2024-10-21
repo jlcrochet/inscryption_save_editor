@@ -21,9 +21,9 @@
 
       <ol>
         <li>
-          Click the button below to upload your save file from your Inscryption directory. The save file should be named <code>SaveFile.gwsave</code>.
+          Click the button below to upload your save file from your Inscryption directory. On PC, the save file will be named <code>SaveFile.gwsave</code>.
           <ul>
-            <li>This editor can also edit save files produced by <a href=https://github.com/FlagBrew/Checkpoint target=_blank>Checkpoint</a>; simply upload your <code>save.fs</code> file instead and the editor should be able to produce another <code>save.fs</code> that you can restore using Checkpoint.</li>
+            <li>This editor can also edit save files from some other platforms like Nintendo Switch and XBox Game Pass.</li>
             <li>If you want this editor to support save files in other formats, please send me an example save file and I'll see what I can do.</li>
           </ul>
         </li>
@@ -104,7 +104,22 @@
         </template>
 
         <p>
-          <button>Save</button>
+          <input type=submit value=Save />
+
+          <br />
+          <br />
+
+          <label title="When in doubt, leave this unchecked.">
+            <template v-if=consoleFormat>
+              Change file to PC format
+            </template>
+
+            <template v-else>
+              Change file to console format
+            </template>
+
+            <input type=checkbox v-model=switchFormat />
+          </label>
         </p>
       </form>
     </template>
@@ -120,6 +135,9 @@
 
   const saveFile = ref(null)
   provide('saveFile', saveFile)
+
+  const consoleFormat = ref(false)
+  const switchFormat = ref(false)
 
   const utf8 = {
     encoder: new TextEncoder(),
@@ -152,6 +170,7 @@
       let body: Uint8Array
 
       if (fileBytes.at(0) == 0x00 && fileBytes.at(-1) == 0x0B /* vertical tab */) {
+        consoleFormat.value = true
         let [h, b] = parseBody(fileBytes)
         header = h
         body = b
@@ -160,15 +179,17 @@
         let i = 1
         while (fileBytes.at(i) <= 0x20)
           i += 1
+
         if (utf8.decode(fileBytes.slice(i, i + 8)) == '"_files"') {
+          consoleFormat.value = true
           let json = utf8.decode(fileBytes)
           fs = JSON.parse(json)
           fsSaveFileIndex = fs._files.findIndex(f => f._fullPath == '/SaveFile.gwsave')
           let [h, b] = parseBody(Uint8Array.from(fs._files[fsSaveFileIndex]._data))
           header = h
           body = b
-        }
-        else {
+        } else {
+          consoleFormat.value = false
           header = null
           body = fileBytes
         }
@@ -269,23 +290,29 @@
 
       let parts: (Uint8Array | string)[]
 
-      // Console filesystem
-      if (fs) {
-        let payload = [
-          ...header,
-          ...vlq(body.length),
-          ...utf8.encode(body),
-          0x0B  // vertical tab; used to indicate EOF
-        ]
-        fs._files[fsSaveFileIndex]._data = payload
-        parts = [JSON.stringify(fs)]
-      }
-      // Console standalone
-      else if (header) {
-        parts = [header, vlq(body.length), body, Uint8Array.of(0x0B)]
-      }
-      // PC
-      else {
+      let outputAsConsoleFormat = consoleFormat.value
+
+      if (switchFormat.value)
+        outputAsConsoleFormat = !outputAsConsoleFormat
+
+      if (outputAsConsoleFormat) {
+        // This seems to be a commonly used header, but I currently don't know
+        // if it will work for all platforms:
+        header ??= Uint8Array.of(0,1,0,0,0,255,255,255,255,1,0,0,0,0,0,0,0,6,1,0,0,0)
+
+        if (fs) {
+          let payload = [
+            ...header,
+            ...vlq(body.length),
+            ...utf8.encode(body),
+            0x0B  // vertical tab; used to indicate EOF
+          ]
+          fs._files[fsSaveFileIndex]._data = payload
+          parts = [JSON.stringify(fs)]
+        } else {
+          parts = [header, vlq(body.length), body, Uint8Array.of(0x0B)]
+        }
+      } else {
         parts = [body]
       }
 
