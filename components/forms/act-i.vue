@@ -301,7 +301,7 @@
 
     <tab title="Painting Puzzle">
       <blockquote>
-        These represent spaces on the board from left to right
+        These represent spaces on the board from left to right:
       </blockquote>
 
       <table cellpadding=4>

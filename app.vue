@@ -175,9 +175,10 @@
         header = h
         body = b
       }
-      else if (fileBytes.at(0) == 0x7B /* { */) {
+      else if (fileBytes.at(0) == 0x7B /* `{` */) {
         let i = 1
-        while (fileBytes.at(i) <= 0x20)
+
+        while (fileBytes.at(i) <= 0x20 /* ` ` */)
           i += 1
 
         if (utf8.decode(fileBytes.slice(i, i + 8)) == '"_files"') {
@@ -277,7 +278,7 @@
       saveFile.value = data
     } catch (error) {
       console.error(error)
-      alert("An error occurred while parsing the file. Please e-mail at jlcrochet91@pm.me me or post an issue on GitHub (https://github.com/jlcrochet/inscryption_save_editor) and I will try to troubleshoot the issue.")
+      alert("An error occurred while parsing the file. Please e-mail me at jlcrochet91@pm.me or post an issue on GitHub (https://github.com/jlcrochet/inscryption_save_editor) and I will try to troubleshoot the issue.")
     }
 
     loading.value = false
@@ -377,7 +378,7 @@
         if (last_region == 'string')
           output.push(b)
       }
-      else if (b == 0x22 /* " */) {
+      else if (b == 0x22 /* `"` */) {
         if (last_region == 'string')
           regions.pop()
         else
@@ -385,12 +386,12 @@
 
         output.push(b)
       }
-      else if (b == 0x2D || (b >= 0x30 && b <= 0x39) /* - or digits */) {
+      else if (b == 0x2D || (b >= 0x30 && b <= 0x39) /* `-` or digits */) {
         if (last_region == 'object' && isKey) {
           output.push(0x22, coordinateX ? 0x78 : 0x79, 0x22, 0x3A)  // "x|y":
           coordinateX = !coordinateX
 
-          while (b == 0x2D || b == 0x2E || (b >= 0x30 && b <= 0x39) /* - or . or digits */) {
+          while (b == 0x2D || b == 0x2E || (b >= 0x30 && b <= 0x39) /* `-` or `.` or digits */) {
             output.push(b)
             i += 1
             b = bytes[i]
@@ -401,39 +402,39 @@
           output.push(b)
         }
       }
-      else if (b == 0x3A /* : */) {
+      else if (b == 0x3A /* `:` */) {
         if (last_region == 'object')
           isKey = false
         output.push(b)
       }
-      else if (b == 0x5B /* [ */) {
+      else if (b == 0x5B /* `[` */) {
         if (last_region != 'string')
           regions.push('array')
         output.push(b)
       }
-      else if (b == 0x7B /* { */) {
+      else if (b == 0x7B /* `{` */) {
         if (last_region != 'string')
           regions.push('object')
         output.push(b)
       }
-      else if (b == 0x5D /* ] */) {
+      else if (b == 0x5D /* `]` */) {
         if (last_region == 'array')
           regions.pop()
         output.push(b)
       }
-      else if (b == 0x7D /* } */) {
+      else if (b == 0x7D /* `}` */) {
         if (last_region == 'object') {
           regions.pop()
           isKey = true
         }
         output.push(b)
       }
-      else if (b == 0x2C /* , */) {
+      else if (b == 0x2C /* `,` */) {
         if (last_region == 'object')
           isKey = true
         output.push(b)
       }
-      else if (b == 0x24 /* $ */) {
+      else if (b == 0x24 /* `$` */) {
         if (last_region == 'string') {
           output.push(b)
         } else {
