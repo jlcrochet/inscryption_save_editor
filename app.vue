@@ -21,8 +21,9 @@
 
       <ol>
         <li>
-          Click the button below to upload your save file from your Inscryption directory. On PC, the save file will be named <code>SaveFile.gwsave</code>.
+          Click the button below to upload your save file from your Inscryption directory.
           <ul>
+            <li>If you are using the Steam version of the game, the save file is located in <code>steamapps\common\Inscryption\SaveFile.gwsave</code> relative to your Steam directory which &mdash; on Windows &mdash; is typically located at <code>%PROGRAMFILES%\Steam</code>.</li>
             <li>This editor can also edit save files from some other platforms like Nintendo Switch and XBox Game Pass.</li>
             <li>If you want this editor to support save files in other formats, please send me an example save file and I'll see what I can do.</li>
           </ul>
@@ -189,7 +190,8 @@
           let [h, b] = parseBody(Uint8Array.from(fs._files[fsSaveFileIndex]._data))
           header = h
           body = b
-        } else {
+        }
+        else {
           consoleFormat.value = false
           header = null
           body = fileBytes
@@ -214,7 +216,8 @@
           case "$type":
             if (typeof value == "number") {
               return types[value]
-            } else {
+            }
+            else {
               let [n, type] = value.split("|", 2)
               types[n] = type
               return type
@@ -276,7 +279,8 @@
       }
 
       saveFile.value = data
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error)
       alert("An error occurred while parsing the file. Please e-mail me at jlcrochet91@pm.me or post an issue on GitHub (https://github.com/jlcrochet/inscryption_save_editor) and I will try to troubleshoot the issue.")
     }
@@ -298,7 +302,7 @@
 
       if (outputAsConsoleFormat) {
         // This seems to be a commonly used header, but I currently don't know
-        // if it will work for all platforms:
+        // if it works for all platforms:
         header ??= Uint8Array.of(0,1,0,0,0,255,255,255,255,1,0,0,0,0,0,0,0,6,1,0,0,0)
 
         if (fs) {
@@ -310,10 +314,12 @@
           ]
           fs._files[fsSaveFileIndex]._data = payload
           parts = [JSON.stringify(fs)]
-        } else {
+        }
+        else {
           parts = [header, vlq(body.length), body, Uint8Array.of(0x0B)]
         }
-      } else {
+      }
+      else {
         parts = [body]
       }
 
@@ -322,7 +328,8 @@
       ghostLink.value.href = URL.createObjectURL(blob)
       ghostLink.value.download = fileName
       ghostLink.value.click()
-    } catch (error) {
+    }
+    catch (error) {
       console.error(error)
       alert('An error occurred while creating the file. Please e-mail me at jlcrochet91@pm.me or post an issue on GitHub (https://github.com/jlcrochet/inscryption_save_editor) and I will try to troubleshoot the issue.')
     }
@@ -388,7 +395,7 @@
       }
       else if (b == 0x2D || (b >= 0x30 && b <= 0x39) /* `-` or digits */) {
         if (last_region == 'object' && isKey) {
-          output.push(0x22, coordinateX ? 0x78 : 0x79, 0x22, 0x3A)  // "x|y":
+          output.push(0x22, (coordinateX ? 0x78 : 0x79), 0x22, 0x3A)  // `"x|y":`
           coordinateX = !coordinateX
 
           while (b == 0x2D || b == 0x2E || (b >= 0x30 && b <= 0x39) /* `-` or `.` or digits */) {
@@ -398,7 +405,8 @@
           }
 
           i -= 1
-        } else {
+        }
+        else {
           output.push(b)
         }
       }
@@ -437,7 +445,8 @@
       else if (b == 0x24 /* `$` */) {
         if (last_region == 'string') {
           output.push(b)
-        } else {
+        }
+        else {
           output.push(0x22)
           while (b > 0x20 && b != 0x2C && b != 0x5D && b != 0x7D /* [^[:space:],\]}] */) {
             output.push(b)
