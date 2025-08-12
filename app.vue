@@ -23,7 +23,8 @@
         <li>
           Click the button below to upload your save file from your Inscryption directory.
           <ul>
-            <li>If you are using the Steam version of the game, the save file is located in <code>steamapps\common\Inscryption\SaveFile.gwsave</code> relative to your Steam directory which &mdash; on Windows &mdash; is typically located at <code>%PROGRAMFILES%\Steam</code>.</li>
+            <li>If you are using the Steam version of the game, the save file is located in <code>steamapps\common\Inscryption\SaveFile.gwsave</code> relative to your Steam directory which &mdash; on Windows &mdash; is typically located at <code>%ProgramFiles%\Steam</code>.</li>
+            <li>If you are using XBox Game Pass on Windows, the save file should be located at <code>%LocalAppData%\Packages\DevolverDigital.Inscryption_xxxxxx</code> where <code>xxxxxx</code> is a string of digits. See <a href=https://github.com/jlcrochet/inscryption_save_editor/issues/23#issuecomment-3172873199 target=_blank>this comment</a> for more details.</li>
             <li>This editor can also edit save files from some other platforms like Nintendo Switch and XBox Game Pass.</li>
             <li>If you want this editor to support save files in other formats, please send me an example save file and I'll see what I can do.</li>
           </ul>
@@ -34,7 +35,7 @@
       </ol>
     </blockquote>
 
-    <input type=file accept=.gwsave,.fs @click="$event.target.value = null" @input=parseFile($event.target.files[0]) />
+    <input type=file @click="$event.target.value = null" @input=parseFile($event.target.files[0]) />
 
     <template v-if=loading>
       <p>
@@ -292,10 +293,8 @@
   {
     try {
       let body = JSON.stringify(saveFile.value)
-
-      let parts: (Uint8Array | string)[]
-
       let outputAsConsoleFormat = consoleFormat.value
+      let blobParts: any[]
 
       if (switchFormat.value)
         outputAsConsoleFormat = !outputAsConsoleFormat
@@ -313,17 +312,17 @@
             0x0B  // vertical tab; used to indicate EOF
           ]
           fs._files[fsSaveFileIndex]._data = payload
-          parts = [JSON.stringify(fs)]
+          blobParts = [JSON.stringify(fs)]
         }
         else {
-          parts = [header, vlq(body.length), body, Uint8Array.of(0x0B)]
+          blobParts = [header, vlq(body.length), body, Uint8Array.of(0x0B)]
         }
       }
       else {
-        parts = [body]
+        blobParts = [body]
       }
 
-      let blob = new Blob(parts, { type: "application/octet-stream" })
+      let blob = new Blob(blobParts, { type: "application/octet-stream" })
 
       ghostLink.value.href = URL.createObjectURL(blob)
       ghostLink.value.download = fileName
