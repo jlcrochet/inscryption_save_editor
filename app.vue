@@ -283,7 +283,7 @@
     }
     catch (error) {
       console.error(error)
-      alert("An error occurred while parsing the file. Please e-mail me at jlcrochet91@pm.me or post an issue on GitHub (https://github.com/jlcrochet/inscryption_save_editor) and I will try to troubleshoot the issue.")
+      alert("An error occurred while parsing the file. Please e-mail me at jlcrochet91@pm.me or post an issue on GitHub (https://github.com/jlcrochet/inscryption_save_editor) and I will try to troubleshoot the issue. Please remember to provide the save file that is having issues.")
     }
 
     loading.value = false
@@ -397,7 +397,7 @@
           output.push(0x22, (coordinateX ? 0x78 : 0x79), 0x22, 0x3A)  // `"x|y":`
           coordinateX = !coordinateX
 
-          while (b == 0x2D || b == 0x2E || (b >= 0x30 && b <= 0x39) /* `-` or `.` or digits */) {
+          while (b == 0x2D || b == 0x2E || (b >= 0x30 && b <= 0x39) || b == 0x45 /* `-` or `.` or digits or `E` for exponents */) {
             output.push(b)
             i += 1
             b = bytes[i]
