@@ -1,3 +1,11 @@
+export function listNew(type, assembly) {
+    return {
+        $type: `System.Collections.Generic.List\`1[[${type}, ${assembly ?? "Assembly-CSharp"}]], mscorlib`,
+        $rcontent: [],
+        $rlength: 0
+    }
+}
+
 export function listAdd(list, value) {
     list.$rcontent.push(value)
     list.$rlength += 1

@@ -15,7 +15,7 @@
         <li>Some cards and sigils may cause errors if played outside of specific contexts; others may do nothing at all.</li>
       </ul>
 
-      <p>To report problems, e-mail me at <a href=mailto:jlcrochet91@pm.me>jlcrochet91@pm.me</a> or post an issue on <a href=https://github.com/jlcrochet/inscryption_save_editor target=_blank>GitHub</a>.</p>
+      <p>To report problems, e-mail me at <a :href='`mailto:${email}`'>{{ email }}</a> or post an issue on <a :href=repo target=_blank>GitHub</a>.</p>
 
       <p>Instructions:</p>
 
@@ -24,7 +24,7 @@
           Click the button below to upload your save file from your Inscryption directory.
           <ul>
             <li>If you are using the Steam version of the game, the save file is located in <code>steamapps\common\Inscryption\SaveFile.gwsave</code> relative to your Steam directory which &mdash; on Windows &mdash; is typically located at <code>%ProgramFiles%\Steam</code>.</li>
-            <li>If you are using XBox Game Pass on Windows, the save file should be located at <code>%LocalAppData%\Packages\DevolverDigital.Inscryption_xxxxxx</code> where <code>xxxxxx</code> is a string of digits. See <a href=https://github.com/jlcrochet/inscryption_save_editor/issues/23#issuecomment-3172873199 target=_blank>this comment</a> for more details.</li>
+            <li>If you are using XBox Game Pass on Windows, the save file should be located at <code>%LocalAppData%\Packages\DevolverDigital.Inscryption_xxxxxx</code> where <code>xxxxxx</code> is a string of digits. See <a :href='`${repo}/issues/23#issuecomment-3172873199`' target=_blank>this comment</a> for more details.</li>
             <li>This editor can also edit save files from some other platforms like Nintendo Switch and XBox Game Pass.</li>
             <li>If you want this editor to support save files in other formats, please send me an example save file and I'll see what I can do.</li>
           </ul>
@@ -45,7 +45,7 @@
 
     <template v-else-if=saveFile>
       <form name=main @submit.prevent=createFile>
-        <br />
+        <br>
 
         <template v-if=saveFile.ascensionData>
           <tabs>
@@ -106,22 +106,20 @@
         </template>
 
         <p>
-          <input type=submit value=Save />
-
-          <br />
-          <br />
-
-          <label title="When in doubt, leave this unchecked.">
+          <label title="If the file is currently in console format, it will be translated to PC format; if it is currently in PC format it will be translated to console format. When in doubt, leave this unchecked.">
             <template v-if=consoleFormat>
               Change file to PC format
             </template>
-
             <template v-else>
               Change file to console format
             </template>
-
             <input type=checkbox v-model=switchFormat />
           </label>
+
+          <br>
+          <br>
+
+          <input type=submit value=Save />
         </p>
       </form>
     </template>
@@ -131,6 +129,9 @@
 </template>
 
 <script setup lang=ts>
+  const email = 'jlcrochet91@pm.me'
+  const repo = 'https://github.com/jlcrochet/inscryption_save_editor'
+  
   const loading = ref(false)
 
   const ghostLink = shallowRef<HTMLAnchorElement>(null)
@@ -283,7 +284,7 @@
     }
     catch (error) {
       console.error(error)
-      alert("An error occurred while parsing the file. Please e-mail me at jlcrochet91@pm.me or post an issue on GitHub (https://github.com/jlcrochet/inscryption_save_editor) and I will try to troubleshoot the issue. Please remember to provide the save file that is having issues.")
+      alert(`An error occurred while parsing the file. Please e-mail me at ${email} or post an issue on GitHub (${repo}) and I will try to troubleshoot the issue. Please remember to provide the save file that is having issues.`)
     }
 
     loading.value = false
@@ -330,7 +331,7 @@
     }
     catch (error) {
       console.error(error)
-      alert('An error occurred while creating the file. Please e-mail me at jlcrochet91@pm.me or post an issue on GitHub (https://github.com/jlcrochet/inscryption_save_editor) and I will try to troubleshoot the issue.')
+      alert(`An error occurred while creating the file. Please e-mail me at ${email} or post an issue on GitHub (${repo}) and I will try to troubleshoot the issue.`)
     }
   }
 

@@ -152,7 +152,7 @@
 
 <script setup>
   import { cardNames, abilities } from '~/game-data'
-  import { listAdd, listRemove } from '~/utils'
+  import { listNew, listAdd, listRemove } from '~/utils'
 
   const props = defineProps({
     deck: {
@@ -167,11 +167,7 @@
     // Stub mod info for new card
     listAdd(props.deck.cardIdModInfos, {
       $k: "",
-      $v: {
-        $type: "System.Collections.Generic.List`1[[DiskCardGame.CardModificationInfo, Assembly-CSharp]], mscorlib",
-        $rlength: 0,
-        $rcontent: []
-      }
+      $v: listNew("DiskCardGame.CardModificationInfo")
     })
   }
 
@@ -272,38 +268,18 @@
       nameReplacement: null,
       attackAdjustment: 0,
       healthAdjustment: 0,
-      abilities: {
-        $type: "System.Collections.Generic.List`1[[DiskCardGame.Ability, Assembly-CSharp]], mscorlib",
-        $rlength: 0,
-        $rcontent: []
-      },
-      negateAbilities: {
-        $type: "System.Collections.Generic.List`1[[DiskCardGame.Ability, Assembly-CSharp]], mscorlib",
-        $rlength: 0,
-        $rcontent: []
-      },
+      abilities: listNew("DiskCardGame.Ability"),
+      negateAbilities: listNew("DiskCardGame.Ability"),
       bloodCostAdjustment: 0,
       bonesCostAdjustment: 0,
       energyCostAdjustment: 0,
       nullifyGemsCost: false,
-      addGemCost: {
-        $type: "System.Collections.Generic.List`1[[DiskCardGame.GemType, Assembly-CSharp]], mscorlib",
-        $rlength: 0,
-        $rcontent: []
-      },
+      addGemCost: listNew("DiskCardGame.GemType"),
       gemify: false,
-      specialAbilities: {
-        $type: "System.Collections.Generic.List`1[[DiskCardGame.SpecialTriggeredAbility, Assembly-CSharp]], mscorlib",
-        $rlength: 0,
-        $rcontent: []
-      },
+      specialAbilities: listNew("DiskCardGame.SpecialTriggeredAbility"),
       fromCardMerge: false,
       deathCardInfo: null,
-      decalIds: {
-        $type: "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
-        $rlength: 0,
-        $rcontent: []
-      }
+      decalIds: listNew("System.String", "mscorlib")
     })
   }
 
