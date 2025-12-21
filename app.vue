@@ -5,8 +5,6 @@
     <noscript>WARNING: This page doesn't work without JavaScript. Please enable JavaScript in your browser and refresh the page.</noscript>
 
     <blockquote>
-      <p>NOTE: Spoilers ahead if you haven't beaten the game yet.</p>
-
       <p>Read the following before use:</p>
 
       <ul>
@@ -124,17 +122,17 @@
       </form>
     </template>
 
-    <a ref=ghostLink hidden />
+    <!-- <a ref=ghostLink hidden /> -->
   </div>
 </template>
 
 <script setup lang=ts>
   const email = 'jlcrochet91@pm.me'
   const repo = 'https://github.com/jlcrochet/inscryption_save_editor'
-  
+
   const loading = ref(false)
 
-  const ghostLink = shallowRef<HTMLAnchorElement>(null)
+  // const ghostLink = shallowRef<HTMLAnchorElement>(null)
 
   const saveFile = ref(null)
   provide('saveFile', saveFile)
@@ -283,15 +281,13 @@
       saveFile.value = data
     }
     catch (error) {
-      console.error(error)
-      alert(`An error occurred while parsing the file. Please e-mail me at ${email} or post an issue on GitHub (${repo}) and I will try to troubleshoot the issue. Please remember to provide the save file that is having issues.`)
+      errorHandler(error)
     }
 
     loading.value = false
   }
 
-  function createFile()
-  {
+  function createFile() {
     try {
       let body = JSON.stringify(saveFile.value)
       let outputAsConsoleFormat = consoleFormat.value
@@ -323,15 +319,22 @@
         blobParts = [body]
       }
 
-      let blob = new Blob(blobParts, { type: "application/octet-stream" })
+      const blob = new Blob(blobParts, { type: "application/octet-stream" })
+      const url = URL.createObjectURL(blob)
+      const anchorElement = document.createElement('a')
+      anchorElement.href = url
+      anchorElement.download = fileName ?? ''
+      anchorElement.click()
+      anchorElement.remove()
+      URL.revokeObjectURL(url)
 
-      ghostLink.value.href = URL.createObjectURL(blob)
-      ghostLink.value.download = fileName
-      ghostLink.value.click()
+      // ghostLink.value.href = URL.createObjectURL(blob)
+      // ghostLink.value.download = fileName
+      // ghostLink.value.click()
+
     }
     catch (error) {
-      console.error(error)
-      alert(`An error occurred while creating the file. Please e-mail me at ${email} or post an issue on GitHub (${repo}) and I will try to troubleshoot the issue.`)
+      errorHandler(error)
     }
   }
 
@@ -463,5 +466,11 @@
     }
 
     return Uint8Array.from(output)
+  }
+
+  function errorHandler(error: Error)
+  {
+    console.error(error)
+    alert(`An error occurred while parsing the file. Please e-mail me at ${email} or post an issue on GitHub (${repo}) and I will try to troubleshoot the issue. Please remember to provide the save file that is having issues.`)
   }
 </script>
