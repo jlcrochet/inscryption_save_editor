@@ -121,8 +121,6 @@
         </p>
       </form>
     </template>
-
-    <!-- <a ref=ghostLink hidden /> -->
   </div>
 </template>
 
@@ -131,8 +129,6 @@
   const repo = 'https://github.com/jlcrochet/inscryption_save_editor'
 
   const loading = ref(false)
-
-  // const ghostLink = shallowRef<HTMLAnchorElement>(null)
 
   const saveFile = ref(null)
   provide('saveFile', saveFile)
@@ -327,11 +323,6 @@
       anchorElement.click()
       anchorElement.remove()
       URL.revokeObjectURL(url)
-
-      // ghostLink.value.href = URL.createObjectURL(blob)
-      // ghostLink.value.download = fileName
-      // ghostLink.value.click()
-
     }
     catch (error) {
       errorHandler(error)
@@ -471,6 +462,6 @@
   function errorHandler(error: Error)
   {
     console.error(error)
-    alert(`An error occurred while parsing the file. Please e-mail me at ${email} or post an issue on GitHub (${repo}) and I will try to troubleshoot the issue. Please remember to provide the save file that is having issues.`)
+    alert(`An unexpected error occurred. Please e-mail me at ${email} or post an issue on GitHub (${repo}) and I will try to troubleshoot the issue. Please remember to provide the save file that is having issues.`)
   }
 </script>
