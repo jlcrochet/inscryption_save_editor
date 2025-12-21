@@ -125,28 +125,23 @@
 </template>
 
 <script setup lang=ts>
+  import { listNew } from '~/utils'
+
   const email = 'jlcrochet91@pm.me'
   const repo = 'https://github.com/jlcrochet/inscryption_save_editor'
-
-  const loading = ref(false)
 
   const saveFile = ref(null)
   provide('saveFile', saveFile)
 
+  const loading = ref(false)
   const consoleFormat = ref(false)
   const switchFormat = ref(false)
 
   const utf8 = {
     encoder: new TextEncoder(),
     decoder: new TextDecoder(),
-    encode(text: string): Uint8Array
-    {
-      return this.encoder.encode(text)
-    },
-    decode(bytes: Uint8Array): string
-    {
-      return this.decoder.decode(bytes)
-    }
+    encode(text: string): Uint8Array { return this.encoder.encode(text) },
+    decode(bytes: Uint8Array): string { return this.decoder.decode(bytes) }
   }
 
   let fileName: string
@@ -158,42 +153,36 @@
   {
     try {
       loading.value = true
+      fs = null
 
       fileName = file.name
-      let fileBytes = new Uint8Array(await file.arrayBuffer())
-
-      fs = null
+      let bytes = new Uint8Array(await file.arrayBuffer())
 
       let body: Uint8Array
 
-      if (fileBytes.at(0) == 0x00 && fileBytes.at(-1) == 0x0B /* vertical tab */) {
+      if (bytes.at(0) == 0x00 && bytes.at(-1) == 0x0B /* vertical tab */) {
         consoleFormat.value = true
-        let [h, b] = parseBody(fileBytes)
+        let [h, b] = parseBody(bytes)
         header = h
         body = b
-      }
-      else if (fileBytes.at(0) == 0x7B /* `{` */) {
+      } else if (bytes.at(0) == 0x7B /* `{` */) {
         let i = 1
+        while (bytes.at(i) <= 0x20 /* ` ` */) i += 1
 
-        while (fileBytes.at(i) <= 0x20 /* ` ` */)
-          i += 1
-
-        if (utf8.decode(fileBytes.slice(i, i + 8)) == '"_files"') {
+        if (utf8.decode(bytes.slice(i, i + 8)) == '"_files"') {
           consoleFormat.value = true
-          let json = utf8.decode(fileBytes)
+          let json = utf8.decode(bytes)
           fs = JSON.parse(json)
           fsSaveFileIndex = fs._files.findIndex(f => f._fullPath == '/SaveFile.gwsave')
           let [h, b] = parseBody(Uint8Array.from(fs._files[fsSaveFileIndex]._data))
           header = h
           body = b
-        }
-        else {
+        } else {
           consoleFormat.value = false
           header = null
-          body = fileBytes
+          body = bytes
         }
-      }
-      else {
+      } else {
         throw 'Unrecognized file format'
       }
 
@@ -212,14 +201,13 @@
           case "$type":
             if (typeof value == "number") {
               return types[value]
-            }
-            else {
+            } else {
               let [n, type] = value.split("|", 2)
               types[n] = type
               return type
             }
           default:
-            if (typeof value == "string" && value.startsWith("$iref")) {
+            if (typeof value == "string" && value.startsWith("$iref:")) {
               let [_, n] = value.split(":", 2)
               return ids[parseInt(n)]
             }
@@ -260,23 +248,12 @@
       }
 
       // Stub boon arrays if they don't already exist:
-      data.currentRun.playerDeck.boonIds ??= {
-        $type: "System.Collections.Generic.List`1[[DiskCardGame.BoonData+Type, Assembly-CSharp]], mscorlib",
-        $rlength: 0,
-        $rcontent: []
-      }
-
-      if (data.ascensionData?.currentRun) {
-        data.ascensionData.currentRun.playerDeck.boonIds ??= {
-          $type: "System.Collections.Generic.List`1[[DiskCardGame.BoonData+Type, Assembly-CSharp]], mscorlib",
-          $rlength: 0,
-          $rcontent: []
-        }
-      }
+      data.currentRun.playerDeck.boonIds ??= listNew("DiskCardGame.BoonData+Type")
+      if (data.ascensionData?.currentRun)
+        data.ascensionData.currentRun.playerDeck.boonIds ??= listNew("DiskCardGame.BoonData+Type")
 
       saveFile.value = data
-    }
-    catch (error) {
+    } catch (error) {
       errorHandler(error)
     }
 
@@ -306,12 +283,10 @@
           ]
           fs._files[fsSaveFileIndex]._data = payload
           blobParts = [JSON.stringify(fs)]
-        }
-        else {
+        } else {
           blobParts = [header, vlq(body.length), body, Uint8Array.of(0x0B)]
         }
-      }
-      else {
+      } else {
         blobParts = [body]
       }
 
@@ -323,8 +298,7 @@
       anchorElement.click()
       anchorElement.remove()
       URL.revokeObjectURL(url)
-    }
-    catch (error) {
+    } catch (error) {
       errorHandler(error)
     }
   }
@@ -335,8 +309,7 @@
 
     // Skip VLQ
     let start = 22
-    while (bytes[start] > 0x7F)
-      start += 1
+    while (bytes[start] > 0x7F) start += 1
     start += 1
 
     let body = bytes.slice(start, -1)
@@ -354,8 +327,7 @@
     while (n > 0) {
       let septet = n & 0x7F
       n >>= 7
-      if (n > 0)
-        septet |= 1 << 7
+      if (n > 0) septet |= 1 << 7
       output[i++] = septet
     }
 
