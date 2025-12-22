@@ -190,26 +190,26 @@
 
       let text = utf8.decode(body)
 
-      let ids: object[] = []
+      let nodes: object[] = []
       let types: string[] = []
 
       let data = JSON.parse(text, function(key: string, value: any): any {
         switch (key) {
           case "$id":
-            ids[value] = this
+            nodes.push(this)
             break
           case "$type":
             if (typeof value == "number") {
               return types[value]
             } else {
-              let [n, type] = value.split("|", 2)
-              types[n] = type
+              let [_, type] = value.split("|", 2)
+              types.push(type)
               return type
             }
           default:
             if (typeof value == "string" && value.startsWith("$iref:")) {
               let [_, n] = value.split(":", 2)
-              return ids[parseInt(n)]
+              return nodes[parseInt(n)]
             }
         }
 
@@ -228,18 +228,15 @@
 
       for (let deck of decks) {
         // Normalize the card mod info list:
-        //
+
         // 1. Ensure that all mod info keys are in the format `[name]#[index]`.
-        //
-        // 2. Ensure that the mod info list is cowitnessed with the card list
-        // for easier lookups.
         for (let modInfo of deck.cardIdModInfos.$rcontent) {
           if (!/#\d+$/.test(modInfo.$k))
             modInfo.$k += "#0"
         }
 
+        // 2. Ensure that the mod info list is cowitnessed with the card list for easier lookups.
         let tally = {}
-
         deck.cardIdModInfos.$rcontent = deck.cardIds.$rcontent.map(name => {
           tally[name] ??= 0
           let search = name + "#" + tally[name]++
