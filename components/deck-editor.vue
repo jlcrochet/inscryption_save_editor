@@ -152,7 +152,7 @@
 
 <script setup>
   import { cardNames, abilities } from '~/game-data'
-  import { listNew, listAdd, listRemove } from '~/utils'
+  import { listNew, listAdd, listRemove, listClone, typeNameWithAssembly } from '~/utils'
 
   const props = defineProps({
     deck: {
@@ -173,7 +173,6 @@
 
   async function duplicateCard(i) {
     let name = props.deck.cardIds.$rcontent[i]
-
     listAdd(props.deck.cardIds, name)
 
     let modInfo = props.deck.cardIdModInfos.$rcontent[i]
@@ -189,38 +188,18 @@
             nameReplacement: mod.nameReplacement,
             attackAdjustment: mod.attackAdjustment,
             healthAdjustment: mod.healthAdjustment,
-            abilities: {
-              $type: mod.abilities.$type,
-              $rlength: mod.abilities.$rlength,
-              $rcontent: [...mod.abilities.$rcontent]
-            },
-            negateAbilities: {
-              $type: mod.negateAbilities.$type,
-              $rlength: mod.negateAbilities.$rlength,
-              $rcontent: [...mod.negateAbilities.$rcontent]
-            },
+            abilities: listClone(mod.abilities),
+            negateAbilities: listClone(mod.negateAbilities),
             bloodCostAdjustment: mod.bloodCostAdjustment,
             bonesCostAdjustment: mod.bonesCostAdjustment,
             energyCostAdjustment: mod.energyCostAdjustment,
             nullifyGemsCost: mod.nullifyGemsCost,
-            addGemCost: {
-              $type: mod.addGemCost.$type,
-              $rlength: mod.addGemCost.$rlength,
-              $rcontent: [...mod.addGemCost.$rcontent]
-            },
+            addGemCost: listClone(mod.addGemCost),
             gemify: mod.gemify,
-            specialAbilities: {
-              $type: mod.specialAbilities.$type,
-              $rlength: mod.specialAbilities.$rlength,
-              $rcontent: [...mod.specialAbilities.$rcontent]
-            },
+            specialAbilities: listClone(mod.specialAbilities),
             fromCardMerge: mod.fromCardMerge,
             deathCardInfo: mod.deathCardInfo,
-            decalIds: {
-              $type: mod.decalIds.$type,
-              $rlength: mod.decalIds.$rlength,
-              $rcontent: [...mod.decalIds.$rcontent]
-            }
+            decalIds: listClone(mod.decalIds),
           }
         })
       }
@@ -233,10 +212,9 @@
 
   function removeCard(i) {
     let name = props.deck.cardIds.$rcontent.splice(i, 1)[0]
+
     props.deck.cardIds.$rlength -= 1
-
     listRemove(props.deck.cardIdModInfos, i)
-
     refreshModInfoKeys(name)
   }
 
@@ -245,7 +223,6 @@
 
     props.deck.cardIds.$rcontent[i] = name
     props.deck.cardIdModInfos.$rcontent[i].$k = name
-
     refreshModInfoKeys(oldName)
     refreshModInfoKeys(name)
   }
@@ -264,7 +241,7 @@
   function addMod(i) {
     // Stub mod
     listAdd(props.deck.cardIdModInfos.$rcontent[i].$v, {
-      $type: "DiskCardGame.CardModificationInfo, Assembly-CSharp",
+      $type: typeNameWithAssembly("DiskCardGame.CardModificationInfo"),
       nameReplacement: null,
       attackAdjustment: 0,
       healthAdjustment: 0,
@@ -279,7 +256,7 @@
       specialAbilities: listNew("DiskCardGame.SpecialTriggeredAbility"),
       fromCardMerge: false,
       deathCardInfo: null,
-      decalIds: listNew("System.String", "mscorlib")
+      decalIds: listNew("System.String")
     })
   }
 

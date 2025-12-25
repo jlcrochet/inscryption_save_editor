@@ -235,7 +235,7 @@
 
 <script setup>
   import * as gameData from '~/game-data'
-  import { listAdd, listRemove, listClear } from '~/utils'
+  import { listAdd, listRemove, listClear, typeNameWithAssembly } from '~/utils'
 
   const saveFile = inject('saveFile')
 
@@ -253,7 +253,7 @@
         if (totems.value.$rlength == 0) {
           // Stub totem
           listAdd(totems.value, {
-            $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
+            $type: typeNameWithAssembly("DiskCardGame.TotemDefinition"),
             tribe: null,
             ability: null
           })

@@ -336,7 +336,7 @@
 
 <script setup>
   import * as gameData from '~/game-data'
-  import { listAdd, listRemove, listClear } from '~/utils'
+  import { listNew, listAdd, listRemove, listClear, typeNameWithAssembly } from '~/utils'
 
   const saveFile = inject('saveFile')
 
@@ -354,7 +354,7 @@
         if (totems.value.$rlength == 0) {
           // Stub totem
           listAdd(totems.value, {
-            $type: "DiskCardGame.TotemDefinition, Assembly-CSharp",
+            $type: typeNameWithAssembly('DiskCardGame.TotemDefinition'),
             tribe: null,
             ability: null
           })
@@ -373,44 +373,24 @@
 
   function addDeathcard() {
     listAdd(saveFile.value.deathCardMods, {
-      $type: "DiskCardGame.CardModificationInfo, Assembly-CSharp",
+      $type: typeNameWithAssembly('DiskCardGame.CardModificationInfo'),
       nameReplacement: null,
       attackAdjustment: 0,
       healthAdjustment: 0,
-      abilities: {
-        $type: "System.Collections.Generic.List`1[[DiskCardGame.Ability, Assembly-CSharp]], mscorlib",
-        $rlength: 0,
-        $rcontent: []
-      },
-      negateAbilities: {
-        $type: "System.Collections.Generic.List`1[[DiskCardGame.Ability, Assembly-CSharp]], mscorlib",
-        $rlength: 0,
-        $rcontent: []
-      },
+      abilities: listNew('DiskCardGame.Ability'),
+      negateAbilities: listNew('DiskCardGame.Ability'),
       bloodCostAdjustment: 0,
       bonesCostAdjustment: 0,
-      addGemCost: {
-        $type: "System.Collections.Generic.List`1[[DiskCardGame.GemType, Assembly-CSharp]], mscorlib",
-        $rlength: 0,
-        $rcontent: []
-      },
-      specialAbilities: {
-        $type: "System.Collections.Generic.List`1[[DiskCardGame.SpecialTriggeredAbility, Assembly-CSharp]], mscorlib",
-        $rlength: 0,
-        $rcontent: []
-      },
+      addGemCost: listNew('DiskCardGame.GemType'),
+      specialAbilities: listNew('DiskCardGame.SpecialTriggeredAbility'),
+      decalIds: listNew('System.String'),
       deathCardInfo: {
-        $type: "DiskCardGame.DeathCardInfo, Assembly-CSharp",
+        $type: typeNameWithAssembly('DiskCardGame.DeathCardInfo'),
         headType: 0,
         mouthIndex: 0,
         eyesIndex: 0,
         lostEye: false
       },
-      decalIds: {
-        $type: "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
-        $rlength: 0,
-        $rcontent: []
-      }
     })
   }
 </script>
