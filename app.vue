@@ -23,7 +23,7 @@
           <ul>
             <li>If you are using the Steam version of the game, the save file is located in <code>steamapps\common\Inscryption\SaveFile.gwsave</code> relative to your Steam directory which &mdash; on Windows &mdash; is typically located at <code>%ProgramFiles%\Steam</code>.</li>
             <li>If you are using XBox Game Pass on Windows, the save file should be located at <code>%LocalAppData%\Packages\DevolverDigital.Inscryption_xxxxxx</code> where <code>xxxxxx</code> is a string of digits. See <a :href='`${repo}/issues/23#issuecomment-3172873199`' target=_blank>this comment</a> for more details.</li>
-            <li>This editor can also edit save files from some other platforms like Nintendo Switch and XBox Game Pass.</li>
+            <li>This editor can also edit save files from some other platforms like Nintendo Switch.</li>
             <li>If you want this editor to support save files in other formats, please send me an example save file and I'll see what I can do.</li>
           </ul>
         </li>
@@ -122,6 +122,8 @@
       </form>
     </template>
   </div>
+
+  <a ref=anchorElement />
 </template>
 
 <script setup lang=ts>
@@ -132,6 +134,8 @@
 
   const saveFile = ref(null)
   provide('saveFile', saveFile)
+
+  const anchorElement = ref(null)
 
   const loading = ref(false)
   const consoleFormat = ref(false)
@@ -165,7 +169,8 @@
         let [h, b] = parseBody(bytes)
         header = h
         body = b
-      } else if (bytes.at(0) == 0x7B /* `{` */) {
+      }
+      else if (bytes.at(0) == 0x7B /* `{` */) {
         let i = 1
         while (bytes.at(i) <= 0x20 /* ` ` */) i += 1
 
@@ -177,12 +182,14 @@
           let [h, b] = parseBody(Uint8Array.from(fs._files[fsSaveFileIndex]._data))
           header = h
           body = b
-        } else {
+        }
+        else {
           consoleFormat.value = false
           header = null
           body = bytes
         }
-      } else {
+      }
+      else {
         throw 'Unrecognized file format'
       }
 
@@ -202,13 +209,13 @@
             if (typeof value == "number") {
               return types[value]
             } else {
-              let [_, type] = value.split("|", 2)
+              const type = value.substring(value.indexOf('|') + 1)
               types.push(type)
               return type
             }
           default:
             if (typeof value == "string" && value.startsWith("$iref:")) {
-              let [_, n] = value.split(":", 2)
+              const n = value.substring(value.indexOf(':') + 1)
               return nodes[parseInt(n)]
             }
         }
@@ -216,17 +223,7 @@
         return value
       })
 
-      let decks = [
-        data.currentRun.playerDeck,
-        data.gbcData.deck,
-        data.part3Data.deck,
-        data.grimoraData.deck
-      ]
-
-      if (data.ascensionData?.currentRun)
-        decks.push(data.ascensionData.currentRun.playerDeck)
-
-      for (let deck of decks) {
+      function normalizeDeck(deck) {
         // Normalize the card mod info list:
 
         // 1. Ensure that all mod info keys are in the format `[name]#[index]`.
@@ -244,13 +241,21 @@
         })
       }
 
+      normalizeDeck(data.currentRun.playerDeck)
+      normalizeDeck(data.gbcData.deck)
+      normalizeDeck(data.part3Data.deck)
+      normalizeDeck(data.grimoraData.deck)
+      if (data.ascensionData?.currentRun)
+        normalizeDeck(data.ascensionData.currentRun.playerDeck)
+
       // Stub boon arrays if they don't already exist:
       data.currentRun.playerDeck.boonIds ??= listNew("DiskCardGame.BoonData+Type")
       if (data.ascensionData?.currentRun)
         data.ascensionData.currentRun.playerDeck.boonIds ??= listNew("DiskCardGame.BoonData+Type")
 
       saveFile.value = data
-    } catch (error) {
+    }
+    catch (error) {
       errorHandler(error)
     }
 
@@ -287,15 +292,15 @@
         blobParts = [body]
       }
 
-      const blob = new Blob(blobParts, { type: "application/octet-stream" })
+      const blob = new Blob(blobParts)
       const url = URL.createObjectURL(blob)
-      const anchorElement = document.createElement('a')
-      anchorElement.href = url
-      anchorElement.download = fileName ?? ''
-      anchorElement.click()
-      anchorElement.remove()
+
+      anchorElement.value.href = url
+      anchorElement.value.download = fileName
+      anchorElement.value.click()
       URL.revokeObjectURL(url)
-    } catch (error) {
+    }
+    catch (error) {
       errorHandler(error)
     }
   }
