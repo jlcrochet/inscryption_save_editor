@@ -349,11 +349,11 @@
       let b = bytes[i]
 
       if (b <= 0x20 /* whitespace */) {
-        if (region.at(-1) == 'string')
+        if (regions.at(-1) == 'string')
           output.push(b)
       }
       else if (b == 0x22 /* `"` */) {
-        if (region.at(-1) == 'string')
+        if (regions.at(-1) == 'string')
           regions.pop()
         else
           regions.push('string')
@@ -361,7 +361,7 @@
         output.push(b)
       }
       else if (b == 0x2D || (b >= 0x30 && b <= 0x39) /* `-` or digits */) {
-        if (region.at(-1) == 'object' && isKey) {
+        if (regions.at(-1) == 'object' && isKey) {
           output.push(0x22, (coordinateX ? 0x78 : 0x79), 0x22, 0x3A)  // `"x|y":`
           coordinateX = !coordinateX
 
@@ -378,39 +378,39 @@
         }
       }
       else if (b == 0x3A /* `:` */) {
-        if (region.at(-1) == 'object')
+        if (regions.at(-1) == 'object')
           isKey = false
         output.push(b)
       }
       else if (b == 0x5B /* `[` */) {
-        if (region.at(-1) != 'string')
+        if (regions.at(-1) != 'string')
           regions.push('array')
         output.push(b)
       }
       else if (b == 0x7B /* `{` */) {
-        if (region.at(-1) != 'string')
+        if (regions.at(-1) != 'string')
           regions.push('object')
         output.push(b)
       }
       else if (b == 0x5D /* `]` */) {
-        if (region.at(-1) == 'array')
+        if (regions.at(-1) == 'array')
           regions.pop()
         output.push(b)
       }
       else if (b == 0x7D /* `}` */) {
-        if (region.at(-1) == 'object') {
+        if (regions.at(-1) == 'object') {
           regions.pop()
           isKey = true
         }
         output.push(b)
       }
       else if (b == 0x2C /* `,` */) {
-        if (region.at(-1) == 'object')
+        if (regions.at(-1) == 'object')
           isKey = true
         output.push(b)
       }
       else if (b == 0x24 /* `$` */) {
-        if (region.at(-1) == 'string') {
+        if (regions.at(-1) == 'string') {
           output.push(b)
         }
         else {
