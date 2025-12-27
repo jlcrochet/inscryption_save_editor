@@ -1,0 +1,43 @@
+input[type=checkbox] {
+    margin: 3px 0;
+}
+
+[title] {
+    text-decoration: underline gray;
+    cursor: help;
+}
+
+.card > td {
+    border: 2px solid black;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td, th {
+    padding: 4px;
+}
+
+td {
+    white-space: nowrap;
+}
+
+summary, button, label {
+    user-select: none;
+}
+
+dialog {
+    max-width: 65vw;
+}
+
+.error-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.5em;
+}
+
+dialog pre {
+    background-color: lightgray;
+    padding: 1em;
+}

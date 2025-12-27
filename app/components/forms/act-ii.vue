@@ -1,7 +1,7 @@
 <template>
   <tabs>
     <tab title="Miscellaneous">
-      <table cellpadding=4>
+      <table>
         <table-input
           v-model.number=saveFile.gbcData.currency
           label=Currency

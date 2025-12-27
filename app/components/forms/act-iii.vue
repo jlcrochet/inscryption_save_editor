@@ -1,7 +1,7 @@
 <template>
   <tabs>
     <tab title="Miscellaneous">
-      <table cellpadding=4>
+      <table>
         <table-input
           v-model.number=saveFile.part3Data.currency
           label=Currency
@@ -25,7 +25,7 @@
     </tab>
 
     <tab title="Side Deck">
-      <table cellpadding=4>
+      <table>
         <table-select
           v-model=saveFile.part3Data.sideDeckAbilities.$rcontent
           :label='`Sigils (${saveFile.part3Data.sideDeckAbilities.$rlength})`'
@@ -40,38 +40,13 @@
     </tab>
 
     <tab title="Items">
-      <table cellpadding=4>
-        <tbody>
-          <template v-for="(item, i) in saveFile.part3Data.items.$rcontent">
-            <tr>
-              <td>
-                <select v-model=saveFile.part3Data.items.$rcontent[i] required>
-                  <template v-for="[gameName, value] in items">
-                    <option :value=value>{{ gameName }}</option>
-                  </template>
-                </select>
-              </td>
-
-              <td>
-                <button type=button @click='listRemove(saveFile.part3Data.items, i)'>Remove</button>
-              </td>
-            </tr>
-          </template>
-
-          <tr>
-            <td>
-              <button type=button @click='listAdd(saveFile.part3Data.items, null)'>Add</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <items-editor :items=saveFile.part3Data.items />
     </tab>
   </tabs>
 </template>
 
 <script setup>
-  import { abilities, items } from '~/game-data'
-  import { listAdd, listRemove } from '~/utils'
+  import { abilities } from '~/game-data'
 
   const saveFile = inject('saveFile')
 </script>

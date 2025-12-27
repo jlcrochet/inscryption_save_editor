@@ -1,7 +1,7 @@
 <template>
   <tr>
     <td>
-      <label :for=id style='user-select: none'>
+      <label :for=id>
         <template v-if=help>
           <span :title=help>{{ label }}</span>
         </template>
@@ -12,7 +12,7 @@
       </label>
     </td>
 
-    <td><input :id=id v-model.lazy=model v-bind=$attrs /></td>
+    <td><select :id=id v-model.lazy=model v-bind=$attrs><slot /></select></td>
   </tr>
 </template>
 

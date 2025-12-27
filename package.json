@@ -6,12 +6,12 @@
     "generate": "nuxi generate",
     "preview": "nuxi preview"
   },
-  "devDependencies": {
-    "nuxt": "^3.18.1",
-    "typescript": "^5.9.2",
-    "vue-tsc": "^2.2.12"
-  },
   "dependencies": {
     "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "nuxt": "^4.2.2",
+    "typescript": "^5.9.3",
+    "vue-tsc": "^3.2.1"
   }
 }

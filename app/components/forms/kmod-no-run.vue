@@ -1,7 +1,7 @@
 <template>
   <tabs>
     <tab title="Miscellaneous">
-      <table cellpadding=4>
+      <table>
         <table-input
           v-model.number=saveFile.ascensionData.challengeLevel
           label='Challenge level'
@@ -17,7 +17,7 @@
     </tab>
 
     <tab title="Conquered Starter Decks">
-      <table cellpadding=4>
+      <table>
         <template v-for="deck in starterDecks">
           <table-input
             v-model=saveFile.ascensionData.conqueredStarterDecks.$rcontent

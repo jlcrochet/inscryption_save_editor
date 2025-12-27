@@ -1,5 +1,5 @@
 <template>
-  <table cellpadding=4>
+  <table>
     <table-input
       v-model.number=saveFile.randomSeed
       label='Random seed'
