@@ -28,7 +28,7 @@
           label='Eye state'
           required
         >
-          <template v-for="(state, i) in gameData.eyeStates">
+          <template v-for="(state, i) in eyeStates">
             <option :value=i>{{ state }}</option>
           </template>
         </table-select>
@@ -132,7 +132,7 @@
     </tab>
 
     <tab title="Items">
-      <items-editor :items=saveFile.currentRun.consumables />
+      <items-editor :itemList=saveFile.currentRun.consumables />
     </tab>
 
     <tab title="Totems">
@@ -154,9 +154,6 @@
 </template>
 
 <script setup>
-  import * as gameData from '~/game-data'
-  import { listNew, listAdd, listRemove, listClone, typeNameWithAssembly } from '~/utils'
-
   const saveFile = inject('saveFile')
 
   const deathcardDialogRef = ref(null)

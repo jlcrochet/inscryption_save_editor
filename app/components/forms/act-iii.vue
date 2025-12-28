@@ -40,13 +40,11 @@
     </tab>
 
     <tab title="Items">
-      <items-editor :items=saveFile.part3Data.items />
+      <items-editor :itemList=saveFile.part3Data.items />
     </tab>
   </tabs>
 </template>
 
 <script setup>
-  import { abilities } from '~/game-data'
-
   const saveFile = inject('saveFile')
 </script>

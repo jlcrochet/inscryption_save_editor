@@ -44,7 +44,7 @@
           label='Eye state'
           required
         >
-          <template v-for="(state, i) in gameData.eyeStates">
+          <template v-for="(state, i) in eyeStates">
             <option :value=i>{{ state }}</option>
           </template>
         </table-select>
@@ -75,7 +75,7 @@
     </tab>
 
     <tab title="Items">
-      <items-editor :items=saveFile.ascensionData.currentRun.consumables />
+      <items-editor :itemList=saveFile.ascensionData.currentRun.consumables />
     </tab>
 
     <tab title="Totems">
@@ -119,7 +119,7 @@
 
     <tab title="Conquered Starter Decks">
       <table>
-        <template v-for="deck in gameData.starterDecks">
+        <template v-for="deck in starterDecks">
           <table-input
             v-model=saveFile.ascensionData.conqueredStarterDecks.$rcontent
             :value=deck
@@ -134,7 +134,5 @@
 </template>
 
 <script setup>
-  import * as gameData from '~/game-data'
-
   const saveFile = inject('saveFile')
 </script>

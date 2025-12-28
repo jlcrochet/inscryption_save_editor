@@ -129,8 +129,6 @@
 </template>
 
 <script setup lang=ts>
-  import { listNew } from '~/utils'
-
   const email = 'jlcrochet91@pm.me'
   const repo = 'https://github.com/jlcrochet/inscryption_save_editor'
 

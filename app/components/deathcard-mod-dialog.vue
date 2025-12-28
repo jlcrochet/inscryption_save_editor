@@ -95,8 +95,6 @@
 </template>
 
 <script setup>
-  import { abilities } from '~/game-data'
-
   const dialogRef = ref(null)
   const mod = ref(null)
 

@@ -45,9 +45,6 @@
 </template>
 
 <script setup>
-  import { tribes, abilities } from '~/game-data'
-  import { listAdd, listClear, typeNameWithAssembly } from '~/utils'
-
   const props = defineProps({
     totemTops: {
       type: Object,

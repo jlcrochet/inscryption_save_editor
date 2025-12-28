@@ -66,9 +66,6 @@
 </template>
 
 <script setup>
-  import { cardNames, abilities } from '~/game-data'
-  import { listNew, listAdd, listRemove, listClone, typeNameWithAssembly } from '~/utils'
-
   const props = defineProps({
     deck: {
       type: Object,

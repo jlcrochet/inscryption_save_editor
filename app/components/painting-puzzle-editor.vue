@@ -34,8 +34,6 @@
 </template>
 
 <script setup>
-  import { cardNames } from '~/game-data'
-
   defineProps({
     oilPaintingState: {
       type: Object,

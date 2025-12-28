@@ -1,25 +1,25 @@
 <template>
   <table>
     <tbody>
-      <template v-for="(item, i) in items.$rcontent">
+      <template v-for="(item, i) in itemList.$rcontent">
         <tr>
           <td>
-            <select v-model=items.$rcontent[i] required>
-              <template v-for="[gameName, value] in itemOptions">
+            <select v-model=itemList.$rcontent[i] required>
+              <template v-for="[gameName, value] in items">
                 <option :value=value>{{ gameName }}</option>
               </template>
             </select>
           </td>
 
           <td>
-            <button type=button @click='listRemove(items, i)'>Remove</button>
+            <button type=button @click='listRemove(itemList, i)'>Remove</button>
           </td>
         </tr>
       </template>
 
       <tr>
         <td>
-          <button type=button @click='listAdd(items, null)'>Add Item</button>
+          <button type=button @click='listAdd(itemList, null)'>Add Item</button>
         </td>
       </tr>
     </tbody>
@@ -27,11 +27,8 @@
 </template>
 
 <script setup>
-  import { items as itemOptions } from '~/game-data'
-  import { listAdd, listRemove } from '~/utils'
-
   defineProps({
-    items: {
+    itemList: {
       type: Object,
       required: true
     }

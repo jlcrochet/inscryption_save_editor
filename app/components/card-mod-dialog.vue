@@ -116,9 +116,6 @@
 </template>
 
 <script setup>
-  import { abilities } from '~/game-data'
-  import { listNew, listAdd, listRemove, listClone, typeNameWithAssembly } from '~/utils'
-
   const dialogRef = ref(null)
   const mods = ref(null)
   const modIndex = ref(0)

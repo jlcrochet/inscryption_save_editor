@@ -1,6 +1,6 @@
 <template>
   <table>
-    <template v-for="([name, description], i) in boonOptions">
+    <template v-for="([name, description], i) in boons">
       <table-input
         v-model=boonIds.$rcontent
         :value="i + 1"
@@ -14,8 +14,6 @@
 </template>
 
 <script setup>
-  import { boons as boonOptions } from '~/game-data'
-
   defineProps({
     boonIds: {
       type: Object,
