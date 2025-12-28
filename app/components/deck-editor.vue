@@ -163,8 +163,6 @@
       }
     })
 
-    // refreshModInfoKeys(name)
-
     nextTick(gotoLastPage)
   }
 
@@ -173,28 +171,12 @@
 
     props.deck.cardIds.$rlength -= 1
     listRemove(props.deck.cardIdModInfos, i)
-    // refreshModInfoKeys(name)
   }
 
   function updateCardSelection(i, name) {
-    // const oldName = props.deck.cardIds.$rcontent[i]
-
     props.deck.cardIds.$rcontent[i] = name
     props.deck.cardIdModInfos.$rcontent[i].$k = name + '#' + i
-    // refreshModInfoKeys(oldName)
-    // refreshModInfoKeys(name)
   }
-
-  // function refreshModInfoKeys(name) {
-  //   const search = name + "#"
-  //   let idx = 0
-
-  //   for (const modInfo of props.deck.cardIdModInfos.$rcontent) {
-  //     if (modInfo.$k == name || modInfo.$k.startsWith(search)) {
-  //       modInfo.$k = search + idx++
-  //     }
-  //   }
-  // }
 </script>
 
 <style scoped>

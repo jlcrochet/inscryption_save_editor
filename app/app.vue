@@ -190,7 +190,6 @@
       loading.value = true
       fs = null
 
-      console.log(file)
       fileName = file.name
       const bytes = new Uint8Array(await file.arrayBuffer())
 
@@ -255,40 +254,6 @@
         return value
       })
 
-      // function normalizeCardModInfo(deck) {
-      //   // Normalize the card mod info list:
-
-      //   // 1. Ensure that all mod info keys are in the format `[name]#[index]`.
-      //   // for (const modInfo of deck.cardIdModInfos.$rcontent) {
-      //   //   if (!modInfo.$k.includes('#'))
-      //   //     modInfo.$k += "#0"
-      //   // }
-
-      //   // 2. Ensure that the mod info list is cowitnessed with the card list for easier lookups.
-      //   // We can remove the `#[index]` at this point.
-      //   deck.cardIdModInfos.$rcontent.sort((a, b) => {
-      //     let [aName, aIdx] = a.$k.split('#', 2)
-      //     let [bName, bIdx] = b.$k.split('#', 2)
-      //     if (aName != bName) return 0
-      //     aIdx = parseInt(aIdx) || 0
-      //     bIdx = parseInt(bIdx) || 0
-      //   })
-
-      //   // const tally = {}
-      //   // deck.cardIdModInfos.$rcontent = deck.cardIds.$rcontent.map(name => {
-      //   //   tally[name] ??= 0
-      //   //   const search = name + "#" + tally[name]++
-      //   //   const target = deck.cardIdModInfos.$rcontent.find(modInfo => modInfo.$k == search)
-      //   // })
-      // }
-
-      // normalizeCardModInfo(data.currentRun.playerDeck)
-      // normalizeCardModInfo(data.gbcData.deck)
-      // normalizeCardModInfo(data.part3Data.deck)
-      // normalizeCardModInfo(data.grimoraData.deck)
-      // if (data.ascensionData?.currentRun)
-      //   normalizeCardModInfo(data.ascensionData.currentRun.playerDeck)
-
       // Stub boon arrays if they don't already exist:
       data.currentRun.playerDeck.boonIds ??= listNew("DiskCardGame.BoonData+Type")
       if (data.ascensionData?.currentRun)
@@ -305,26 +270,6 @@
 
   function createFile() {
     try {
-      // function normalizeModInfoKeys(deck) {
-      //   for (const name of deck.cardIds) {
-      //     const search = name + "#"
-      //     let idx = 0
-
-      //     for (const modInfo of deck.cardIdModInfos.$rcontent) {
-      //       if (modInfo.$k == name || modInfo.$k.startsWith(search)) {
-      //         modInfo.$k = search + idx++
-      //       }
-      //     }
-      //   }
-      // }
-
-      // normalizeModInfoKeys(saveFile.value.currentRun.playerDeck)
-      // normalizeModInfoKeys(saveFile.value.gbcData.deck)
-      // normalizeModInfoKeys(saveFile.value.part3Data.deck)
-      // normalizeModInfoKeys(saveFile.value.grimoraData.deck)
-      // if (saveFile.value.ascensionData?.currentRun)
-      //   normalizeModInfoKeys(saveFile.value.ascensionData.currentRun.playerDeck)
-
       const body = JSON.stringify(saveFile.value)
 
       let outputAsConsoleFormat = consoleFormat.value
