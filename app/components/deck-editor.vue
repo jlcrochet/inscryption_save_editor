@@ -10,7 +10,7 @@
         </tr>
       </thead>
 
-      <tbody>
+      <tbody ref=tbodyRef>
         <template v-for="card in paginatedCards">
           <tr>
             <td style="text-align: right">{{ card.index + 1 }}</td>
@@ -36,7 +36,8 @@
         </template>
 
         <tr>
-          <td colspan=4>
+          <td></td>
+          <td>
             <button type=button @click=addCard>Add Card</button>
           </td>
         </tr>
@@ -76,6 +77,7 @@
   const page = ref(0)
   const pageSize = ref(20)
   const modDialogRef = ref(null)
+  const tbodyRef = ref(null)
 
   const totalCards = computed(() => props.deck.cardIds.$rlength)
   const totalPages = computed(() => Math.max(1, Math.ceil(totalCards.value / pageSize.value)))
@@ -122,11 +124,21 @@
       $v: listNew("DiskCardGame.CardModificationInfo")
     })
 
-    nextTick(gotoLastPage)
+    nextTick(gotoLastPageAndFocus)
   }
 
   function gotoLastPage() {
     page.value = totalPages.value - 1
+  }
+
+  function gotoLastPageAndFocus() {
+    gotoLastPage()
+    nextTick(() => {
+      const rows = tbodyRef.value.querySelectorAll('tr')
+      const lastCardRow = rows[rows.length - 2] // -2 because last row is the "Add Card" button row
+      const select = lastCardRow?.querySelector('select')
+      select?.focus()
+    })
   }
 
   function duplicateCard(i) {

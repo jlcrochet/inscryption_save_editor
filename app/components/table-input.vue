@@ -12,7 +12,7 @@
       </label>
     </td>
 
-    <td><input :id=id v-model.lazy=model v-bind=$attrs /></td>
+    <td><input ref=inputRef :id=id v-model.lazy=model v-bind=$attrs /></td>
   </tr>
 </template>
 
@@ -36,4 +36,12 @@
       type: String
     }
   })
+
+  const inputRef = ref(null)
+
+  function focus() {
+    inputRef.value?.focus()
+  }
+
+  defineExpose({ focus })
 </script>

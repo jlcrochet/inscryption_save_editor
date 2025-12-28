@@ -11,6 +11,7 @@
 
       <table>
         <table-input
+          ref=nameInputRef
           v-model.trim=currentMod.nameReplacement
           label=Name
           help="Changes the displayed name of this card."
@@ -108,7 +109,7 @@
       <p>No modifications for this card.</p>
 
       <div class=actions>
-        <button type=button @click=addMod>Add</button>
+        <button type=button @click=addMod>Add Mod</button>
         <button type=button @click=close>Close</button>
       </div>
     </template>
@@ -119,6 +120,7 @@
   const dialogRef = ref(null)
   const mods = ref(null)
   const modIndex = ref(0)
+  const nameInputRef = ref(null)
 
   const currentMod = computed(() => {
     if (!mods.value || mods.value.$rlength === 0) return null
@@ -178,6 +180,7 @@
       decalIds: listNew("System.String")
     })
     modIndex.value = mods.value.$rlength - 1
+    nextTick(() => nameInputRef.value?.focus())
   }
 
   function duplicateMod() {

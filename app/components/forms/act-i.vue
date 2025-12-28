@@ -103,7 +103,7 @@
           </tr>
         </thead>
 
-        <tbody>
+        <tbody ref=deathcardsTbodyRef>
           <template v-for="(mod, i) in saveFile.deathCardMods.$rcontent">
             <tr>
               <td style="text-align: right">{{ i + 1 }}</td>
@@ -121,7 +121,8 @@
           </template>
 
           <tr>
-            <td colspan=3>
+            <td></td>
+            <td>
               <button type=button @click=addDeathcard>Add Deathcard</button>
             </td>
           </tr>
@@ -157,6 +158,7 @@
   const saveFile = inject('saveFile')
 
   const deathcardDialogRef = ref(null)
+  const deathcardsTbodyRef = ref(null)
 
   function openDeathcardDialog(i) {
     deathcardDialogRef.value.open(saveFile.value.deathCardMods.$rcontent[i])
@@ -206,6 +208,12 @@
         eyesIndex: 0,
         lostEye: false
       },
+    })
+    nextTick(() => {
+      const rows = deathcardsTbodyRef.value.querySelectorAll('tr')
+      const lastCardRow = rows[rows.length - 2]
+      const input = lastCardRow?.querySelector('input')
+      input?.focus()
     })
   }
 </script>
