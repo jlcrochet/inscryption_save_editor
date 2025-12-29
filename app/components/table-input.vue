@@ -12,7 +12,9 @@
       </label>
     </td>
 
-    <td><input ref=inputRef :id=id v-model.lazy=model v-bind=$attrs /></td>
+    <td>
+      <input ref=inputRef :id=id v-model.lazy=model v-bind=$attrs>
+    </td>
   </tr>
 </template>
 

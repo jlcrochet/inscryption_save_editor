@@ -144,12 +144,12 @@
   const switchFormat = ref(false)
   const errorText = ref('')
 
-  const VISITED_KEY = 'inscryption-save-editor-visited'
+  const visitedKey = 'inscryption-save-editor-visited'
 
   onMounted(() => {
-    if (!localStorage.getItem(VISITED_KEY)) {
+    if (!localStorage.getItem(visitedKey)) {
       dialogRef.value?.showModal()
-      localStorage.setItem(VISITED_KEY, '1')
+      localStorage.setItem(visitedKey, '1')
     }
   })
 

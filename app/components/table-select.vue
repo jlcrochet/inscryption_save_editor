@@ -12,7 +12,11 @@
       </label>
     </td>
 
-    <td><select :id=id v-model.lazy=model v-bind=$attrs><slot /></select></td>
+    <td>
+      <select :id=id v-model.lazy=model v-bind=$attrs>
+        <slot />
+      </select>
+    </td>
   </tr>
 </template>
 

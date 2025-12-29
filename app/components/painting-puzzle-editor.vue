@@ -1,27 +1,21 @@
 <template>
-  <div>
-    <p>
-      These represent spaces on the board from left to right:
-    </p>
+  <table>
+    <tbody>
+      <tr>
+        <td v-for="(card, i) in oilPaintingState.puzzleSolution.$rcontent">
+          <select v-model=oilPaintingState.puzzleSolution.$rcontent[i]>
+            <option :value=null>(empty)</option>
+            <template v-for="[gameName, value] in cardNames">
+              <option :value=value :selected="card == value">{{ gameName }}</option>
+            </template>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-    <table>
-      <template v-for="(card, i) in oilPaintingState.puzzleSolution.$rcontent">
-        <tr>
-          <td>
-            <select v-model=oilPaintingState.puzzleSolution.$rcontent[i]>
-              <option :value=null>(empty)</option>
-              <template v-for="[gameName, value] in cardNames">
-                <option :value=value :selected="card == value">{{ gameName }}</option>
-              </template>
-            </select>
-          </td>
-        </tr>
-      </template>
-    </table>
-
-    <hr />
-
-    <table>
+  <table>
+    <tbody>
       <table-input v-model=oilPaintingState.puzzleSolved type=checkbox label=Solved />
       <table-select v-model.number=oilPaintingState.rewardIndex label=Reward>
         <option value=0>Clover</option>
@@ -29,8 +23,8 @@
         <option value=2>Bee Statue</option>
       </table-select>
       <table-input v-model=oilPaintingState.rewardTaken type=checkbox label='Reward taken' />
-    </table>
-  </div>
+    </tbody>
+  </table>
 </template>
 
 <script setup>

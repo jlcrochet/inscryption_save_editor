@@ -1,69 +1,67 @@
 <template>
-  <div>
-    <table>
-      <thead>
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align: right">#</th>
+        <th>Name</th>
+        <th style="text-align: right">Mods</th>
+        <th></th>
+      </tr>
+    </thead>
+
+    <tbody ref=tbodyRef>
+      <template v-for="card in paginatedCards">
         <tr>
-          <th style="text-align: right">#</th>
-          <th>Name</th>
-          <th style="text-align: right">Mods</th>
-          <th></th>
-        </tr>
-      </thead>
+          <td style="text-align: right">{{ card.index + 1 }}</td>
 
-      <tbody ref=tbodyRef>
-        <template v-for="card in paginatedCards">
-          <tr>
-            <td style="text-align: right">{{ card.index + 1 }}</td>
-
-            <td>
-              <select :value=card.name @input="updateCardSelection(card.index, $event.target.value)" required>
-                <template v-for="[gameName, value] in cardNames">
-                  <option :value=value>{{ gameName }}</option>
-                </template>
-              </select>
-            </td>
-
-            <td style="text-align: right">
-              {{ card.modCount }}
-            </td>
-
-            <td class=actions>
-              <button type=button @click="openModDialog(card.index)">Edit Mods</button>
-              <button type=button @click=duplicateCard(card.index)>Duplicate</button>
-              <button type=button @click=deleteCard(card.index)>Delete</button>
-            </td>
-          </tr>
-        </template>
-
-        <tr>
-          <td></td>
           <td>
-            <button type=button @click=addCard>Add Card</button>
+            <select :value=card.name @input="updateCardSelection(card.index, $event.target.value)" required>
+              <template v-for="[gameName, value] in cardNames">
+                <option :value=value>{{ gameName }}</option>
+              </template>
+            </select>
+          </td>
+
+          <td style="text-align: right">
+            {{ card.modCount }}
+          </td>
+
+          <td class=actions>
+            <button type=button @click="openModDialog(card.index)">Edit Mods</button>
+            <button type=button @click=duplicateCard(card.index)>Duplicate</button>
+            <button type=button @click=deleteCard(card.index)>Delete</button>
           </td>
         </tr>
-      </tbody>
-    </table>
+      </template>
 
-    <div v-if="totalPages > 1" class=pagination>
-      <button type=button @click=prevPage :disabled="page === 0">&lt;</button>
-      <span>{{ page + 1 }} / {{ totalPages }}</span>
-      <button type=button @click=nextPage :disabled="page === totalPages - 1">&gt;</button>
-    </div>
+      <tr>
+        <td></td>
+        <td>
+          <button type=button @click=addCard>Add Card</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-    <div class=page-size>
-      <label>
-        Per page:
-        <select v-model.number=pageSize>
-          <option :value=10>10</option>
-          <option :value=20>20</option>
-          <option :value=50>50</option>
-          <option :value=100>100</option>
-        </select>
-      </label>
-    </div>
-
-    <card-mod-dialog ref=modDialogRef />
+  <div v-if="totalPages > 1" class=pagination>
+    <button type=button @click=prevPage :disabled="page === 0">&lt</button>
+    <span>{{ page + 1 }} / {{ totalPages }}</span>
+    <button type=button @click=nextPage :disabled="page === totalPages - 1">&gt</button>
   </div>
+
+  <div class=page-size>
+    <label>
+      Per page:
+      <select v-model.number=pageSize>
+        <option :value=10>10</option>
+        <option :value=20>20</option>
+        <option :value=50>50</option>
+        <option :value=100>100</option>
+      </select>
+    </label>
+  </div>
+
+  <card-mod-dialog ref=modDialogRef />
 </template>
 
 <script setup>
@@ -118,12 +116,10 @@
 
   function addCard() {
     listAdd(props.deck.cardIds, null)
-
     listAdd(props.deck.cardIdModInfos, {
       $k: "",
       $v: listNew("DiskCardGame.CardModificationInfo")
     })
-
     nextTick(gotoLastPageAndFocus)
   }
 
@@ -134,19 +130,18 @@
   function gotoLastPageAndFocus() {
     gotoLastPage()
     nextTick(() => {
-      const rows = tbodyRef.value.querySelectorAll('tr')
+      const rows = tbodyRef.value.children
       const lastCardRow = rows[rows.length - 2] // -2 because last row is the "Add Card" button row
-      const select = lastCardRow?.querySelector('select')
+      const select = lastCardRow?.cells[1]?.firstElementChild
       select?.focus()
     })
   }
 
   function duplicateCard(i) {
     const name = props.deck.cardIds.$rcontent[i]
-    listAdd(props.deck.cardIds, name)
-
     const modInfo = props.deck.cardIdModInfos.$rcontent[i]
 
+    listAdd(props.deck.cardIds, name)
     listAdd(props.deck.cardIdModInfos, {
       $k: name + '#' + props.deck.cardIdModInfos.$rlength,
       $v: {
@@ -179,9 +174,7 @@
   }
 
   function deleteCard(i) {
-    const name = props.deck.cardIds.$rcontent.splice(i, 1)[0]
-
-    props.deck.cardIds.$rlength -= 1
+    listRemove(props.deck.cardIds, i)
     listRemove(props.deck.cardIdModInfos, i)
   }
 

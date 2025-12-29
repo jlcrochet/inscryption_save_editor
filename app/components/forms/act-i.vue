@@ -210,9 +210,9 @@
       },
     })
     nextTick(() => {
-      const rows = deathcardsTbodyRef.value.querySelectorAll('tr')
+      const rows = deathcardsTbodyRef.value.children
       const lastCardRow = rows[rows.length - 2]
-      const input = lastCardRow?.querySelector('input')
+      const input = lastCardRow?.cells[1]?.firstElementChild
       input?.focus()
     })
   }
