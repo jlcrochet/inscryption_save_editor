@@ -35,9 +35,12 @@ export function listClear(list) {
 }
 
 export function listClone(list) {
-    return {
-        $type: list.$type,
-        $rlength: list.$rlength,
-        $rcontent: [...list.$rcontent]
-    }
+    if (list === null || list === undefined)
+        return list
+    else
+        return {
+            $type: list.$type,
+            $rlength: list.$rlength,
+            $rcontent: [...list.$rcontent]
+        }
 }

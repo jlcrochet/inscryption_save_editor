@@ -364,7 +364,7 @@
       }
       else if (b == 0x2D || (b >= 0x30 && b <= 0x39) /* - or digits */) {
         if (regions.at(-1) == 'object' && isKey) {
-          output.push(0x22, (coordinateX ? 0x78 : 0x79), 0x22, 0x3A)  // "x|y":
+          output.push(0x22, (coordinateX ? 0x78 : 0x79), 0x22, 0x3A)  // "[xy]":
           coordinateX = !coordinateX
 
           while (b == 0x2D || b == 0x2E || (b >= 0x30 && b <= 0x39) || b == 0x45 /* - or . or digits or E for exponents */) {
@@ -374,9 +374,7 @@
 
           i -= 1
         }
-        else {
-          output.push(b)
-        }
+        else output.push(b)
       }
       else if (b == 0x3A /* : */) {
         if (regions.at(-1) == 'object')
@@ -424,9 +422,7 @@
           output.push(0x22)
         }
       }
-      else {
-        output.push(b)
-      }
+      else output.push(b)
     }
 
     return Uint8Array.from(output)
@@ -434,7 +430,9 @@
 
   function errorHandler(error: Error) {
     console.error(error)
-    errorText.value = error instanceof Error ? (error.stack || `${error.name}: ${error.message}`) : String(error)
+    errorText.value = error instanceof Error
+      ? error.stack || `${error.name}: ${error.message}`
+      : String(error)
     errorDialogRef.value?.showModal()
   }
 </script>
