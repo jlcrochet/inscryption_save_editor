@@ -32,8 +32,8 @@
           @change="saveFile.part3Data.sideDeckAbilities.$rlength = $event.target.selectedOptions.length"
           multiple size=10
         >
-          <template v-for="([ability, description], k) in abilities">
-            <option :value="k + 1" :title=description>{{ ability }}</option>
+          <template v-for="(ability, k) in abilities">
+            <option :value="k + 1" :title=ability.description>{{ ability.name }}</option>
           </template>
         </table-select>
       </table>

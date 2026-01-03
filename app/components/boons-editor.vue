@@ -1,12 +1,12 @@
 <template>
   <table>
-    <template v-for="([name, description], i) in boons">
+    <template v-for="(boon, i) in boons">
       <table-input
         v-model=boonIds.$rcontent
         :value="i + 1"
         @change="boonIds.$rlength = boonIds.$rcontent.length"
-        :label=name
-        :help=description
+        :label=boon.name
+        :help=boon.description
         type=checkbox
       />
     </template>

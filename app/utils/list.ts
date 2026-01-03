@@ -1,5 +1,11 @@
-export function typeNameWithAssembly(type) {
-	let assembly
+type List = {
+    $type: string,
+    $rlength: number,
+    $rcontent: object[]
+}
+
+export function typeNameWithAssembly(type: string): string {
+    let assembly: string
 
     if (type.startsWith('System.'))
         assembly = 'mscorlib'
@@ -8,10 +14,10 @@ export function typeNameWithAssembly(type) {
     else
         assembly = 'Assembly-CSharp'
 
-	return `${type}, ${assembly}`
+    return `${type}, ${assembly}`
 }
 
-export function listNew(type) {
+export function listNew(type: string): List {
     return {
         $type: `System.Collections.Generic.List\`1[[${typeNameWithAssembly(type)}]], mscorlib`,
         $rlength: 0,
@@ -19,22 +25,22 @@ export function listNew(type) {
     }
 }
 
-export function listAdd(list, value) {
+export function listAdd(list: List, value: any) {
     list.$rcontent.push(value)
     list.$rlength += 1
 }
 
-export function listRemove(list, index) {
+export function listRemove(list: List, index: number) {
     list.$rcontent.splice(index, 1)
     list.$rlength -= 1
 }
 
-export function listClear(list) {
+export function listClear(list: List) {
     list.$rcontent.splice(0)
     list.$rlength = 0
 }
 
-export function listClone(list) {
+export function listClone(list: List): List {
     if (list === null || list === undefined)
         return list
     else

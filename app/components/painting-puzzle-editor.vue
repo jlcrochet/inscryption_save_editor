@@ -5,8 +5,8 @@
         <td v-for="(card, i) in oilPaintingState.puzzleSolution.$rcontent">
           <select v-model=oilPaintingState.puzzleSolution.$rcontent[i]>
             <option :value=null>(empty)</option>
-            <template v-for="[gameName, value] in cardNames">
-              <option :value=value :selected="card == value">{{ gameName }}</option>
+            <template v-for="cardName in cards">
+              <option :value=cardName.id :selected="card == cardName.id">{{ cardName.name }}</option>
             </template>
           </select>
         </td>

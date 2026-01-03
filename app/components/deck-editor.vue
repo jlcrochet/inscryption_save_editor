@@ -16,8 +16,8 @@
 
           <td>
             <select :value=card.name @input="updateCardSelection(card.index, $event.target.value)" required>
-              <template v-for="[gameName, value] in cardNames">
-                <option :value=value>{{ gameName }}</option>
+              <template v-for="card in cards">
+                <option :value=card.id>{{ card.name }}</option>
               </template>
             </select>
           </td>
@@ -140,7 +140,6 @@
   function duplicateCard(i) {
     const name = props.deck.cardIds.$rcontent[i]
     const modInfo = props.deck.cardIdModInfos.$rcontent[i]
-    console.log(name, modInfo)
 
     listAdd(props.deck.cardIds, name)
     listAdd(props.deck.cardIdModInfos, {
@@ -149,7 +148,6 @@
         $type: modInfo.$v.$type,
         $rlength: modInfo.$v.$rlength,
         $rcontent: modInfo.$v.$rcontent.map(mod => {
-          console.log(mod)
           return {
             $type: mod.$type,
             nameReplacement: mod.nameReplacement,

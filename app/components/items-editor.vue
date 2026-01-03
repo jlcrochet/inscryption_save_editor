@@ -5,8 +5,8 @@
         <tr>
           <td>
             <select v-model=itemList.$rcontent[i] required>
-              <template v-for="[gameName, value] in items">
-                <option :value=value>{{ gameName }}</option>
+              <template v-for="item in items">
+                <option :value=item.id>{{ item.name }}</option>
               </template>
             </select>
           </td>

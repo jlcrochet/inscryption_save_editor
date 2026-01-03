@@ -19,8 +19,8 @@
       help="Which totem bodies you have."
       multiple size=10
     >
-      <template v-for="([ability, description], i) in abilities">
-        <option :value="i + 1" :title=description>{{ ability }}</option>
+      <template v-for="(ability, i) in abilities">
+        <option :value="i + 1" :title=ability.description>{{ ability.name }}</option>
       </template>
     </table-select>
 
@@ -38,7 +38,7 @@
     +
     <select v-model=totems.$rcontent[0].ability label=Body required>
       <template v-for="i in totemBottoms.$rcontent">
-        <option :value=i :title='abilities[i - 1][1]'>{{ abilities[i - 1][0] }}</option>
+        <option :value=i :title='abilities[i - 1].description'>{{ abilities[i - 1].name }}</option>
       </template>
     </select>
   </template>
