@@ -323,13 +323,15 @@
   }
 
   function vlq(n: number): Uint8Array {
+    if (n < 0 || n > 0xFFFFFFFF)
+      throw new RangeError('VLQ input must be a 32-bit unsigned integer')
+
     if (n == 0) return Uint8Array.of(0)
 
     const size = ((31 - Math.clz32(n)) / 7 | 0) + 1
     const output = new Uint8Array(size)
 
-    for (let i = 0; i < size; i += 1)
-    {
+    for (let i = 0; i < size; i += 1) {
       let septet = n & 0x7F
       n >>>= 7
       if (n > 0) septet |= 0x80
