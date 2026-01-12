@@ -1,5 +1,5 @@
 <template>
-  <main style="margin: 1em">
+  <main style='margin: 1em'>
     <h1>Inscryption Save Editor</h1>
 
     <noscript>WARNING: This page doesn't work without JavaScript. Please enable JavaScript in your browser and refresh the page.</noscript>
@@ -39,7 +39,7 @@
         </ol>
       </article>
 
-      <button @click="dialogRef.close()">Close</button>
+      <button @click=dialogRef.close()>Close</button>
     </dialog>
 
     <dialog ref=errorDialogRef @click=closeErrorDialogOnBackdrop>
@@ -57,16 +57,16 @@
 
       <div class=error-actions>
         <button type=button @click=copyError>Copy Error</button>
-        <button type=button @click="errorDialogRef.close()">Close</button>
+        <button type=button @click=errorDialogRef.close()>Close</button>
       </div>
     </dialog>
 
     <p>
-      <button class="outline" @click="dialogRef.showModal()">Instructions</button>
+      <button class=outline @click=dialogRef.showModal()>Instructions</button>
     </p>
 
     <p>
-      <input type=file @click="$event.target.value = null" @input=parseFile($event.target.files[0])>
+      <input type=file @click='$event.target.value = null' @input=parseFile($event.target.files[0])>
     </p>
 
     <template v-if=loading>
@@ -233,11 +233,11 @@
 
       const data = JSON.parse(text, function(key: string, value: any): any {
         switch (key) {
-          case "$id":
+          case '$id':
             nodes.push(this)
             break
-          case "$type":
-            if (typeof value == "number") {
+          case '$type':
+            if (typeof value == 'number') {
               return types[value]
             } else {
               const type = value.substring(value.indexOf('|') + 1)
@@ -245,7 +245,7 @@
               return type
             }
           default:
-            if (typeof value == "string" && value.startsWith("$iref:")) {
+            if (typeof value == 'string' && value.startsWith('$iref:')) {
               const n = parseInt(value.substring(6))
               return nodes[n]
             }
@@ -255,9 +255,9 @@
       })
 
       // Stub boon arrays if they don't already exist:
-      data.currentRun.playerDeck.boonIds ??= listNew("DiskCardGame.BoonData+Type")
+      data.currentRun.playerDeck.boonIds ??= listNew('DiskCardGame.BoonData+Type')
       if (data.ascensionData?.currentRun)
-        data.ascensionData.currentRun.playerDeck.boonIds ??= listNew("DiskCardGame.BoonData+Type")
+        data.ascensionData.currentRun.playerDeck.boonIds ??= listNew('DiskCardGame.BoonData+Type')
 
       saveFile.value = data
     }
@@ -323,16 +323,17 @@
   }
 
   function vlq(n: number): Uint8Array {
-    const size = Math.ceil(Math.log2(n + 1) / 7)
+    if (n == 0) return Uint8Array.of(0)
+
+    const size = ((31 - Math.clz32(n)) / 7 | 0) + 1
     const output = new Uint8Array(size)
 
-    let i = 0
-
-    while (n > 0) {
+    for (let i = 0; i < size; i += 1)
+    {
       let septet = n & 0x7F
-      n >>= 7
-      if (n > 0) septet |= 1 << 7
-      output[i++] = septet
+      n >>>= 7
+      if (n > 0) septet |= 0x80
+      output[i] = septet
     }
 
     return output

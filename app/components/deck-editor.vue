@@ -27,7 +27,7 @@
           </td>
 
           <td class=actions>
-            <button type=button @click="openModDialog(card.index)">Edit Mods</button>
+            <button type=button @click=openModDialog(card.index)>Edit Mods</button>
             <button type=button @click=duplicateCard(card.index)>Duplicate</button>
             <button type=button @click=deleteCard(card.index)>Delete</button>
           </td>
@@ -117,8 +117,8 @@
   function addCard() {
     listAdd(props.deck.cardIds, null)
     listAdd(props.deck.cardIdModInfos, {
-      $k: "",
-      $v: listNew("DiskCardGame.CardModificationInfo")
+      $k: '',
+      $v: listNew('DiskCardGame.CardModificationInfo')
     })
     nextTick(gotoLastPageAndFocus)
   }
