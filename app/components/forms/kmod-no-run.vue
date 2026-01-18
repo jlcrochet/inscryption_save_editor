@@ -18,15 +18,19 @@
 
     <tab title="Conquered Starter Decks">
       <table>
-        <template v-for="deck in starterDecks">
-          <table-input
-            v-model=saveFile.ascensionData.conqueredStarterDecks.$rcontent
-            :value=deck
-            @change="saveFile.ascensionData.conqueredStarterDecks.$rlength = saveFile.ascensionData.conqueredStarterDecks.$rcontent.length"
-            :label=deck
-            type=checkbox
-          />
-        </template>
+        <tr v-for="(deck, i) in starterDecks" :key="i">
+          <td>
+            <label :for="'deck-' + i">{{ deck }}</label>
+          </td>
+          <td>
+            <input
+              :id="'deck-' + i"
+              type="checkbox"
+              :checked="saveFile.ascensionData.conqueredStarterDecks.$rcontent.includes(deck)"
+              @change="toggleConqueredDeck(deck, $event.target.checked)"
+            />
+          </td>
+        </tr>
       </table>
     </tab>
   </tabs>
@@ -34,4 +38,15 @@
 
 <script setup>
   const saveFile = inject('saveFile')
+
+  function toggleConqueredDeck(deck, checked) {
+    const list = saveFile.value.ascensionData.conqueredStarterDecks
+    const index = list.$rcontent.indexOf(deck)
+    if (checked && index === -1) {
+      list.$rcontent.push(deck)
+    } else if (!checked && index !== -1) {
+      list.$rcontent.splice(index, 1)
+    }
+    list.$rlength = list.$rcontent.length
+  }
 </script>
