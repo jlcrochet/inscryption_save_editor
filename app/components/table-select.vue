@@ -21,9 +21,7 @@
 </template>
 
 <script setup>
-  import { v4 as uuidv4 } from 'uuid'
-
-  const id = ref(uuidv4())
+  const id = useId()
 
   defineOptions({
     inheritAttrs: false

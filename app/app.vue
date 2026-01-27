@@ -15,7 +15,7 @@
         <ul>
           <li>Make sure that you keep a backup of your original save file before experimenting.</li>
           <li>Avoid making manual changes to your save file before uploading; doing so may cause errors.</li>
-          <li>Some cards and sigils may cause errors if played outside of specific contexts; others may do nothing at all.</li>
+          <li>Some cards and sigils may cause errors if played outside of specific contexts; others may do nothing at all. Cards and sigils shown in <span style="color: Red">red</span> are known to cause bugs or instability; those shown in <span style="color: DarkOrange">orange</span> are dummies that don't do anything.</li>
         </ul>
 
         <p>To report problems, e-mail me at <a :href='`mailto:${email}`'>{{ email }}</a> or post an issue on <a :href=repo target=_blank>GitHub</a>.</p>
@@ -34,7 +34,7 @@
           </li>
           <li>A form will appear on the page; use it to make changes to your save file.</li>
           <li>After making changes, click the Save button at the bottom of the page; this will create a new file and will prompt you to save it.</li>
-          <li>Save the new file to your Inscryption directory.</li>
+          <li>Save the new file to your Inscryption directory, <strong>replacing the original save file</strong>. Make sure the filename matches the original exactly (e.g., <code>SaveFile.gwsave</code>). If your browser adds an extra extension like <code>.txt</code>, remove it.</li>
           <li>After loading the new save file into Inscryption, the game might take a bit longer than usual to start; this is normal and should only happen once.</li>
         </ol>
       </article>
@@ -296,7 +296,7 @@
         blobParts = [body]
       }
 
-      const blob = new Blob(blobParts)
+      const blob = new Blob(blobParts, { type: 'application/octet-stream' })
       const url = URL.createObjectURL(blob)
 
       anchorRef.value.href = url

@@ -20,7 +20,7 @@
       multiple size=10
     >
       <template v-for="(ability, i) in abilities">
-        <option :value="i + 1" :title=ability.description>{{ ability.name }}</option>
+        <option :value="i + 1" :title=ability.description :class=ability.type>{{ ability.name }}</option>
       </template>
     </table-select>
 
@@ -36,15 +36,22 @@
       </template>
     </select>
     +
-    <select v-model=totems.$rcontent[0].ability label=Body required>
+    <select v-model=totems.$rcontent[0].ability label=Body required :class=getAbilityType(totems.$rcontent[0].ability)>
       <template v-for="i in totemBottoms.$rcontent">
-        <option :value=i :title='abilities[i - 1].description'>{{ abilities[i - 1].name }}</option>
+        <option :value=i :title='abilities[i - 1].description' :class='abilities[i - 1].type'>{{ abilities[i - 1].name }}</option>
       </template>
     </select>
   </template>
 </template>
 
 <script setup>
+  import { abilities } from '~/utils/game-data'
+
+  function getAbilityType(abilityIndex) {
+    if (!abilityIndex) return 'normal'
+    return abilities[abilityIndex - 1]?.type ?? 'normal'
+  }
+
   const props = defineProps({
     totemTops: {
       type: Object,
@@ -85,3 +92,13 @@
     }
   )
 </script>
+
+<style scoped>
+  .unsafe {
+    color: Red;
+  }
+
+  .dummy {
+    color: DarkOrange;
+  }
+</style>

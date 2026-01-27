@@ -144,10 +144,9 @@
     const list = saveFile.value.ascensionData.conqueredStarterDecks
     const index = list.$rcontent.indexOf(deck)
     if (checked && index === -1) {
-      list.$rcontent.push(deck)
+      listAdd(list, deck)
     } else if (!checked && index !== -1) {
-      list.$rcontent.splice(index, 1)
+      listRemove(list, index)
     }
-    list.$rlength = list.$rcontent.length
   }
 </script>

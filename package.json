@@ -7,11 +7,11 @@
     "preview": "nuxi preview"
   },
   "dependencies": {
-    "uuid": "^10.0.0"
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "nuxt": "^4.2.2",
     "typescript": "^5.9.3",
-    "vue-tsc": "^3.2.1"
+    "vue-tsc": "^3.2.2"
   }
 }

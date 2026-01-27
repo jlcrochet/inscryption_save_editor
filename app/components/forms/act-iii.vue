@@ -33,7 +33,7 @@
           multiple size=10
         >
           <template v-for="(ability, k) in abilities">
-            <option :value="k + 1" :title=ability.description>{{ ability.name }}</option>
+            <option :value="k + 1" :title=ability.description :class=ability.type>{{ ability.name }}</option>
           </template>
         </table-select>
       </table>
@@ -48,3 +48,13 @@
 <script setup>
   const saveFile = inject('saveFile')
 </script>
+
+<style scoped>
+  .unsafe {
+    color: Red;
+  }
+
+  .dummy {
+    color: DarkOrange;
+  }
+</style>

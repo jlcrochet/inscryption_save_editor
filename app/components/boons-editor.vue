@@ -29,10 +29,9 @@
   function toggleBoon(boonId, checked) {
     const index = props.boonIds.$rcontent.indexOf(boonId)
     if (checked && index === -1) {
-      props.boonIds.$rcontent.push(boonId)
+      listAdd(props.boonIds, boonId)
     } else if (!checked && index !== -1) {
-      props.boonIds.$rcontent.splice(index, 1)
+      listRemove(props.boonIds, index)
     }
-    props.boonIds.$rlength = props.boonIds.$rcontent.length
   }
 </script>

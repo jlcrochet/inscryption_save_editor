@@ -39,7 +39,7 @@
           multiple size=8
         >
           <template v-for="(ability, k) in abilities">
-            <option :value="k + 1" :title=ability.description>{{ ability.name }}</option>
+            <option :value="k + 1" :title=ability.description :class=ability.type>{{ ability.name }}</option>
           </template>
         </table-select>
 
@@ -51,7 +51,7 @@
           multiple size=8
         >
           <template v-for="(ability, k) in abilities">
-            <option :value="k + 1" :title=ability.description>{{ ability.name }}</option>
+            <option :value="k + 1" :title=ability.description :class=ability.type>{{ ability.name }}</option>
           </template>
         </table-select>
       </table>
@@ -121,5 +121,13 @@
     display: flex;
     justify-content: center;
     gap: 0.5em;
+  }
+
+  .unsafe {
+    color: Red;
+  }
+
+  .dummy {
+    color: DarkOrange;
   }
 </style>

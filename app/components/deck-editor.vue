@@ -10,29 +10,25 @@
     </thead>
 
     <tbody ref=tbodyRef>
-      <template v-for="card in paginatedCards">
-        <tr>
-          <td style="text-align: right">{{ card.index + 1 }}</td>
+      <tr v-for="card in paginatedCards">
+        <td style="text-align: right">{{ card.index + 1 }}</td>
 
-          <td>
-            <select :value=card.name @input="updateCardSelection(card.index, $event.target.value)" required>
-              <template v-for="card in cards">
-                <option :value=card.id>{{ card.name }}</option>
-              </template>
-            </select>
-          </td>
+        <td>
+          <select :value=card.name @input="updateCardSelection(card.index, $event.target.value)" :class="getCardType(card.name)" required>
+            <option v-for="c in cards" :value=c.id :class="c.type">{{ c.name }}</option>
+          </select>
+        </td>
 
-          <td style="text-align: right">
-            {{ card.modCount }}
-          </td>
+        <td style="text-align: right">
+          {{ card.modCount }}
+        </td>
 
-          <td class=actions>
-            <button type=button @click=openModDialog(card.index)>Edit Mods</button>
-            <button type=button @click=duplicateCard(card.index)>Duplicate</button>
-            <button type=button @click=deleteCard(card.index)>Delete</button>
-          </td>
-        </tr>
-      </template>
+        <td class=actions>
+          <button type=button @click=openModDialog(card.index)>Edit Mods</button>
+          <button type=button @click=duplicateCard(card.index)>Duplicate</button>
+          <button type=button @click=deleteCard(card.index)>Delete</button>
+        </td>
+      </tr>
 
       <tr>
         <td></td>
@@ -65,6 +61,8 @@
 </template>
 
 <script setup>
+  import { cards } from '~/utils/game-data'
+
   const props = defineProps({
     deck: {
       type: Object,
@@ -76,6 +74,11 @@
   const pageSize = ref(20)
   const modDialogRef = ref(null)
   const tbodyRef = ref(null)
+
+  const cardTypes = new Map(cards.map(c => [c.id, c.type]))
+  function getCardType(cardId) {
+    return cardTypes.get(cardId) ?? 'normal'
+  }
 
   const totalCards = computed(() => props.deck.cardIds.$rlength)
   const totalPages = computed(() => Math.max(1, Math.ceil(totalCards.value / pageSize.value)))
@@ -196,5 +199,25 @@
   .actions {
     display: flex;
     gap: 0.5em;
+  }
+
+  select.unsafe {
+    color: Red;
+  }
+
+  select.dummy {
+    color: DarkOrange;
+  }
+
+  option.normal {
+    color: initial;
+  }
+
+  option.unsafe {
+    color: Red;
+  }
+
+  option.dummy {
+    color: DarkOrange;
   }
 </style>

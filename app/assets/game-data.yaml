@@ -1,0 +1,1589 @@
+# Mapping of card ID -> { name: string | null, type?: 'normal' | 'unsafe' | 'dummy' }
+# Sorted by ID. Name defaults to ID if null. Type defaults to 'normal' if omitted.
+# unsafe = cards that cause bugs/instability, dummy = cards that don't do anything.
+cards:
+  "!BOUNTYHUNTER_BASE":
+    name: null
+    type: unsafe
+
+  "!BUILDACARD_BASE":
+    name: null
+    type: normal
+
+  "!CORRUPTED":
+    name: null
+    type: normal
+
+  "!DEATHCARD_BASE":
+    name: null
+    type: normal
+
+  "!DEATHCARD_LESHY":
+    name: null
+    type: dummy
+
+  "!DEATHCARD_PIXEL_BASE":
+    name: null
+    type: normal
+
+  "!DEATHCARD_VICTORY":
+    name: null
+    type: normal
+
+  "!FRIENDCARD_BASE":
+    name: null
+    type: normal
+
+  "!GIANTCARD_MOON":
+    name: The Moon
+    type: unsafe
+
+  "!INSPECTOR":
+    name: null
+    type: normal
+
+  "!MELTER":
+    name: null
+    type: normal
+
+  "!MYCOCARD_BASE":
+    name: null
+    type: normal
+
+  "!MYCO_OLD_DATA":
+    name: null
+    type: normal
+
+  "!STATIC!GLITCH":
+    name: null
+    type: normal
+
+  AboveCurve:
+    name: Curve Hopper
+    type: normal
+
+  Adder:
+    name: null
+    type: normal
+
+  AlarmBot:
+    name: Alarm Bot
+    type: normal
+
+  Alpha:
+    name: null
+    type: normal
+
+  Amalgam:
+    name: null
+    type: normal
+
+  Amoeba:
+    name: null
+    type: normal
+
+  Amoebot:
+    name: null
+    type: normal
+
+  Angler_Fish_Bad:
+    name: Bad Fish
+    type: normal
+
+  Angler_Fish_Good:
+    name: Good Fish
+    type: normal
+
+  Angler_Fish_More:
+    name: More Fish
+    type: normal
+
+  Angler_Talking:
+    name: Fishbot
+    type: normal
+
+  AnnoyTower:
+    name: Annoy FM
+    type: normal
+
+  Ant:
+    name: Worker Ant
+    type: normal
+
+  AntFlying:
+    name: Flying Ant
+    type: normal
+
+  AntQueen:
+    name: Ant Queen
+    type: normal
+
+  AquaSquirrel:
+    name: null
+    type: normal
+
+  AttackConduit:
+    name: Buff Conduit
+    type: normal
+
+  Automaton:
+    name: null
+    type: normal
+
+  BaitBucket:
+    name: Bait Bucket
+    type: normal
+
+  Banshee:
+    name: null
+    type: normal
+
+  Bat:
+    name: null
+    type: normal
+
+  BatteryBot:
+    name: Energy Bot
+    type: normal
+
+  Beaver:
+    name: null
+    type: normal
+
+  Bee:
+    name: null
+    type: normal
+
+  Beehive:
+    name: null
+    type: normal
+
+  Bloodhound:
+    name: null
+    type: normal
+
+  BlueMage:
+    name: Blue Mage
+    type: normal
+
+  BlueMage_Fused:
+    name: Blue Sporemage
+    type: normal
+
+  BlueMage_Talking:
+    name: Lonely Wizbot
+    type: normal
+
+  BoltHound:
+    name: Bolthound
+    type: normal
+
+  Bombbot:
+    name: Explode Bot
+    type: normal
+
+  BombMaiden:
+    name: Mrs. Bomb
+    type: normal
+
+  Bonehound:
+    name: null
+    type: normal
+
+  BonelordHorn:
+    name: Bone Lord's Horn
+    type: normal
+
+  Bonepile:
+    name: Bone Heap
+    type: normal
+
+  Boulder:
+    name: null
+    type: normal
+
+  BridgeRailing:
+    name: Bridge Rails
+    type: normal
+
+  BrokenBot:
+    name: Broken Bot
+    type: normal
+
+  Bull:
+    name: Wild Bull
+    type: normal
+
+  Bullfrog:
+    name: null
+    type: normal
+
+  BurrowingTrap:
+    name: Burrowing Trap
+    type: normal
+
+  BustedPrinter:
+    name: Busted 3D Printer
+    type: normal
+
+  CXformerAdder:
+    name: ADD3R
+    type: normal
+
+  CXformerElk:
+    name: 3LK
+    type: normal
+
+  CXformerRaven:
+    name: RAV3N
+    type: normal
+
+  CXformerWolf:
+    name: W07F
+    type: normal
+
+  CagedWolf:
+    name: Caged Wolf
+    type: normal
+
+  CaptiveFile:
+    name: Captive File
+    type: normal
+
+  CardMergeStones:
+    name: The Stones
+    type: normal
+
+  Cat:
+    name: null
+    type: normal
+
+  CatUndead:
+    name: Undead Cat
+    type: normal
+
+  CellBuff:
+    name: Tough Cell
+    type: normal
+
+  CellGift:
+    name: Kind Cell
+    type: normal
+
+  CellTri:
+    name: Splinter Cell
+    type: normal
+
+  CloserBot:
+    name: Double Gunner
+    type: normal
+
+  Cockroach:
+    name: null
+    type: normal
+
+  CoinLeft:
+    name: Broken Obol (left)
+    type: normal
+
+  CoinRight:
+    name: Broken Obol (right)
+    type: normal
+
+  ConduitTower:
+    name: Conduit Tower
+    type: normal
+
+  Coyote:
+    name: null
+    type: normal
+
+  Cuckoo:
+    name: null
+    type: normal
+
+  DUMMY_5-5:
+    name: null
+    type: normal
+
+  Dam:
+    name: null
+    type: normal
+
+  Daus:
+    name: The Daus
+    type: normal
+
+  DausBell:
+    name: Chime
+    type: normal
+
+  DeadHand:
+    name: Dead Hand
+    type: normal
+
+  DeadPets:
+    name: Pharaoh's Pets
+    type: normal
+
+  DeadTree:
+    name: Dead Tree
+    type: normal
+
+  DefaultTail:
+    name: Tail
+    type: normal
+
+  DireWolf:
+    name: Dire Wolf
+    type: normal
+
+  DireWolfCub:
+    name: Dire Wolf Cub
+    type: normal
+
+  Draugr:
+    name: null
+    type: normal
+
+  DrownedSoul:
+    name: Drowned Soul
+    type: normal
+
+  Elk:
+    name: null
+    type: normal
+
+  ElkCub:
+    name: Elk Fawn
+    type: normal
+
+  EmptyVessel:
+    name: Empty Vessel
+    type: normal
+
+  EmptyVessel_BlueGem:
+    name: Sapphire Vessel
+    type: normal
+
+  EmptyVessel_GreenGem:
+    name: Emerald Vessel
+    type: normal
+
+  EmptyVessel_OrangeGem:
+    name: Ruby Vessel
+    type: normal
+
+  EnergyConduit:
+    name: Energy Conduit
+    type: normal
+
+  EnergyRoller:
+    name: Gamblobot
+    type: normal
+
+  FactoryConduit:
+    name: Factory Conduit
+    type: normal
+
+  Family:
+    name: The Walkers
+    type: normal
+
+  FieldMouse:
+    name: Field Mice
+    type: normal
+
+  FieldMouse_Fused:
+    name: Spore Mice
+    type: normal
+
+  FlyingMage:
+    name: Hover Mage
+    type: normal
+
+  ForceMage:
+    name: Force Mage
+    type: normal
+
+  FrankNStein:
+    name: Frank & Stein
+    type: normal
+
+  FrozenOpossum:
+    name: Frozen Opossum
+    type: normal
+
+  Geck:
+    name: null
+    type: normal
+
+  GemExploder:
+    name: Gem Detonator
+    type: normal
+
+  GemFiend:
+    name: Gem Fiend
+    type: normal
+
+  GemRipper:
+    name: Gembound Ripper
+    type: normal
+
+  GemShielder:
+    name: Gem Guardian
+    type: normal
+
+  GemsConduit:
+    name: Gems Conduit
+    type: normal
+
+  GhostShip:
+    name: Ghost Ship
+    type: normal
+
+  GiftBot:
+    name: Gift Bot
+    type: normal
+
+  Goat:
+    name: Black Goat
+    type: normal
+
+  GoldNugget:
+    name: Gold Nugget
+    type: normal
+
+  Gravedigger:
+    name: null
+    type: normal
+
+  Gravedigger_Fused:
+    name: Sporedigger
+    type: normal
+
+  GreenMage:
+    name: Green Mage
+    type: normal
+
+  Grizzly:
+    name: null
+    type: normal
+
+  Hawk:
+    name: null
+    type: normal
+
+  HeadlessHorseman:
+    name: Headless Horseman
+    type: normal
+
+  HealerConduit:
+    name: Heal Conduit
+    type: normal
+
+  Hodag:
+    name: null
+    type: normal
+
+  Hrokkall:
+    name: null
+    type: normal
+
+  Hydra:
+    name: null
+    type: normal
+
+  HydraEgg:
+    name: Curious Egg
+    type: normal
+
+  Ijiraq:
+    name: null
+    type: normal
+
+  Insectodrone:
+    name: null
+    type: normal
+
+  JerseyDevil:
+    name: Child 13
+    type: normal
+
+  JuniorSage:
+    name: Junior Sage
+    type: normal
+
+  Kingfisher:
+    name: null
+    type: normal
+
+  Kraken:
+    name: Great Kraken
+    type: normal
+
+  Lammergeier:
+    name: null
+    type: normal
+
+  LatcherBomb:
+    name: Bomb Latcher
+    type: normal
+
+  LatcherBrittle:
+    name: Skel-e-latcher
+    type: normal
+
+  LatcherShield:
+    name: Shield Latcher
+    type: normal
+
+  LeapBot:
+    name: L33pB0t
+    type: normal
+
+  Librarian:
+    name: null
+    type: normal
+
+  Lice:
+    name: Pelt Lice
+    type: normal
+
+  MageKnight:
+    name: Mage Knight
+    type: normal
+
+  Maggots:
+    name: Corpse Maggots
+    type: normal
+
+  Magpie:
+    name: null
+    type: normal
+
+  Mantis:
+    name: null
+    type: normal
+
+  MantisGod:
+    name: Mantis God
+    type: normal
+
+  MarrowMage:
+    name: Gourmage
+    type: normal
+
+  MasterBleene:
+    name: Master Bleene
+    type: normal
+
+  MasterGoranj:
+    name: Master Goranj
+    type: normal
+
+  MasterOrlu:
+    name: Master Orlu
+    type: normal
+
+  MealWorm:
+    name: Meal Worm
+    type: normal
+
+  MeatBot:
+    name: M3atB0t
+    type: normal
+
+  MineCart:
+    name: 49er
+    type: normal
+
+  Mole:
+    name: null
+    type: normal
+
+  Mole_Telegrapher:
+    name: Mole (Telegrapher)
+    type: normal
+
+  MoleMan:
+    name: Mole Man
+    type: normal
+
+  Moose:
+    name: Moose Buck
+    type: normal
+
+  Mothman_Stage1:
+    name: Strange Larva
+    type: normal
+
+  Mothman_Stage2:
+    name: Strange Pupa
+    type: normal
+
+  Mothman_Stage3:
+    name: Mothman
+    type: normal
+
+  MoxDualBG:
+    name: Bleene's Mox
+    type: normal
+
+  MoxDualGO:
+    name: Goranj's Mox
+    type: normal
+
+  MoxDualOB:
+    name: Orlu's Mox
+    type: normal
+
+  MoxEmerald:
+    name: Emerald Mox
+    type: normal
+
+  MoxRuby:
+    name: Ruby Mox
+    type: normal
+
+  MoxSapphire:
+    name: Sapphire Mox
+    type: normal
+
+  MoxTriple:
+    name: Magnus Mox
+    type: normal
+
+  MudTurtle:
+    name: Mud Turtle
+    type: normal
+
+  Mule:
+    name: Pack Mule
+    type: normal
+
+  Mummy:
+    name: Mummy Lord
+    type: normal
+
+  Mummy_Telegrapher:
+    name: Mummy Lord (Telegrapher)
+    type: normal
+
+  MuscleMage:
+    name: Muscle Mage
+    type: normal
+
+  Necromancer:
+    name: null
+    type: normal
+
+  NullConduit:
+    name: Null Conduit
+    type: normal
+
+  Opossum:
+    name: null
+    type: normal
+
+  OrangeMage:
+    name: Orange Mage
+    type: normal
+
+  Otter:
+    name: River Otter
+    type: normal
+
+  Ouroboros:
+    name: null
+    type: normal
+
+  Ouroboros_Part3:
+    name: Ourobot
+    type: normal
+
+  PackRat:
+    name: Pack Rat
+    type: normal
+
+  PeltGolden:
+    name: Golden Pelt
+    type: normal
+
+  PeltHare:
+    name: Rabbit Pelt
+    type: normal
+
+  PeltWolf:
+    name: Wolf Pelt
+    type: normal
+
+  PlasmaGunner:
+    name: Plasma Jimmy
+    type: normal
+
+  Porcupine:
+    name: null
+    type: normal
+
+  PracticeMage:
+    name: Practice Wizard
+    type: normal
+
+  PracticeMageSmall:
+    name: Practice Mage
+    type: normal
+
+  Pronghorn:
+    name: null
+    type: normal
+
+  Pupil:
+    name: Mage Pupil
+    type: normal
+
+  Rabbit:
+    name: null
+    type: normal
+
+  Raccoon:
+    name: null
+    type: normal
+
+  RatKing:
+    name: Rat King
+    type: normal
+
+  Rattler:
+    name: null
+    type: normal
+
+  Raven:
+    name: null
+    type: normal
+
+  RavenEgg:
+    name: Raven Egg
+    type: normal
+
+  RedHart:
+    name: Red Hart
+    type: normal
+
+  Revenant:
+    name: null
+    type: normal
+
+  RingWorm:
+    name: Ring Worm
+    type: normal
+
+  RoboMice:
+    name: Steel Mice
+    type: normal
+
+  RoboSkeleton:
+    name: ExeSkeleton
+    type: normal
+
+  RubyGolem:
+    name: Ruby Golem
+    type: normal
+
+  Salmon:
+    name: null
+    type: normal
+
+  Sarcophagus:
+    name: null
+    type: normal
+
+  SentinelBlue:
+    name: Goranj's Vessel
+    type: normal
+
+  SentinelGreen:
+    name: Orlu's Vessel
+    type: normal
+
+  SentinelOrange:
+    name: Bleene's Vessel
+    type: normal
+
+  SentryBot:
+    name: Sentry Drone
+    type: normal
+
+  SentryBot_Fused:
+    name: Sentry Spore
+    type: normal
+
+  Shark:
+    name: Great White
+    type: normal
+
+  Shieldbot:
+    name: null
+    type: normal
+
+  Shutterbug:
+    name: null
+    type: normal
+
+  Skeleton:
+    name: null
+    type: normal
+
+  SkeletonMage:
+    name: Skelemagus
+    type: normal
+
+  Skink:
+    name: null
+    type: normal
+
+  SkinkTail:
+    name: Wriggling Tail
+    type: normal
+
+  Skunk:
+    name: null
+    type: normal
+
+  Smoke:
+    name: The Smoke
+    type: normal
+
+  Smoke_Improved:
+    name: Greater Smoke
+    type: normal
+
+  Smoke_NoBones:
+    name: The Smoke (no bones)
+    type: normal
+
+  Snapper:
+    name: River Snapper
+    type: normal
+
+  Snelk:
+    name: Long Elk
+    type: normal
+
+  Sniper:
+    name: Sniper Bot
+    type: normal
+
+  Sparrow:
+    name: null
+    type: normal
+
+  SquidBell:
+    name: Bell Tentacle
+    type: normal
+
+  SquidCards:
+    name: Hand Tentacle
+    type: normal
+
+  SquidMirror:
+    name: Mirror Tentacle
+    type: normal
+
+  Squirrel:
+    name: null
+    type: normal
+
+  SquirrelBall:
+    name: Squirrel Ball
+    type: normal
+
+  Starvation:
+    name: null
+    type: normal
+
+  Steambot:
+    name: null
+    type: normal
+
+  StimMage:
+    name: Stim Mage
+    type: normal
+
+  Stinkbug_Talking:
+    name: Stinkbug
+    type: normal
+
+  Stoat:
+    name: null
+    type: normal
+
+  Stoat_Talking:
+    name: Stoat (talking)
+    type: normal
+
+  Stump:
+    name: null
+    type: normal
+
+  SwapBot:
+    name: Swapbot
+    type: normal
+
+  Tadpole:
+    name: null
+    type: normal
+
+  Tail_Bird:
+    name: Tail Feathers
+    type: normal
+
+  Tail_Furry:
+    name: Furry Tail
+    type: normal
+
+  Tail_Insect:
+    name: Wriggling Leg
+    type: normal
+
+  TechMoxTriple:
+    name: Mox Module
+    type: normal
+
+  Thickbot:
+    name: Thick Droid
+    type: normal
+
+  TombRobber:
+    name: Tomb Robber
+    type: normal
+
+  TombStone:
+    name: Tombstone
+    type: normal
+
+  Trap:
+    name: Leaping Trap
+    type: normal
+
+  TrapFrog:
+    name: Strange Frog
+    type: normal
+
+  Tree:
+    name: Grand Fir
+    type: normal
+
+  Tree_Hologram:
+    name: Ancient Fir
+    type: normal
+
+  Tree_Hologram_SnowCovered:
+    name: Snowy Fir (hologram)
+    type: normal
+
+  Tree_SnowCovered:
+    name: Snowy Fir
+    type: normal
+
+  Urayuli:
+    name: null
+    type: normal
+
+  Vulture:
+    name: Turkey Vulture
+    type: normal
+
+  Warren:
+    name: null
+    type: normal
+
+  Wolf:
+    name: null
+    type: normal
+
+  Wolf_Talking:
+    name: Stunted Wolf
+    type: normal
+
+  WolfCub:
+    name: Wolf Cub
+    type: normal
+
+  Wolverine:
+    name: null
+    type: normal
+
+  XformerBatBeast:
+    name: S0N1A (transformed)
+    type: normal
+
+  XformerBatBot:
+    name: S0N1A
+    type: normal
+
+  XformerGrizzlyBeast:
+    name: GR1ZZ (transformed)
+    type: normal
+
+  XformerGrizzlyBot:
+    name: GR1ZZ
+    type: normal
+
+  XformerPorcupineBeast:
+    name: QU177 (transformed)
+    type: normal
+
+  XformerPorcupineBot:
+    name: QU177
+    type: normal
+
+  Zombie:
+    name: null
+    type: normal
+
+
+# Mapping of item ID -> { name: string | null }
+# Sorted by ID. Name defaults to ID if null.
+items:
+  Battery:
+    name: Extra Battery
+
+  BirdLegFan:
+    name: Harpie's Birdleg Fan
+
+  BleachPot:
+    name: Magickal Bleach
+
+  BombRemote:
+    name: Mrs. Bomb's Remote
+
+  FishHook:
+    name: Fish Hook
+
+  FrozenOpossumBottle:
+    name: Frozen Opossum Bottle
+
+  GooBottle:
+    name: Failure
+
+  GoatBottle:
+    name: Black Goat Bottle
+
+  Hammer:
+    name: null
+
+  Hourglass:
+    name: null
+
+  MagnifyingGlass:
+    name: Magpie's Glass
+
+  PiggyBank:
+    name: Hoggy Bank
+
+  Pliers:
+    name: null
+
+  PocketWatch:
+    name: Wiseclock
+
+  Scissors:
+    name: null
+
+  ShieldGenerator:
+    name: Nano Shield Generator
+
+  SpecialDagger:
+    name: Special Dagger
+
+  SquirrelBottle:
+    name: Squirrel in a Bottle
+
+  TerrainBottle:
+    name: Boulder in a Bottle
+
+  TrapperKnife:
+    name: Skinning Knife
+
+
+# Array of { name: string, description: string, type?: 'normal' | 'unsafe' | 'dummy' }
+# Index is the game's internal ability ID. Do not reorder.
+# Type defaults to 'normal' if omitted. Known as "sigils" in-game.
+abilities:
+  - name: Rabbit Hole
+    description: "When a card bearing this sigil is played, a Rabbit is created in your hand. A Rabbit is defined as: 0 Power, 1 Health."
+    type: normal
+
+  - name: Bees Within
+    description: "Once a card bearing this sigil is struck, a Bee is created in your hand. A Bee is defined as: 1 Power, 1 Health, Guardian."
+    type: normal
+
+  - name: Sprinter
+    description: At the end of the owner's turn, a card bearing this sigil will move in the direction inscribed in the sigil.
+    type: normal
+
+  - name: Touch of Death
+    description: When a card bearing this sigil damages another creature, that creature perishes.
+    type: normal
+
+  - name: Fledgling
+    description: A card bearing this sigil will grow into a more powerful form after 1 turn on the board.
+    type: normal
+
+  - name: Dam Builder
+    description: "When a card bearing this sigil is played, a Dam is created on each empty adjacent space. A Dam is defined as: 0 Power, 2 Health."
+    type: normal
+
+  - name: Hoarder
+    description: When a card bearing this sigil is played, you may search your deck for any card and take it into your hand.
+    type: normal
+
+  - name: Burrower
+    description: When an empty space would be struck, a card bearing this sigil will move to that space to receive the strike instead.
+    type: normal
+
+  - name: Fecundity
+    description: When a card bearing this sigil is played, a copy of it is created in your hand.
+    type: normal
+
+  - name: Loose Tail
+    description: When a card bearing this sigil would be struck, a Tail is created in its place and a card bearing this sigil moves to the right.
+    type: normal
+
+  - name: Corpse Eater
+    description: If a creature that you own perishes by combat, a card bearing this sigil in your hand is automatically played in its place.
+    type: normal
+
+  - name: Bone King
+    description: When a card bearing this sigil dies, 4 bones are awarded instead of 1.
+    type: normal
+
+  - name: Waterborne
+    description: A card bearing this sigil submerges itself during its opponent's turn. While submerged, opposing creatures attack its owner directly.
+    type: normal
+
+  - name: Unkillable
+    description: When a card bearing this sigil perishes, a copy of it is created in your hand.
+    type: normal
+
+  - name: Sharp Quills
+    description: Once a card bearing this sigil is struck, the striker is then dealt a single damage point.
+    type: normal
+
+  - name: Hefty
+    description: At the end of the owner's turn, a card bearing this sigil will move in the direction inscribed in the sigil. Creatures in the way will be pushed in the same direction.
+    type: normal
+
+  - name: Ant Spawner
+    description: When a card bearing this sigil is played, an Ant is created in your hand.
+    type: normal
+
+  - name: Guardian
+    description: When an opposing creature is placed opposite to an empty space, a card bearing this sigil will move to that empty space.
+    type: normal
+
+  - name: Airborne
+    description: A card bearing this sigil will strike an opponent directly, even if there is a creature opposing it.
+    type: normal
+
+  - name: Many Lives
+    description: When a card bearing this sigil is sacrificed it does not perish.
+    type: normal
+
+  - name: Repulsive
+    description: If a creature would attack a card bearing this sigil, it does not.
+    type: normal
+
+  - name: Worthy Sacrifice
+    description: A card bearing this sigil is counted as 3 Blood rather than 1 Blood when sacrificed.
+    type: normal
+
+  - name: Mighty Leap
+    description: A card bearing this sigil will block an opposing creature bearing the Airborne sigil.
+    type: normal
+
+  - name: Bifurcated Strike
+    description: A card bearing this sigil will strike each opposing space to the left and right of the space across from it.
+    type: normal
+
+  - name: Trifurcated Strike
+    description: A card bearing this sigil will strike each opposing space to the left, right, and center of it.
+    type: normal
+
+  - name: Frozen Away
+    description: When a card bearing this sigil perishes, the creature inside is released in its place.
+    type: normal
+
+  - name: Sinkhole
+    description: (no description)
+    type: normal
+
+  - name: Bone Digger
+    description: At the end of the owner's turn, a card bearing this sigil will generate 1 Bone.
+    type: normal
+
+  - name: Trinket Bearer
+    description: When a card bearing this sigil is played, you will receive a random item as long as you have less than 3 items.
+    type: normal
+
+  - name: Steel Trap
+    description: When a card bearing this sigil perishes, the creature opposing it perishes as well. A pelt is created in your hand.
+    type: normal
+
+  - name: Amorphous
+    description: When a card bearing this sigil is drawn, this sigil is replaced with another sigil at random.
+    type: normal
+
+  - name: Tidal Lock
+    description: At the beginning of its owner's turn, a card bearing this sigil will pull small creatures, like Squirrels, into its orbit.
+    type: normal
+
+  - name: Moon Strike
+    description: A card bearing this sigil will strike each opposing space that is occupied by a creature. It will strike directly if no creatures oppose it.
+    type: normal
+
+  - name: Leader
+    description: Creatures adjacent to a card bearing this sigil gain 1 power.
+    type: normal
+
+  - name: Brittle
+    description: After attacking, a card bearing this sigil perishes.
+    type: normal
+
+  - name: Skeleton Crew
+    description: At the end of the owner's turn, a card bearing this sigil will move in the direction inscribed in the sigil and drop a Skeleton in its old space.
+    type: normal
+
+  - name: Green Mox
+    description: While a card bearing this sigil is on the board, it provides a Green Gem to its owner.
+    type: normal
+
+  - name: Orange Mox
+    description: While a card bearing this sigil is on the board, it provides an Orange Gem to its owner.
+    type: normal
+
+  - name: Blue Mox
+    description: While a card bearing this sigil is on the board, it provides a Blue Gem to its owner.
+    type: normal
+
+  - name: Gem Animator
+    description: Mox cards on the owner's side of the board gain 1 power.
+    type: normal
+
+  - name: Ruby Heart
+    description: When a card bearing this sigil perishes, a Ruby Mox is created in its place.
+    type: normal
+
+  - name: Mental Gemnastics
+    description: When a card bearing this sigil is played, you draw cards equal to the amount of Mox cards on your side of the board.
+    type: normal
+
+  - name: Gem Dependant
+    description: If a card bearing this sigil's owner controls no Mox cards, a card bearing this sigil perishes.
+    type: normal
+
+  - name: Great Mox
+    description: While a card bearing this sigil is on the board, it provides a Green, Orange, and Blue gem to its owner.
+    type: normal
+
+  - name: Handy
+    description: When a card bearing this sigil is played, discard your hand then draw a new hand of 4 cards.
+    type: normal
+
+  - name: Squirrel Shedder
+    description: At the end of the owner's turn, a card bearing this sigil will move in the direction inscribed in the sigil and drop a Squirrel in their old space.
+    type: normal
+
+  - name: Attack Conduit
+    description: Other creatures within a circuit completed by a card bearing this sigil gain 1 power.
+    type: normal
+
+  - name: Spawn Conduit
+    description: Empty spaces within a circuit completed by a card bearing this sigil spawn L33pB0ts at the end of the owner's turn.
+    type: normal
+
+  - name: Healing Conduit
+    description: Other creatures within a circuit completed by a card bearing this sigil are healed at the end of the owner's turn.
+    type: normal
+
+  - name: Null Conduit
+    description: A card bearing this sigil may complete a circuit, but provides no effect.
+    type: normal
+
+  - name: Battery Bearer
+    description: When a card bearing this sigil is played, it provides an Energy Cell to its owner.
+    type: normal
+
+  - name: Detonator
+    description: When a card bearing this sigil dies, the creature opposing it, as well as adjacent friendly creatures, are dealt 10 damage.
+    type: normal
+
+  - name: Sniper
+    description: You may choose which opposing space a card bearing this sigil strikes.
+    type: normal
+
+  - name: Nano Armor
+    description: The first time a card bearing this sigil would take damage, prevent that damage.
+    type: normal
+
+  - name: Overclocked
+    description: A card bearing this sigil has increased power. But, if a card bearing this sigil perishes, it is permanently removed from your deck.
+    type: normal
+
+  - name: Bomb Latch
+    description: When a card bearing this sigil perishes, its owner chooses a creature to gain the Detonator sigil.
+    type: normal
+
+  - name: Brittle Latch
+    description: When a card bearing this sigil perishes, its owner chooses a creature to gain the Brittle sigil.
+    type: normal
+
+  - name: Shield Latch
+    description: When a card bearing this sigil perishes, its owner chooses a creature to gain the Nano Armor sigil.
+    type: normal
+
+  - name: Dead Byte
+    description: When a card bearing this sigil perishes, select a file. Place damage on the scales according to the file's size.
+    type: normal
+
+  - name: Hostage File
+    description: When a card bearing this sigil perishes the file used to create it is really deleted from your Hard Drive.
+    type: normal
+
+  - name: Transformer
+    description: At the beginning of your turn a card bearing this sigil will transform to, or from, Beast mode.
+    type: normal
+
+  - name: Sentry
+    description: When a creature moves into the space opposing a card bearing this sigil, they are dealt 1 damage.
+    type: normal
+
+  - name: Gem Detonator
+    description: When Gem Vessels on the owner's side of the board die, they Detonate (the creature opposing them, as well as adjacent friendly creatures, are dealt 10 damage).
+    type: normal
+
+  - name: Gem Guardian
+    description: When a card bearing this sigil is played, all Gem Vessels on the owners' side of the board gain Nano Armor.
+    type: normal
+
+  - name: Vessel Printer
+    description: Once a card bearing this sigil is struck, draw a card from your Empty Vessel pile.
+    type: normal
+
+  - name: Energy Conduit
+    description: If a card bearing this sigil is part of a completed circuit, your Energy never depletes.
+    type: normal
+
+  - name: Bomb Spewer
+    description: When a card bearing this sigil is played, fill all empty spaces with Explode Bots.
+    type: normal
+
+  - name: Handy
+    description: When another creature you own dies, it is returned to life and dies again immediately.
+    type: normal
+
+  - name: Power Dice
+    description: Pay 1 Energy to set the power of a card bearing this sigil randomly between 1 and 6.
+    type: normal
+
+  - name: Activated Random Power Bone
+    description: (no description)
+    type: normal
+
+  - name: Enlarge
+    description: Pay 2 Bones to increase the power and health of a card bearing this sigil by 1.
+    type: normal
+
+  - name: Swapper
+    description: After a card bearing this sigil is dealt damage, swap its Power and Health.
+    type: normal
+
+  - name: Disentomb
+    description: Pay 1 Bone to create a Skeleton in your hand.
+    type: normal
+
+  - name: Energy Gun
+    description: Pay 1 Energy to deal 1 damage to the creature across from a card bearing this sigil.
+    type: normal
+
+  - name: Bellist
+    description: "When a card bearing this sigil is played, a Chime is created on each empty adjacent space. A Chime is defined as: 0 Power, 1 Health."
+    type: normal
+
+  - name: Annoying
+    description: The creature opposing a card bearing this sigil gains 1 power.
+    type: normal
+
+  - name: Gem Spawn Conduit
+    description: Empty spaces within a circuit completed by a card bearing this sigil spawn Gem Vessels at the end of the owner's turn.
+    type: normal
+
+  - name: Gift Bearer
+    description: When a card bearing this sigil perishes, a random card is created in your hand.
+    type: normal
+
+  - name: Looter
+    description: When a card bearing this sigil deals damage directly, draw a card for each damage dealt.
+    type: normal
+
+  - name: True Scholar
+    description: If you have a Blue gem, sacrifice a card bearing this sigil to draw 3 cards.
+    type: normal
+
+  - name: Stimulate
+    description: Pay 3 Energy to increase the power and health of a card bearing this sigil by 1.
+    type: normal
+
+  - name: Marrow Sucker
+    description: Pay 2 Bones to heal a card bearing this sigil.
+    type: normal
+
+  - name: Stinky
+    description: The creature opposing a card bearing this sigil loses 1 power.
+    type: normal
+
+  - name: Buff When Powered
+    description: If a card bearing this sigil is within a circuit, it gains 2 power.
+    type: normal
+
+  - name: Gift When Powered
+    description: If a card bearing this sigil is within a circuit when it perishes, a random card is created in your hand.
+    type: normal
+
+  - name: Trifurcated When Powered
+    description: If a card bearing this sigil is within a circuit, it will strike each opposing space to the left, right, and center of it.
+    type: normal
+
+  - name: Bonehorn
+    description: Pay 1 Energy to gain 3 Bones.
+    type: normal
+
+  - name: Clinger
+    description: When one of your creatures is placed in a space, a card bearing this sigil will move towards them as far as possible.
+    type: normal
+
+  - name: Waterborne (tentacle)
+    description: A card bearing this sigil submerges itself during its opponent's turn. While submerged, opposing creatures attack its owner directly.
+    type: normal
+
+  - name: Blood Guzzler
+    description: When a creature bearing this sigil deals damage, it gains 1 health for each damage dealt.
+    type: normal
+
+  - name: Haunter
+    description: When a creature bearing this sigil dies, it haunts the space it died in. Creatures played on this space gain its old sigils.
+    type: dummy
+
+  - name: Exploding Corpse
+    description: When a creature bearing this sigil dies, all empty spaces on the board are filled with a Guts card.
+    type: dummy
+
+  - name: Apparition
+    description: A creature bearing this sigil gains 1 power when you speak 'Bloody Mary' into a connected microphone up to a total of 13 times.
+    type: dummy
+
+  - name: Virtual Realist
+    description: If a VR headset is connected, a creature bearing this sigil may be played without paying its cost.
+    type: dummy
+
+  - name: Head of Edaxio
+    description: Edaxio is summoned if you control creatures bearing the sigils of Head, Arms, Legs, and Torso of Edaxio.
+    type: dummy
+
+  - name: Arms of Edaxio
+    description: Edaxio is summoned if you control creatures bearing the sigils of Head, Arms, Legs, and Torso of Edaxio.
+    type: dummy
+
+  - name: Legs of Edaxio
+    description: Edaxio is summoned if you control creatures bearing the sigils of Head, Arms, Legs, and Torso of Edaxio.
+    type: dummy
+
+  - name: Torso of Edaxio
+    description: Edaxio is summoned if you control creatures bearing the sigils of Head, Arms, Legs, and Torso of Edaxio.
+    type: dummy
+
+  - name: Brood Parasite
+    description: When a card bearing this sigil is played, an egg is created on the opposing space.
+    type: normal
+
+  - name: Double Strike
+    description: A card bearing this sigil will strike the opposing space an extra time when attacking.
+    type: normal
+
+  - name: Scavenger
+    description: While a card bearing this sigil is on the board, opposing creatures also provide bones when perishing.
+    type: normal
+
+  - name: Rampager
+    description: At the end of the owner's turn, a card bearing this sigil will move in the direction inscribed in the sigil. Creatures in the way will be thrown back behind it.
+    type: normal
+
+  - name: Morsel
+    description: When a card bearing this sigil is sacrificed, it adds its stat values to the card it was sacrificed for.
+    type: normal
+
+  - name: Blood Lust
+    description: When a card bearing this sigil attacks an opposing creature and it perishes, this card gains 1 power.
+    type: normal
+
+  - name: Made of Stone
+    description: A card bearing this sigil is immune to the effects of Touch of Death and Stinky.
+    type: normal
+
+  - name: Finical Hatchling
+    description: A card bearing this sigil hatches when drawn if the numbers 1 to 5 are represented in the health of creatures in your deck, and in their power, and if there is a creature of each tribe in your deck.
+    type: normal
+
+# Array of tribe names
+# Index is the game's internal tribe ID. Do not reorder.
+tribes:
+  - Squirrel
+  - Feathered
+  - Canine
+  - Hooved
+  - Reptilian
+  - Insectoid
+
+# Array of { name: string, description: string }
+# Index is the game's internal boon ID. Do not reorder.
+boons:
+  - name: Boon of the Ambidextrous
+    description: You may draw twice at the beginning of your turn.
+
+  - name: Boon of the Magpie's Eye
+    description: When you draw from your deck, you may choose any card in your deck to draw.
+
+  - name: Boon of the Rabid Squirrel
+    description: Your Squirrels will have 1 power.
+
+  - name: Boon of Goat's Blood
+    description: You will start a battle with a Black Goat on the board.
+
+  - name: Boon of the Forest
+    description: You will start a battle with Grand Firs on all of your spaces.
+
+  - name: Boon of the Bone Lord
+    description: You will start a battle with 8 bones.
+
+
+# Array of eye state names
+# Index is the game's internal eye state ID. Do not reorder.
+eyeStates:
+  - Default
+  - Eye missing
+  - Magnificus eye inserted
+  - Goat eye inserted
+
+
+# Array of starter deck IDs for Kaycee's Mod
+# Index is the game's internal deck ID. Do not reorder.
+starterDecks:
+  - Vanilla
+  - MooseBlood
+  - Ants
+  - MantisGod
+  - SubmergeBirds
+  - Bones
+  - FreeReptiles
+  - HydraEggs
