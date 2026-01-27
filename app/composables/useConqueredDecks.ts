@@ -1,5 +1,3 @@
-import type { Ref } from 'vue'
-
 export function useConqueredDecks(saveFile: Ref<any>) {
   function toggleConqueredDeck(deck: string, checked: boolean) {
     const list = saveFile.value.ascensionData.conqueredStarterDecks
