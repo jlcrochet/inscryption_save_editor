@@ -95,6 +95,8 @@
 </template>
 
 <script setup>
+  import { useCloseOnBackdrop } from '~/composables/useDialog'
+
   const dialogRef = ref(null)
   const mod = ref(null)
 
@@ -107,11 +109,7 @@
     dialogRef.value.close()
   }
 
-  function closeOnBackdrop(event) {
-    if (event.target === dialogRef.value) {
-      dialogRef.value.close()
-    }
-  }
+  const closeOnBackdrop = useCloseOnBackdrop(dialogRef)
 
   defineExpose({ open })
 </script>
@@ -121,13 +119,5 @@
     display: flex;
     justify-content: center;
     gap: 0.5em;
-  }
-
-  .unsafe {
-    color: Red;
-  }
-
-  .dummy {
-    color: DarkOrange;
   }
 </style>

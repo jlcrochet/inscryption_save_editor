@@ -49,12 +49,3 @@
   const saveFile = inject('saveFile')
 </script>
 
-<style scoped>
-  .unsafe {
-    color: Red;
-  }
-
-  .dummy {
-    color: DarkOrange;
-  }
-</style>

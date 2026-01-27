@@ -129,6 +129,8 @@
 </template>
 
 <script setup lang=ts>
+  import { useCloseOnBackdrop } from '~/composables/useDialog'
+
   const email = 'jlcrochet91@pm.me'
   const repo = 'https://github.com/jlcrochet/inscryption_save_editor'
 
@@ -153,17 +155,8 @@
     }
   })
 
-  function closeDialogOnBackdrop(event: MouseEvent) {
-    if (event.target === dialogRef.value) {
-      dialogRef.value?.close()
-    }
-  }
-
-  function closeErrorDialogOnBackdrop(event: MouseEvent) {
-    if (event.target === errorDialogRef.value) {
-      errorDialogRef.value?.close()
-    }
-  }
+  const closeDialogOnBackdrop = useCloseOnBackdrop(dialogRef)
+  const closeErrorDialogOnBackdrop = useCloseOnBackdrop(errorDialogRef)
 
   function copyError() {
     navigator.clipboard.writeText(errorText.value)
@@ -210,6 +203,7 @@
           const json = utf8.decode(bytes)
           fs = JSON.parse(json)
           fsSaveFileIndex = fs._files.findIndex(f => f._fullPath == '/SaveFile.gwsave')
+          if (fsSaveFileIndex === -1) throw 'SaveFile.gwsave not found in compressed FS'
           const [h, b] = parseBody(Uint8Array.from(fs._files[fsSaveFileIndex]._data))
           header = h
           body = b

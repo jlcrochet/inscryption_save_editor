@@ -50,3 +50,30 @@ export function listClone(list: List): List {
             $rcontent: [...list.$rcontent]
         }
 }
+
+export function cloneMod(mod: any): any {
+    return {
+        $type: mod.$type,
+        nameReplacement: mod.nameReplacement,
+        attackAdjustment: mod.attackAdjustment,
+        healthAdjustment: mod.healthAdjustment,
+        abilities: listClone(mod.abilities),
+        negateAbilities: listClone(mod.negateAbilities),
+        bloodCostAdjustment: mod.bloodCostAdjustment,
+        bonesCostAdjustment: mod.bonesCostAdjustment,
+        energyCostAdjustment: mod.energyCostAdjustment ?? 0,
+        nullifyGemsCost: mod.nullifyGemsCost ?? false,
+        addGemCost: listClone(mod.addGemCost),
+        gemify: mod.gemify ?? false,
+        specialAbilities: listClone(mod.specialAbilities),
+        fromCardMerge: mod.fromCardMerge ?? false,
+        deathCardInfo: mod.deathCardInfo ? {
+            $type: mod.deathCardInfo.$type,
+            headType: mod.deathCardInfo.headType,
+            mouthIndex: mod.deathCardInfo.mouthIndex,
+            eyesIndex: mod.deathCardInfo.eyesIndex,
+            lostEye: mod.deathCardInfo.lostEye
+        } : null,
+        decalIds: listClone(mod.decalIds)
+    }
+}

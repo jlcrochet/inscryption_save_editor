@@ -69,7 +69,7 @@
           type=checkbox
         />
         <table-input
-          v-model=saveFile.currentRun.playerAvatarHead
+          v-model.number=saveFile.currentRun.playerAvatarHead
           label='Avatar head'
           help="The appearance of your figurine's head; valid values are 0 to 7."
           type=number min=0 max=7 required
@@ -166,30 +166,7 @@
 
   function duplicateDeathcard(i) {
     const mod = saveFile.value.deathCardMods.$rcontent[i]
-    listAdd(saveFile.value.deathCardMods, {
-      $type: mod.$type,
-      nameReplacement: mod.nameReplacement,
-      attackAdjustment: mod.attackAdjustment,
-      healthAdjustment: mod.healthAdjustment,
-      abilities: listClone(mod.abilities),
-      negateAbilities: listClone(mod.negateAbilities),
-      bloodCostAdjustment: mod.bloodCostAdjustment,
-      bonesCostAdjustment: mod.bonesCostAdjustment,
-      energyCostAdjustment: mod.energyCostAdjustment ?? 0,
-      nullifyGemsCost: mod.nullifyGemsCost ?? false,
-      addGemCost: listClone(mod.addGemCost),
-      gemify: mod.gemify ?? false,
-      specialAbilities: listClone(mod.specialAbilities),
-      fromCardMerge: mod.fromCardMerge ?? false,
-      decalIds: listClone(mod.decalIds),
-      deathCardInfo: {
-        $type: mod.deathCardInfo.$type,
-        headType: mod.deathCardInfo.headType,
-        mouthIndex: mod.deathCardInfo.mouthIndex,
-        eyesIndex: mod.deathCardInfo.eyesIndex,
-        lostEye: mod.deathCardInfo.lostEye
-      }
-    })
+    listAdd(saveFile.value.deathCardMods, cloneMod(mod))
   }
 
   function addDeathcard() {

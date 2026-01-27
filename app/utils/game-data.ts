@@ -33,6 +33,7 @@ function mapToSortedArray(map: IdNameMap): { id: string, name: string }[] {
 }
 
 export const cards: { id: string, name: string, type: CardType }[] = cardsToSortedArray(data.cards)
+export const cardTypes: Map<string, CardType> = new Map(cards.map(c => [c.id, c.type]))
 export const items: { id: string, name: string }[] = mapToSortedArray(data.items)
 export const abilities: { name: string, description: string, type: CardType }[] = abilitiesToArray(data.abilities)
 export const tribes: string[] = data.tribes

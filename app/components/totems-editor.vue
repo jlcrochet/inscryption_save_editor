@@ -93,12 +93,3 @@
   )
 </script>
 
-<style scoped>
-  .unsafe {
-    color: Red;
-  }
-
-  .dummy {
-    color: DarkOrange;
-  }
-</style>

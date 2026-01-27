@@ -41,3 +41,11 @@ dialog pre {
     background-color: lightgray;
     padding: 1em;
 }
+
+.unsafe {
+    color: Red;
+}
+
+.dummy {
+    color: DarkOrange;
+}

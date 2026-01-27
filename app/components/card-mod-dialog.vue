@@ -117,6 +117,8 @@
 </template>
 
 <script setup>
+  import { useCloseOnBackdrop } from '~/composables/useDialog'
+
   const dialogRef = ref(null)
   const mods = ref(null)
   const modIndex = ref(0)
@@ -137,11 +139,7 @@
     dialogRef.value.close()
   }
 
-  function closeOnBackdrop(event) {
-    if (event.target === dialogRef.value) {
-      dialogRef.value.close()
-    }
-  }
+  const closeOnBackdrop = useCloseOnBackdrop(dialogRef)
 
   function onClose() {
     mods.value = null
@@ -184,25 +182,7 @@
   }
 
   function duplicateMod() {
-    const mod = currentMod.value
-    listAdd(mods.value, {
-      $type: mod.$type,
-      nameReplacement: mod.nameReplacement,
-      attackAdjustment: mod.attackAdjustment,
-      healthAdjustment: mod.healthAdjustment,
-      abilities: listClone(mod.abilities),
-      negateAbilities: listClone(mod.negateAbilities),
-      bloodCostAdjustment: mod.bloodCostAdjustment,
-      bonesCostAdjustment: mod.bonesCostAdjustment,
-      energyCostAdjustment: mod.energyCostAdjustment,
-      nullifyGemsCost: mod.nullifyGemsCost,
-      addGemCost: listClone(mod.addGemCost),
-      gemify: mod.gemify,
-      specialAbilities: listClone(mod.specialAbilities),
-      fromCardMerge: mod.fromCardMerge,
-      deathCardInfo: mod.deathCardInfo,
-      decalIds: listClone(mod.decalIds)
-    })
+    listAdd(mods.value, cloneMod(currentMod.value))
     modIndex.value = mods.value.$rlength - 1
   }
 
@@ -228,13 +208,5 @@
     display: flex;
     justify-content: center;
     gap: 0.5em;
-  }
-
-  .unsafe {
-    color: Red;
-  }
-
-  .dummy {
-    color: DarkOrange;
   }
 </style>

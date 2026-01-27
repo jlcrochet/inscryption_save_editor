@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-  import { cards } from '~/utils/game-data'
+  import { cards, cardTypes } from '~/utils/game-data'
 
   const props = defineProps({
     deck: {
@@ -75,7 +75,6 @@
   const modDialogRef = ref(null)
   const tbodyRef = ref(null)
 
-  const cardTypes = new Map(cards.map(c => [c.id, c.type]))
   function getCardType(cardId) {
     return cardTypes.get(cardId) ?? 'normal'
   }
@@ -150,26 +149,7 @@
       $v: {
         $type: modInfo.$v.$type,
         $rlength: modInfo.$v.$rlength,
-        $rcontent: modInfo.$v.$rcontent.map(mod => {
-          return {
-            $type: mod.$type,
-            nameReplacement: mod.nameReplacement,
-            attackAdjustment: mod.attackAdjustment,
-            healthAdjustment: mod.healthAdjustment,
-            abilities: listClone(mod.abilities),
-            negateAbilities: listClone(mod.negateAbilities),
-            bloodCostAdjustment: mod.bloodCostAdjustment,
-            bonesCostAdjustment: mod.bonesCostAdjustment,
-            energyCostAdjustment: mod.energyCostAdjustment,
-            nullifyGemsCost: mod.nullifyGemsCost,
-            addGemCost: listClone(mod.addGemCost),
-            gemify: mod.gemify,
-            specialAbilities: listClone(mod.specialAbilities),
-            fromCardMerge: mod.fromCardMerge,
-            deathCardInfo: mod.deathCardInfo,
-            decalIds: listClone(mod.decalIds),
-          }
-        })
+        $rcontent: modInfo.$v.$rcontent.map(cloneMod)
       }
     })
 
@@ -201,23 +181,12 @@
     gap: 0.5em;
   }
 
-  select.unsafe {
-    color: Red;
-  }
-
-  select.dummy {
-    color: DarkOrange;
-  }
-
   option.normal {
     color: initial;
   }
 
-  option.unsafe {
-    color: Red;
-  }
-
+  option.unsafe,
   option.dummy {
-    color: DarkOrange;
+    color: inherit;
   }
 </style>

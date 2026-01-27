@@ -37,15 +37,8 @@
 </template>
 
 <script setup>
-  const saveFile = inject('saveFile')
+  import { useConqueredDecks } from '~/composables/useConqueredDecks'
 
-  function toggleConqueredDeck(deck, checked) {
-    const list = saveFile.value.ascensionData.conqueredStarterDecks
-    const index = list.$rcontent.indexOf(deck)
-    if (checked && index === -1) {
-      listAdd(list, deck)
-    } else if (!checked && index !== -1) {
-      listRemove(list, index)
-    }
-  }
+  const saveFile = inject('saveFile')
+  const { toggleConqueredDeck } = useConqueredDecks(saveFile)
 </script>
