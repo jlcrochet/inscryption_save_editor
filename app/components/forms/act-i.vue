@@ -104,21 +104,19 @@
         </thead>
 
         <tbody ref=deathcardsTbodyRef>
-          <template v-for="(mod, i) in saveFile.deathCardMods.$rcontent">
-            <tr>
-              <td style="text-align: right">{{ i + 1 }}</td>
+          <tr v-for="(mod, i) in saveFile.deathCardMods.$rcontent" :key=i>
+            <td style="text-align: right">{{ i + 1 }}</td>
 
-              <td>
-                <input v-model.lazy.trim=mod.nameReplacement required maxlength=16 />
-              </td>
+            <td>
+              <input v-model.lazy.trim=mod.nameReplacement required maxlength=16 />
+            </td>
 
-              <td class=actions>
-                <button type=button @click="openDeathcardDialog(i)">Edit</button>
-                <button type=button @click="duplicateDeathcard(i)">Duplicate</button>
-                <button type=button @click='listRemove(saveFile.deathCardMods, i)'>Delete</button>
-              </td>
-            </tr>
-          </template>
+            <td class=actions>
+              <button type=button @click="openDeathcardDialog(i)">Edit</button>
+              <button type=button @click="duplicateDeathcard(i)">Duplicate</button>
+              <button type=button @click='listRemove(saveFile.deathCardMods, i)'>Delete</button>
+            </td>
+          </tr>
 
           <tr>
             <td></td>

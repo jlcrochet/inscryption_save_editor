@@ -54,13 +54,13 @@
           type=checkbox
         />
         <table-input
-          v-model.number=currentMod.gemify
+          v-model=currentMod.gemify
           label=Gemified
           help="If true, this card is now gemified."
           type=checkbox
         />
         <table-input
-          v-model.number=currentMod.fromCardMerge
+          v-model=currentMod.fromCardMerge
           label=Merged
           help="If true, this mod occurred as the result of a card merge of some sort, such as the Mysterious Stones or the Mycologists. Determines the appearance of any added sigils as well as whether or not this card can be used in subsequent merges."
           type=checkbox
@@ -77,7 +77,7 @@
           help="Sigils to add to this card."
           multiple size=8
         >
-          <template v-for="(ability, k) in abilities">
+          <template v-for="(ability, k) in abilities" :key="k + 1">
             <option :value="k + 1" :title=ability.description :class=ability.type>{{ ability.name }}</option>
           </template>
         </table-select>
@@ -89,7 +89,7 @@
           help="Sigils to remove from this card."
           multiple size=8
         >
-          <template v-for="(ability, k) in abilities">
+          <template v-for="(ability, k) in abilities" :key="k + 1">
             <option :value="k + 1" :title=ability.description :class=ability.type>{{ ability.name }}</option>
           </template>
         </table-select>

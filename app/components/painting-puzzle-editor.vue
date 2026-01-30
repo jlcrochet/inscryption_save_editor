@@ -2,11 +2,11 @@
   <table>
     <tbody>
       <tr>
-        <td v-for="(card, i) in oilPaintingState.puzzleSolution.$rcontent">
+        <td v-for="(card, i) in oilPaintingState.puzzleSolution.$rcontent" :key=i>
           <select v-model=oilPaintingState.puzzleSolution.$rcontent[i]>
             <option :value=null>(empty)</option>
-            <template v-for="cardName in cards">
-              <option :value=cardName.id :selected="card == cardName.id">{{ cardName.name }}</option>
+            <template v-for="cardName in cards" :key=cardName.id>
+              <option :value=cardName.id>{{ cardName.name }}</option>
             </template>
           </select>
         </td>

@@ -1,5 +1,12 @@
 <template>
-  <main style='margin: 1em'>
+  <main
+    style='padding: 1em; min-height: 100vh; box-sizing: border-box; overflow-x: hidden'
+    :class="{ 'drop-target': isDragOver }"
+    @dragover=onDragOver
+    @dragenter=onDragEnter
+    @dragleave=onDragLeave
+    @drop=onDrop
+  >
     <h1>Inscryption Save Editor</h1>
 
     <noscript>WARNING: This page doesn't work without JavaScript. Please enable JavaScript in your browser and refresh the page.</noscript>
@@ -24,7 +31,7 @@
 
         <ol>
           <li>
-            Click the Choose File button to upload your save file from your Inscryption directory.
+            Click the Choose File button to upload your save file from your Inscryption directory, or drag and drop the file onto this page.
             <ul>
               <li>If you are using the Steam version of the game, the save file is located in <code>steamapps\common\Inscryption\SaveFile.gwsave</code> relative to your Steam directory which &mdash; on Windows &mdash; is typically located at <code>%ProgramFiles%\Steam</code>.</li>
               <li>If you are using XBox Game Pass on Windows, the save file should be located at <code>%LocalAppData%\Packages\DevolverDigital.Inscryption_xxxxxx</code> where <code>xxxxxx</code> is a string of digits. See <a :href='`${repo}/issues/23#issuecomment-3172873199`' target=_blank>this comment</a> for more details.</li>
@@ -158,6 +165,18 @@
   const closeDialogOnBackdrop = useCloseOnBackdrop(dialogRef)
   const closeErrorDialogOnBackdrop = useCloseOnBackdrop(errorDialogRef)
 
+  const preventWindowDrag = (event: DragEvent) => {
+    if (hasFiles(event)) event.preventDefault()
+  }
+  const handleWindowDrop = (event: DragEvent) => {
+    if (hasFiles(event)) {
+      event.preventDefault()
+      onDrop(event)
+    }
+  }
+  const isDragOver = ref(false)
+  let dragDepth = 0
+
   function copyError() {
     navigator.clipboard.writeText(errorText.value)
   }
@@ -178,13 +197,15 @@
   let fs: any
   let fsSaveFileIndex: number
 
-  async function parseFile(file: File) {
+  async function parseFile(file?: File) {
+    if (!file) return
     try {
       loading.value = true
       fs = null
 
       fileName = file.name
       const bytes = new Uint8Array(await file.arrayBuffer())
+      if (bytes.length === 0) throw new Error('File is empty')
 
       let body: Uint8Array
 
@@ -202,9 +223,12 @@
           consoleFormat.value = true
           const json = utf8.decode(bytes)
           fs = JSON.parse(json)
+          if (!Array.isArray(fs?._files)) throw new Error('Invalid compressed FS: missing _files array')
           fsSaveFileIndex = fs._files.findIndex(f => f._fullPath == '/SaveFile.gwsave')
           if (fsSaveFileIndex === -1) throw 'SaveFile.gwsave not found in compressed FS'
-          const [h, b] = parseBody(Uint8Array.from(fs._files[fsSaveFileIndex]._data))
+          const data = fs._files[fsSaveFileIndex]?._data
+          if (!data) throw new Error('Invalid compressed FS: SaveFile.gwsave has no data')
+          const [h, b] = parseBody(Uint8Array.from(data))
           header = h
           body = b
         }
@@ -262,9 +286,54 @@
     loading.value = false
   }
 
+  function hasFiles(event: DragEvent) {
+    return event.dataTransfer?.types?.includes('Files')
+  }
+
+  function onDragOver(event: DragEvent) {
+    if (!hasFiles(event)) return
+    event.preventDefault()
+    if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy'
+  }
+
+  function onDragEnter(event: DragEvent) {
+    if (!hasFiles(event)) return
+    event.preventDefault()
+    dragDepth += 1
+    isDragOver.value = true
+  }
+
+  function onDragLeave(event: DragEvent) {
+    if (!hasFiles(event)) return
+    event.preventDefault()
+    dragDepth = Math.max(0, dragDepth - 1)
+    if (dragDepth === 0) isDragOver.value = false
+  }
+
+  function onDrop(event: DragEvent) {
+    if (!hasFiles(event)) return
+    event.preventDefault()
+    event.stopPropagation()
+    dragDepth = 0
+    isDragOver.value = false
+    const file = event.dataTransfer?.files?.[0]
+    if (file) parseFile(file)
+  }
+
+  onMounted(() => {
+    window.addEventListener('dragover', preventWindowDrag)
+    window.addEventListener('drop', handleWindowDrop)
+  })
+
+  onUnmounted(() => {
+    window.removeEventListener('dragover', preventWindowDrag)
+    window.removeEventListener('drop', handleWindowDrop)
+  })
+
   function createFile() {
     try {
       const body = JSON.stringify(saveFile.value)
+      const bodyBytes = utf8.encode(body)
 
       let outputAsConsoleFormat = consoleFormat.value
       if (switchFormat.value) outputAsConsoleFormat = !outputAsConsoleFormat
@@ -277,17 +346,17 @@
         if (fs) {
           const payload = [
             ...header,
-            ...vlq(body.length),
-            ...utf8.encode(body),
+            ...vlq(bodyBytes.length),
+            ...bodyBytes,
             0x0B  // vertical tab; used to indicate EOF
           ]
           fs._files[fsSaveFileIndex]._data = payload
           blobParts = [JSON.stringify(fs)]
         } else {
-          blobParts = [header, vlq(body.length), body, Uint8Array.of(0x0B)]
+          blobParts = [header, vlq(bodyBytes.length), bodyBytes, Uint8Array.of(0x0B)]
         }
       } else {
-        blobParts = [body]
+        blobParts = [bodyBytes]
       }
 
       const blob = new Blob(blobParts, { type: 'application/octet-stream' })
@@ -296,7 +365,7 @@
       anchorRef.value.href = url
       anchorRef.value.download = fileName
       anchorRef.value.click()
-      URL.revokeObjectURL(url)
+      setTimeout(() => URL.revokeObjectURL(url), 0)
     }
     catch (error) {
       errorHandler(error)
@@ -304,12 +373,18 @@
   }
 
   function parseBody(bytes: Uint8Array): [Uint8Array, Uint8Array] {
+    if (bytes.length < 24) throw new Error('Console save is too short')
+    if (bytes.at(-1) !== 0x0B) throw new Error('Invalid console save: missing EOF marker')
     const header = bytes.slice(0, 22)
 
     // Skip VLQ
     let start = 22
-    while (bytes[start] > 0x7F) start += 1
+    while (bytes[start] > 0x7F) {
+      start += 1
+      if (start >= bytes.length - 1) throw new Error('Invalid console save: bad VLQ length')
+    }
     start += 1
+    if (start >= bytes.length) throw new Error('Invalid console save: missing body')
 
     const body = bytes.slice(start, -1)
 
@@ -343,24 +418,41 @@
 
     let coordinateX = true
     let isKey = true
+    let escaped = false
 
     for (let i = 0; i < bytes.length; i += 1) {
       let b = bytes[i]
+      const region = regions.at(-1)
+
+      if (region == 'string') {
+        if (escaped) {
+          output.push(b)
+          escaped = false
+          continue
+        }
+        if (b == 0x5C /* \\ */) {
+          output.push(b)
+          escaped = true
+          continue
+        }
+      }
 
       if (b <= 0x20 /* whitespace */) {
-        if (regions.at(-1) == 'string')
+        if (region == 'string')
           output.push(b)
       }
       else if (b == 0x22 /* " */) {
-        if (regions.at(-1) == 'string')
+        if (region == 'string') {
           regions.pop()
+          escaped = false
+        }
         else
           regions.push('string')
 
         output.push(b)
       }
       else if (b == 0x2D || (b >= 0x30 && b <= 0x39) /* - or digits */) {
-        if (regions.at(-1) == 'object' && isKey) {
+        if (region == 'object' && isKey) {
           output.push(0x22, (coordinateX ? 0x78 : 0x79), 0x22, 0x3A)  // "[xy]":
           coordinateX = !coordinateX
 
@@ -374,39 +466,39 @@
         else output.push(b)
       }
       else if (b == 0x3A /* : */) {
-        if (regions.at(-1) == 'object')
+        if (region == 'object')
           isKey = false
         output.push(b)
       }
       else if (b == 0x5B /* [ */) {
-        if (regions.at(-1) != 'string')
+        if (region != 'string')
           regions.push('array')
         output.push(b)
       }
       else if (b == 0x7B /* { */) {
-        if (regions.at(-1) != 'string')
+        if (region != 'string')
           regions.push('object')
         output.push(b)
       }
       else if (b == 0x5D /* ] */) {
-        if (regions.at(-1) == 'array')
+        if (region == 'array')
           regions.pop()
         output.push(b)
       }
       else if (b == 0x7D /* } */) {
-        if (regions.at(-1) == 'object') {
+        if (region == 'object') {
           regions.pop()
           isKey = true
         }
         output.push(b)
       }
       else if (b == 0x2C /* , */) {
-        if (regions.at(-1) == 'object')
+        if (region == 'object')
           isKey = true
         output.push(b)
       }
       else if (b == 0x24 /* $ */) {
-        if (regions.at(-1) == 'string') {
+        if (region == 'string') {
           output.push(b)
         }
         else {

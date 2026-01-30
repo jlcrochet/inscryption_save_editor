@@ -13,9 +13,9 @@
   })
 
   const { tabs, tabIndex, register, unregister } = inject('tabs')
-  const index = register({ title: props.title })
+  const id = register({ title: props.title })
 
-  const isActive = computed(() => tabIndex.value === index)
+  const isActive = computed(() => tabIndex.value === id)
 
-  onUnmounted(() => unregister(index))
+  onUnmounted(() => unregister(id))
 </script>

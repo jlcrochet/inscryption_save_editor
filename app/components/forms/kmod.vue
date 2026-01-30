@@ -103,7 +103,7 @@
           type=number min=0 max=2 required
         />
 
-        <template v-for="i in saveFile.ascensionData.currentRun.regionOrder.$plength">
+        <template v-for="i in saveFile.ascensionData.currentRun.regionOrder.$plength" :key=i>
           <table-select
             v-model.number='saveFile.ascensionData.currentRun.regionOrder.$pcontent[i - 1]'
             :label="'Map #' + i"

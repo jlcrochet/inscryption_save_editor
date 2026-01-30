@@ -38,7 +38,7 @@
           help="Sigils to add to the card."
           multiple size=8
         >
-          <template v-for="(ability, k) in abilities">
+          <template v-for="(ability, k) in abilities" :key="k + 1">
             <option :value="k + 1" :title=ability.description :class=ability.type>{{ ability.name }}</option>
           </template>
         </table-select>
@@ -50,7 +50,7 @@
           help="Sigils to remove from the card."
           multiple size=8
         >
-          <template v-for="(ability, k) in abilities">
+          <template v-for="(ability, k) in abilities" :key="k + 1">
             <option :value="k + 1" :title=ability.description :class=ability.type>{{ ability.name }}</option>
           </template>
         </table-select>

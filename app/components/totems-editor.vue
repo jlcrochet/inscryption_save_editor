@@ -7,9 +7,9 @@
       help="Which totem heads you have."
       multiple size=6
     >
-      <template v-for='(tribe, i) in tribes'>
-        <option :value="i + 1">{{ tribe }}</option>
-      </template>
+    <template v-for='(tribe, i) in tribes' :key="i + 1">
+      <option :value="i + 1">{{ tribe }}</option>
+    </template>
     </table-select>
 
     <table-select
@@ -19,9 +19,9 @@
       help="Which totem bodies you have."
       multiple size=10
     >
-      <template v-for="(ability, i) in abilities">
-        <option :value="i + 1" :title=ability.description :class=ability.type>{{ ability.name }}</option>
-      </template>
+    <template v-for="(ability, i) in abilities" :key="i + 1">
+      <option :value="i + 1" :title=ability.description :class=ability.type>{{ ability.name }}</option>
+    </template>
     </table-select>
 
   </table>
@@ -31,15 +31,15 @@
 
     Selected:
     <select v-model=totems.$rcontent[0].tribe label=Head required>
-      <template v-for="i in totemTops.$rcontent">
-        <option :value=i>{{ tribes[i - 1] }}</option>
-      </template>
+    <template v-for="i in totemTops.$rcontent" :key=i>
+      <option :value=i>{{ tribes[i - 1] }}</option>
+    </template>
     </select>
     +
     <select v-model=totems.$rcontent[0].ability label=Body required :class=getAbilityType(totems.$rcontent[0].ability)>
-      <template v-for="i in totemBottoms.$rcontent">
-        <option :value=i :title='abilities[i - 1].description' :class='abilities[i - 1].type'>{{ abilities[i - 1].name }}</option>
-      </template>
+    <template v-for="i in totemBottoms.$rcontent" :key=i>
+      <option :value=i :title='abilities[i - 1].description' :class='abilities[i - 1].type'>{{ abilities[i - 1].name }}</option>
+    </template>
     </select>
   </template>
 </template>
@@ -92,4 +92,3 @@
     }
   )
 </script>
-

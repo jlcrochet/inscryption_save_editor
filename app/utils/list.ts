@@ -35,6 +35,14 @@ export function listRemove(list: List, index: number) {
     list.$rlength -= 1
 }
 
+export function listSwap(list: List, indexA: number, indexB: number) {
+    if (list === null || list === undefined) return
+    if (indexA === indexB) return
+    const content = list.$rcontent
+    if (indexA < 0 || indexB < 0 || indexA >= content.length || indexB >= content.length) return
+    ;[content[indexA], content[indexB]] = [content[indexB], content[indexA]]
+}
+
 export function listClear(list: List) {
     list.$rcontent.splice(0)
     list.$rlength = 0

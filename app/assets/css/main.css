@@ -2,7 +2,11 @@ input[type=checkbox] {
     margin: 3px 0;
 }
 
-[title] {
+main {
+    transition: background-color 120ms ease, box-shadow 120ms ease;
+}
+
+span[title] {
     text-decoration: underline gray;
     cursor: help;
 }
@@ -27,6 +31,18 @@ summary, button, label {
     user-select: none;
 }
 
+main.drop-target {
+    background-color: #f7f7f7;
+    background-image: repeating-linear-gradient(
+        135deg,
+        rgba(0, 0, 0, 0.04) 0 12px,
+        rgba(0, 0, 0, 0.02) 12px 24px
+    );
+    box-shadow:
+        inset 0 0 0 2px #4b5563,
+        inset 0 0 0 7px rgba(75, 85, 99, 0.15);
+}
+
 dialog {
     max-width: 65vw;
 }
@@ -48,4 +64,8 @@ dialog pre {
 
 .dummy {
     color: DarkOrange;
+}
+html, body {
+    margin: 0;
+    padding: 0;
 }
