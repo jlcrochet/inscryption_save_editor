@@ -1,5 +1,31 @@
+html {
+    color-scheme: light;
+    --page-bg: Canvas;
+    --page-text: CanvasText;
+    --help-underline: gray;
+    --card-border: black;
+    --drop-bg: #f7f7f7;
+    --drop-stripe-strong: rgba(0, 0, 0, 0.04);
+    --drop-stripe-soft: rgba(0, 0, 0, 0.02);
+    --drop-border: #4b5563;
+    --drop-shadow: rgba(75, 85, 99, 0.15);
+    --pre-bg: lightgray;
+    --unsafe-color: Red;
+    --dummy-color: DarkOrange;
+    --row-hover-bg: #e2e8f0;
+    --row-drop-bg: #f8fafc;
+    --drop-indicator: #333;
+    --drag-handle-color: #64748b;
+    --drag-handle-focus: #94a3b8;
+}
+
 input[type=checkbox] {
     margin: 3px 0;
+}
+
+body {
+    background: var(--page-bg);
+    color: var(--page-text);
 }
 
 main {
@@ -7,12 +33,12 @@ main {
 }
 
 span[title] {
-    text-decoration: underline gray;
+    text-decoration: underline var(--help-underline);
     cursor: help;
 }
 
 .card > td {
-    border: 2px solid black;
+    border: 2px solid var(--card-border);
 }
 
 table {
@@ -31,16 +57,26 @@ summary, button, label {
     user-select: none;
 }
 
+.icon-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+}
+
+.icon-button svg {
+    flex: 0 0 auto;
+}
+
 main.drop-target {
-    background-color: #f7f7f7;
+    background-color: var(--drop-bg);
     background-image: repeating-linear-gradient(
         135deg,
-        rgba(0, 0, 0, 0.04) 0 12px,
-        rgba(0, 0, 0, 0.02) 12px 24px
+        var(--drop-stripe-strong) 0 12px,
+        var(--drop-stripe-soft) 12px 24px
     );
     box-shadow:
-        inset 0 0 0 2px #4b5563,
-        inset 0 0 0 7px rgba(75, 85, 99, 0.15);
+        inset 0 0 0 2px var(--drop-border),
+        inset 0 0 0 7px var(--drop-shadow);
 }
 
 dialog {
@@ -54,18 +90,68 @@ dialog {
 }
 
 dialog pre {
-    background-color: lightgray;
+    background-color: var(--pre-bg);
     padding: 1em;
 }
 
+.theme-selector {
+    margin-top: 2em;
+    font-size: 0.9em;
+}
+
 .unsafe {
-    color: Red;
+    color: var(--unsafe-color);
 }
 
 .dummy {
-    color: DarkOrange;
+    color: var(--dummy-color);
 }
+
 html, body {
     margin: 0;
     padding: 0;
+}
+
+html[data-theme=dark] {
+    color-scheme: dark;
+    --page-bg: #111827;
+    --page-text: #e5e7eb;
+    --help-underline: #9ca3af;
+    --card-border: #d1d5db;
+    --drop-bg: #1f2937;
+    --drop-stripe-strong: rgba(255, 255, 255, 0.06);
+    --drop-stripe-soft: rgba(255, 255, 255, 0.03);
+    --drop-border: #9ca3af;
+    --drop-shadow: rgba(156, 163, 175, 0.16);
+    --pre-bg: #1f2937;
+    --unsafe-color: #ff6b6b;
+    --dummy-color: #f59e0b;
+    --row-hover-bg: #1f2937;
+    --row-drop-bg: #263244;
+    --drop-indicator: #d1d5db;
+    --drag-handle-color: #9ca3af;
+    --drag-handle-focus: #d1d5db;
+}
+
+@media (prefers-color-scheme: dark) {
+    html:not([data-theme]) {
+        color-scheme: dark;
+        --page-bg: #111827;
+        --page-text: #e5e7eb;
+        --help-underline: #9ca3af;
+        --card-border: #d1d5db;
+        --drop-bg: #1f2937;
+        --drop-stripe-strong: rgba(255, 255, 255, 0.06);
+        --drop-stripe-soft: rgba(255, 255, 255, 0.03);
+        --drop-border: #9ca3af;
+        --drop-shadow: rgba(156, 163, 175, 0.16);
+        --pre-bg: #1f2937;
+        --unsafe-color: #ff6b6b;
+        --dummy-color: #f59e0b;
+        --row-hover-bg: #1f2937;
+        --row-drop-bg: #263244;
+        --drop-indicator: #d1d5db;
+        --drag-handle-color: #9ca3af;
+        --drag-handle-focus: #d1d5db;
+    }
 }

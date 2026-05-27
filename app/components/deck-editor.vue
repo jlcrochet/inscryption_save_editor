@@ -20,16 +20,28 @@
         :key=card.index
         :data-index=card.index
         class=deck-row
-        draggable=true
         :class="{
           dragging: dragIndex === card.index,
           'drag-over-before': dragOverIndex === card.index && !dragOverAfter,
           'drag-over-after': dragOverIndex === card.index && dragOverAfter
         }"
-        @dragstart="startDrag(card.index, $event)"
-        @dragend=endDrag
       >
-        <td style="text-align: right">{{ card.index + 1 }}</td>
+        <td class=index-cell>
+          <div class=index-content>
+            <button
+              type=button
+              class=drag-handle
+              draggable=true
+              :aria-label="`Drag card ${card.index + 1} to reorder`"
+              title="Drag to reorder"
+              @dragstart.stop="startDrag(card.index, $event)"
+              @dragend=endDrag
+            >
+              <span aria-hidden=true></span>
+            </button>
+            <span>{{ card.index + 1 }}</span>
+          </div>
+        </td>
 
         <td>
           <select :value=card.name @input="updateCardSelection(card.index, $event.target.value)" :class="getCardType(card.name)" required>
@@ -41,10 +53,12 @@
           {{ card.modCount }}
         </td>
 
-        <td class=actions>
-          <button type=button @click=openModDialog(card.index)>Edit Mods</button>
-          <button type=button @click=duplicateCard(card.index)>Duplicate</button>
-          <button type=button @click=deleteCard(card.index)>Delete</button>
+        <td>
+          <div class=actions>
+            <button type=button @click=openModDialog(card.index)>Edit Mods</button>
+            <button type=button @click=duplicateCard(card.index)>Duplicate</button>
+            <button type=button @click=deleteCard(card.index)>Delete</button>
+          </div>
         </td>
       </tr>
 
@@ -252,15 +266,7 @@
     rebuildModKeys()
   }
 
-  function isInteractiveTarget(target) {
-    return target?.closest?.('input, select, button, textarea, option')
-  }
-
   function startDrag(i, event) {
-    if (isInteractiveTarget(event?.target)) {
-      event.preventDefault()
-      return
-    }
     dragIndex.value = i
     dragOverIndex.value = i
     dragOverAfter.value = false
@@ -333,7 +339,7 @@
 </script>
 
 <style scoped>
-  .pagination, .page-size {
+  .pagination {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -341,21 +347,78 @@
     margin-top: 0.5em;
   }
 
+  .page-size {
+    margin-top: 1em;
+  }
+
   .actions {
     display: flex;
     gap: 0.5em;
   }
 
-  .deck-row {
-    cursor: grab;
+  .index-cell {
+    text-align: right;
+  }
+
+  .index-content {
+    display: inline-flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.4em;
   }
 
   .deck-row:hover {
-    background-color: #e2e8f0;
+    background-color: var(--row-hover-bg);
   }
 
-  .deck-row :is(input, select, button, textarea) {
-    cursor: auto;
+  .drag-handle {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 1.5em;
+    height: 1.5em;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: transparent;
+    cursor: grab;
+  }
+
+  .drag-handle:focus-visible {
+    border-color: var(--drag-handle-focus);
+  }
+
+  .drag-handle:active {
+    cursor: grabbing;
+  }
+
+  .drag-handle span,
+  .drag-handle span::before,
+  .drag-handle span::after {
+    display: block;
+    width: 0.75em;
+    height: 2px;
+    border-radius: 999px;
+    background: var(--drag-handle-color);
+  }
+
+  .drag-handle span {
+    position: relative;
+  }
+
+  .drag-handle span::before,
+  .drag-handle span::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .drag-handle span::before {
+    top: -5px;
+  }
+
+  .drag-handle span::after {
+    top: 5px;
   }
 
   tr.dragging {
@@ -363,19 +426,24 @@
   }
 
   tr.drag-over-before > td {
-    border-top: 2px solid #333;
+    border-top: 2px solid var(--drop-indicator);
+    background: var(--row-drop-bg);
   }
 
   tr.drag-over-after > td {
-    border-bottom: 2px solid #333;
+    border-bottom: 2px solid var(--drop-indicator);
+    background: var(--row-drop-bg);
   }
 
   option.normal {
     color: initial;
   }
 
-  option.unsafe,
+  option.unsafe {
+    color: var(--unsafe-color);
+  }
+
   option.dummy {
-    color: inherit;
+    color: var(--dummy-color);
   }
 </style>

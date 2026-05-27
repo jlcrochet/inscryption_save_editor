@@ -3,10 +3,10 @@
     <tbody>
       <tr>
         <td v-for="(card, i) in oilPaintingState.puzzleSolution.$rcontent" :key=i>
-          <select v-model=oilPaintingState.puzzleSolution.$rcontent[i]>
+          <select v-model=oilPaintingState.puzzleSolution.$rcontent[i] :class=getCardType(oilPaintingState.puzzleSolution.$rcontent[i])>
             <option :value=null>(empty)</option>
             <template v-for="cardName in cards" :key=cardName.id>
-              <option :value=cardName.id>{{ cardName.name }}</option>
+              <option :value=cardName.id :class=cardName.type>{{ cardName.name }}</option>
             </template>
           </select>
         </td>
@@ -28,10 +28,16 @@
 </template>
 
 <script setup>
+  import { cardTypes } from '~/utils/game-data'
+
   defineProps({
     oilPaintingState: {
       type: Object,
       required: true
     }
   })
+
+  function getCardType(cardId) {
+    return cardTypes.get(cardId) ?? 'normal'
+  }
 </script>

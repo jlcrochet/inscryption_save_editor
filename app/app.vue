@@ -22,7 +22,7 @@
         <ul>
           <li>Make sure that you keep a backup of your original save file before experimenting.</li>
           <li>Avoid making manual changes to your save file before uploading; doing so may cause errors.</li>
-          <li>Some cards and sigils may cause errors if played outside of specific contexts; others may do nothing at all. Cards and sigils shown in <span style="color: Red">red</span> are known to cause bugs or instability; those shown in <span style="color: DarkOrange">orange</span> are dummies that don't do anything.</li>
+          <li>Some cards and sigils may cause errors if played outside of specific contexts; others may do nothing at all. Cards and sigils shown in <span class=unsafe>red</span> are known to cause bugs or instability; those shown in <span class=dummy>orange</span> are dummies that don't do anything.</li>
         </ul>
 
         <p>To report problems, e-mail me at <a :href='`mailto:${email}`'>{{ email }}</a> or post an issue on <a :href=repo target=_blank>GitHub</a>.</p>
@@ -69,11 +69,18 @@
     </dialog>
 
     <p>
-      <button class=outline @click=dialogRef.showModal()>Instructions</button>
+      <button type=button class=icon-button @click=dialogRef.showModal()>
+        <Info :size=16 aria-hidden=true />
+        <span>Instructions</span>
+      </button>
     </p>
 
     <p>
-      <input type=file @click='$event.target.value = null' @input=parseFile($event.target.files[0])>
+      <button type=button class=icon-button @click=fileInputRef?.click()>
+        <Upload :size=16 aria-hidden=true />
+        <span>Choose File</span>
+      </button>
+      <input ref=fileInputRef hidden type=file @click='$event.target.value = null' @input=parseFile($event.target.files[0])>
     </p>
 
     <template v-if=loading>
@@ -126,16 +133,31 @@
         </p>
 
         <p>
-          <input type=submit value=Save>
+          <button type=submit class=icon-button>
+            <Save :size=16 aria-hidden=true />
+            <span>Save</span>
+          </button>
         </p>
       </form>
     </template>
+
+    <p class=theme-selector>
+      <label>
+        Theme:
+        <select v-model=themePreference>
+          <option value=system>System</option>
+          <option value=light>Light</option>
+          <option value=dark>Dark</option>
+        </select>
+      </label>
+    </p>
   </main>
 
   <a ref=anchorRef hidden />
 </template>
 
 <script setup lang=ts>
+  import { Info, Save, Upload } from '@lucide/vue'
   import { useCloseOnBackdrop } from '~/composables/useDialog'
 
   const email = 'jlcrochet91@pm.me'
@@ -145,6 +167,7 @@
   provide('saveFile', saveFile)
 
   const anchorRef = ref(null)
+  const fileInputRef = ref<HTMLInputElement | null>(null)
   const dialogRef = ref<HTMLDialogElement | null>(null)
   const errorDialogRef = ref<HTMLDialogElement | null>(null)
 
@@ -154,8 +177,17 @@
   const errorText = ref('')
 
   const visitedKey = 'inscryption-save-editor-visited'
+  const themeKey = 'inscryption-save-editor-theme'
+  type ThemePreference = 'system' | 'light' | 'dark'
+  const themePreference = ref<ThemePreference>('system')
 
   onMounted(() => {
+    const storedTheme = localStorage.getItem(themeKey)
+    if (storedTheme === 'system' || storedTheme === 'light' || storedTheme === 'dark') {
+      themePreference.value = storedTheme
+    }
+    applyThemePreference(themePreference.value)
+
     if (!localStorage.getItem(visitedKey)) {
       dialogRef.value?.showModal()
       localStorage.setItem(visitedKey, '1')
@@ -179,6 +211,23 @@
 
   function copyError() {
     navigator.clipboard.writeText(errorText.value)
+  }
+
+  watch(themePreference, (preference) => {
+    if (!import.meta.client) return
+    localStorage.setItem(themeKey, preference)
+    applyThemePreference(preference)
+  })
+
+  function applyThemePreference(preference: ThemePreference) {
+    if (!import.meta.client) return
+    const root = document.documentElement
+    if (preference === 'system') {
+      root.removeAttribute('data-theme')
+    }
+    else {
+      root.dataset.theme = preference
+    }
   }
 
   // This seems to be a commonly used header, but I currently don't know
