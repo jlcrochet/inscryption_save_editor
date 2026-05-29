@@ -100,7 +100,7 @@
           v-model.number=saveFile.ascensionData.currentRun.regionTier
           label='Current map'
           help="Zero-based index for the current map; 0 for Map #1, 1 for Map #2, etc."
-          type=number min=0 max=2 required
+          type=number min=0 max=3 required
         />
 
         <template v-for="i in saveFile.ascensionData.currentRun.regionOrder.$plength" :key=i>
