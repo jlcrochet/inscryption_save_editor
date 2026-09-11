@@ -26,7 +26,7 @@
         <table-input
           v-model.number=saveFile.ascensionData.currentRun.currency
           label=Currency
-          type=number min=0 max=999 required
+          type=number min=0 required
         />
         <table-input
           v-model.number=saveFile.ascensionData.currentRun.playerLives

@@ -5,7 +5,7 @@
         <table-input
           v-model.number=saveFile.part3Data.currency
           label=Currency
-          type=number min=0 max=999 required
+          type=number min=0 required
         />
         <table-input
           v-model.number=saveFile.part3Data.bounty

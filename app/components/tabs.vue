@@ -40,8 +40,7 @@
     }
   })
 
-  function setIndex(i)
-  {
+  function setIndex(i) {
     const form = document.forms.main
     if (!form || form.reportValidity()) {
       const nextId = tabs.value[i]?.id
