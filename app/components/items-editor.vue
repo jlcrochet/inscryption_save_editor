@@ -3,7 +3,7 @@
     <tbody>
       <tr v-for="(item, i) in itemList.$rcontent" :key=i>
         <td>
-          <select v-model=itemList.$rcontent[i] required>
+          <select v-model=itemList.$rcontent[i] :aria-label="`Item ${i + 1}`" required>
             <template v-for="item in items" :key=item.id>
               <option :value=item.id>{{ item.name }}</option>
             </template>

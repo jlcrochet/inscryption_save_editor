@@ -44,7 +44,13 @@
         </td>
 
         <td>
-          <select :value=card.name @input="updateCardSelection(card.index, $event.target.value)" :class="getCardType(card.name)" required>
+          <select
+            :value=card.name
+            :aria-label="`Card ${card.index + 1} name`"
+            :class="getCardType(card.name)"
+            required
+            @input="updateCardSelection(card.index, $event.target.value)"
+          >
             <option v-for="c in cards" :key=c.id :value=c.id :class="c.type">{{ c.name }}</option>
           </select>
         </td>

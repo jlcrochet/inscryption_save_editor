@@ -108,7 +108,11 @@
             <td style="text-align: right">{{ i + 1 }}</td>
 
             <td>
-              <input v-model.lazy.trim=mod.nameReplacement required maxlength=16 />
+              <input
+                v-model.lazy.trim=mod.nameReplacement
+                :aria-label="`Deathcard ${i + 1} name`"
+                required maxlength=16
+              />
             </td>
 
             <td class=actions>

@@ -1,5 +1,8 @@
 <template>
-  <div v-show=isActive>
+  <div
+    v-show=isActive
+    @reveal-invalid=activate
+  >
     <slot />
   </div>
 </template>
@@ -16,6 +19,10 @@
   const id = register({ title: props.title })
 
   const isActive = computed(() => tabIndex.value === id)
+
+  function activate() {
+    tabIndex.value = id
+  }
 
   onUnmounted(() => unregister(id))
 </script>

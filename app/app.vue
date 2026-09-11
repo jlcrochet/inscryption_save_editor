@@ -90,7 +90,7 @@
     </template>
 
     <template v-else-if=saveFile>
-      <form name=main @submit.prevent=createFile>
+      <form name=main novalidate @submit.prevent=validateAndCreateFile>
         <tabs>
           <tab title="Global">
             <forms-global />
@@ -175,6 +175,7 @@
   const consoleFormat = ref(false)
   const switchFormat = ref(false)
   const errorText = ref('')
+  type ValidatableControl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 
   const visitedKey = 'inscryption-save-editor-visited'
   const themeKey = 'inscryption-save-editor-theme'
@@ -419,6 +420,39 @@
     catch (error) {
       errorHandler(error)
     }
+  }
+
+  function isValidatableControl(element: Element): element is ValidatableControl {
+    return element instanceof HTMLInputElement
+      || element instanceof HTMLSelectElement
+      || element instanceof HTMLTextAreaElement
+  }
+
+  function validateAndCreateFile(event: SubmitEvent) {
+    const form = event.currentTarget as HTMLFormElement
+    const invalidControl = Array.from(form.elements)
+      .find((element): element is ValidatableControl => {
+        return isValidatableControl(element) && element.willValidate && !element.validity.valid
+      })
+
+    if (!invalidControl) {
+      createFile()
+      return
+    }
+
+    revealValidationError(invalidControl)
+  }
+
+  function revealValidationError(control: ValidatableControl) {
+    control.dispatchEvent(new CustomEvent('reveal-invalid', { bubbles: true }))
+
+    nextTick(() => {
+      const dialog = control.closest<HTMLDialogElement>('dialog')
+      if (dialog && !dialog.open) dialog.showModal()
+      control.scrollIntoView({ block: 'center' })
+      control.focus()
+      control.reportValidity()
+    })
   }
 
   function parseBody(bytes: Uint8Array): [Uint8Array, Uint8Array] {
